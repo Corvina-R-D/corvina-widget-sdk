@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   id="svg4"
+   sodipodi:docname="clock-digital-v1.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="true"
+     inkscape:zoom="36.333333"
+     inkscape:cx="16.389908"
+     inkscape:cy="12.922018"
+     inkscape:window-width="1920"
+     inkscape:window-height="1057"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4">
+    <inkscape:grid
+       type="xygrid"
+       id="grid1264" />
+  </sodipodi:namedview>
+  <path
+     d="M 1,6 C 0,6 0,7.0074556 0,7.0074556 V 17.031468 C 0,18 1.0269173,18 1.0269173,18 H 22.934159 c 0.06584,0 1.067306,-6e-6 1.070706,-0.997725 l 0.03406,-9.9948194 C 24,7 24,6 23,6 M 1.5,7.5 h 21 v 9 H 1.5 M 3,9 v 1.5 H 6.25 L 3,15 H 4.75 L 8,10.5 V 9 m 1.25,0 v 1.5 h 1.5 V 9 M 12,9 v 1.5 h 1.5 V 15 H 15 V 9 m 2,0 c -0.552285,0 -1,0.4477153 -1,1 v 4 c 0,0.552285 0.447715,1 1,1 h 3 c 0.552285,0 1,-0.447715 1,-1 V 10 C 21,9.4477153 20.552285,9 20,9 m -2.5,1.5 h 2 v 3 h -2 m -8.25,0 V 15 h 1.5 v -1.5"
+     id="path2"
+     style="fill:#c8c8c8;fill-opacity:1"
+     sodipodi:nodetypes="ccsccsccccccccccccccccccccccccssssssccccccccc" />
+</svg>

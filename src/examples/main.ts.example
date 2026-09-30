@@ -1,0 +1,82 @@
+declare var adjustPath;
+import { registerWidget, registerPropControl} from "corvina";
+import manifest from "./manifest.json";
+
+import MyWidget from "./examples/MyWidget/MyWidget";
+import MyWidgetVue from "./examples/MyWidget/MyWidget.vue";
+import { myWidgetGallery } from "./examples/MyWidget/MyWidgetGallery";
+import { widgetType as MyWidgetType } from "./examples/MyWidget/defs";
+const iconMyWidget = require( "./resources/images/corvina-widget1.png" );
+registerWidget({
+  type: MyWidgetType,  // The value is org.MyWidget
+  class: MyWidget,
+  component: MyWidgetVue,
+  gfx: myWidgetGallery.getDefaultConfiguration,
+  props: myWidgetGallery.getPropsHandler(),
+  icon: adjustPath( iconMyWidget ),
+  category: "MyGallery"
+}, manifest);
+
+
+// Custom dataset widget
+import MyDatasetWgt from "./examples/MyDataset/MyDataset";
+import MyDatasetVue from "./examples/MyDataset/MyDataset.vue";
+import { myDatasetGallery } from "./examples/MyDataset/MyDatasetGallery";
+import { widgetType as MyDatasetType } from "./examples/MyDataset/defs";
+const iconDataset = require( "./resources/images/database-outline.svg" );
+registerWidget({
+  type: MyDatasetType,  // The value is org.MyWidget
+  class: MyDatasetWgt,
+  component: MyDatasetVue,
+  gfx: myDatasetGallery.getDefaultConfiguration,
+  props: myDatasetGallery.getPropsHandler(),
+  icon: adjustPath( iconDataset ),
+  inGallery: false,
+  category: "MyGallery"
+}, manifest);
+
+// A with that use dataset
+import WgtWithDataset from "./examples/WgtWithDataset/WgtWithDataset";
+import WgtWithDatasetVue from "./examples/WgtWithDataset/WgtWithDataset.vue";
+import { wgtWithDatasetGallery } from "./examples/WgtWithDataset/WgtWithDatasetGallery";
+import { widgetType as MyWgtWithDatasetType } from "./examples/WgtWithDataset/defs";
+const iconWidget = require( "./resources/images/widgets-outline.svg" );
+registerWidget({
+  type: MyWgtWithDatasetType,  // The value is org.MyWidget
+  class: WgtWithDataset,
+  component: WgtWithDatasetVue,
+  gfx: wgtWithDatasetGallery.getDefaultConfiguration,
+  props: wgtWithDatasetGallery.getPropsHandler(),
+  icon: adjustPath( iconWidget ),
+  category: "MyGallery"
+}, manifest);
+
+// Datasetlist propcontrol
+import MyDatasetListPropControl from "./examples/WgtWithDataset/MyDatasetListPropControl.vue";
+registerPropControl(MyDatasetListPropControl);
+
+// Widget without Vue.js, drawn with the DOM API: no component is needed
+import MyRenderWidget from "./examples/MyRenderWidget/MyRenderWidget";
+import { myRenderWidgetGallery } from "./examples/MyRenderWidget/MyRenderWidgetGallery";
+import { widgetType as MyRenderWidgetType } from "./examples/MyRenderWidget/defs";
+registerWidget({
+  type: MyRenderWidgetType,  // The value is org.MyRenderWidget
+  class: MyRenderWidget,
+  gfx: myRenderWidgetGallery.getDefaultConfiguration,
+  props: myRenderWidgetGallery.getPropsHandler(),
+  icon: adjustPath( iconMyWidget ),
+  category: "MyGallery"
+}, manifest);
+
+// Widget without Vue.js, drawn with lit-html (requires: yarn add lit-html)
+import MyLitWidget from "./examples/MyLitWidget/MyLitWidget";
+import { myLitWidgetGallery } from "./examples/MyLitWidget/MyLitWidgetGallery";
+import { widgetType as MyLitWidgetType } from "./examples/MyLitWidget/defs";
+registerWidget({
+  type: MyLitWidgetType,  // The value is org.MyLitWidget
+  class: MyLitWidget,
+  gfx: myLitWidgetGallery.getDefaultConfiguration,
+  props: myLitWidgetGallery.getPropsHandler(),
+  icon: adjustPath( iconMyWidget ),
+  category: "MyGallery"
+}, manifest);

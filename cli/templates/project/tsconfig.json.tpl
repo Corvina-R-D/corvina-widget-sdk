@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        "types": [
+            "node"
+        ],
+        "lib": [
+            "dom",
+            "es5",
+            "es2015",
+            "es6"
+        ],
+        "target": "es2018",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "outDir": "./dist",
+        "baseUrl": ".",
+        "rootDir": ".",
+        "paths": {
+            "@/*": [ "_corvina/src/*"], // must match webpack alias !!!
+            "corvina": [ "_corvina/src/corvina-module" ],
+        },
+        "resolveJsonModule":true
+    },
+    "include": [
+        "_corvina/**/*",
+        "src/**/*",
+        "index.ts",
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+    ]
+}

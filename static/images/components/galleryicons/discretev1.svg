@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+ <g stroke-linejoin="round">
+  <g transform="matrix(.99586 0 0 1.3326 .00093561 -.60484)">
+   <path d="m3.5 1.9688h4v4h-4z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width=".89646" style="paint-order:markers fill stroke"/>
+   <path d="m8.5723 2h1.1789v4h-1.1789z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width=".48667" style="paint-order:markers fill stroke"/>
+   <path d="m2.5981 2h18.491v4h-18.491z" fill-opacity="0" opacity=".99" stroke="#c8c8c8" stroke-width=".5" style="paint-order:markers fill stroke"/>
+   <path d="m10.848 2h1.1789v4h-1.1789z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width=".48667" style="paint-order:markers fill stroke"/>
+   <path d="m14.723 1.875h4.3351v4h-4.3351z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width=".93326" style="paint-order:markers fill stroke"/>
+  </g>
+  <g transform="translate(-.09375 5.25)">
+   <g transform="matrix(1 0 0 .99948 .7956 -5.6546)">
+    <path d="m3.8223 9.8982h1.1789v5.4821h-1.1789z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width=".56974" style="paint-order:markers fill stroke"/>
+    <path d="m1.8885 9.9154h18.41v5.4193h-18.41z" fill-opacity="0" opacity=".99" stroke="#c8c8c8" stroke-width=".58071" style="paint-order:markers fill stroke"/>
+    <path d="m5.4731 9.8125h1.1789v5.4821h-1.1789z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width=".56974" style="paint-order:markers fill stroke"/>
+    <path d="m11.692 9.8554h5.5226v5.4821h-5.5226z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width="1.2332" style="paint-order:markers fill stroke"/>
+   </g>
+   <g transform="translate(.79569 2.5938)">
+    <path d="m3.8223 8.8685h1.1789v5.2987h-1.1789z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width=".56013" style="paint-order:markers fill stroke"/>
+    <path d="m1.8884 8.8885h18.41v5.4164h-18.41z" fill-opacity="0" opacity=".99" stroke="#c8c8c8" stroke-width=".58056" style="paint-order:markers fill stroke"/>
+    <path d="m5.4731 8.7857h5.3351v5.2987h-5.3351z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width="1.1916" style="paint-order:markers fill stroke"/>
+    <path d="m14.348 8.8272h4.7726v5.2987h-4.7726z" fill="#c8c8c8" opacity=".99" stroke-opacity=".22097" stroke-width="1.127" style="paint-order:markers fill stroke"/>
+   </g>
+  </g>
+ </g>
+</svg>

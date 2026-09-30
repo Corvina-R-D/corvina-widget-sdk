@@ -1,0 +1,148 @@
+import { PaginationRestDTO } from '@/interfaces/commons/pagination';
+import { UserInDTO, UserOutDTO, UserQueryParamsDTO, SecretOutDto, UserPreferenceInDTO, ApiKeyInDTO, UserDeepSearchQueryParamsDTO, DeepSearchUserDTO } from '@/interfaces/user';
+import { UserAuthorizationDTO, UserGroupInDTO, UserGroupMembershipRole, UserGroupOutDTO, UserGroupQueryParamsDTO, UserGroupUpdateDTO } from '@/interfaces/userGroup';
+import { RoleInDTO, RoleOutDTO, RoleUpdateDTO, RoleQueryParamsDTO, DetailedRoleInDTO } from '@/interfaces/role';
+import { ApplicationPermissionInDTO } from '@/interfaces/applicationpermission';
+import { DeviceController } from '@/interfaces/devicecontroller';
+import ICorvinaCoreAxiosInstance from '../ICorvinaCoreAxiosInstance';
+import AbstractAxiosInstance from './AbstractAxiosInstance';
+import { ModelPathQueryParamsDTO, ModelPathInDTO, ModelPathOutDTO } from '@/interfaces/modelpath';
+import { OrganizationInDTO, OrganizationOutDTO, OrganizationQueryParamsDTO, OrganizationUpdateDTO, OrganizationLoginInfoDTO, OrganizationGrantDTO, VerifyTokenOutDTO } from '@/interfaces/organization';
+import { SecurityPolicyQueryParamsDTO, SecurityPolicyInDTO, SecurityPolicyOutDTO } from '@/interfaces/securitypolicy';
+import { DeviceOutDTO, DeviceQueryParamsDTO, DeviceRepositoryDTO, DeviceUpdateDTO } from '@/interfaces/device';
+import { AgreementOutDTO, CheckAgreementOutDTO, AgreementService } from '@/interfaces/agreements';
+import { ApplicationsQueryParamsDTO, ApplicationOutDTO, AppOrganizationOutDTO, AppOrganizationsQueryParamsDTO, AppOrganizationCreateBodyDTO, AppOrganizationUpgradeBodyDTO } from '@/interfaces/applications';
+import { InstanceDTO } from '@/interfaces/instance';
+import { RealmOutDTO } from '@/interfaces/realm';
+import { AccountDTO, AccountPatchDTO } from '@/interfaces/account';
+declare class CorvinaCoreAxiosInstance extends AbstractAxiosInstance implements ICorvinaCoreAxiosInstance {
+    constructor();
+    updateBaseUrl(): void;
+    fetchInstance(): Promise<InstanceDTO>;
+    fetchUsers(organizationId: number | string, params?: UserQueryParamsDTO): Promise<PaginationRestDTO<UserInDTO>>;
+    deepSearchUsers(params?: UserDeepSearchQueryParamsDTO): Promise<PaginationRestDTO<DeepSearchUserDTO>>;
+    fetchUser(organizationId: number, userId: number): Promise<UserInDTO>;
+    checkUserExists(username: string): Promise<boolean>;
+    fetchUserMine(): Promise<UserInDTO>;
+    fetchUserByUsername(organizationId: number, username: string): Promise<UserInDTO>;
+    createUser(organizationId: number, data: UserOutDTO): Promise<UserInDTO>;
+    updateUser(organizationId: number, userId: number, newEmail: string, newPassword: string, passwordChangeInvitation: boolean, groupPoliciesEnabled: boolean): Promise<UserInDTO>;
+    deleteUser(organizationId: number, userId: number): Promise<UserInDTO>;
+    getUserSecurityPolicyGroups(organizationId: number, userId: number): Promise<SecurityPolicyInDTO[]>;
+    addUserSecurityPolicyGroups(organizationId: number, userId: number, securityPolicyIds: number[]): Promise<SecurityPolicyInDTO>;
+    removeUserSecurityPolicyGroups(organizationId: number, userId: number, securityPolicyIds: number[]): Promise<SecurityPolicyInDTO>;
+    fetchUserGroups(organizationId: number, params?: UserGroupQueryParamsDTO): Promise<PaginationRestDTO<UserGroupInDTO>>;
+    fetchUserGroupsMineMembers(organizationId: number): Promise<{
+        adminsOf: number[];
+        usersOf: number[];
+    }>;
+    fetchUserGroup(organizationId: number, userGroupId: number): Promise<UserGroupInDTO>;
+    fetchUserGroupMembers(organizationId: number, userGroupId: number): Promise<UserInDTO[]>;
+    createUserGroup(organizationId: number, data: UserGroupOutDTO): Promise<UserGroupInDTO>;
+    editUserGroup(organizationId: number, userGroupId: number, data: UserGroupUpdateDTO): Promise<UserGroupInDTO>;
+    addUserToGroup(organizationId: number, userGroupId: number, userId: number, role: UserGroupMembershipRole): Promise<UserGroupInDTO>;
+    addRolesToGroup(organizationId: number, userGroupId: number, roleIds: number): Promise<UserGroupInDTO>;
+    removeUserFromGroup(organizationId: number, userGroupId: number, userId: number): Promise<UserGroupInDTO>;
+    removeRolesFromGroup(organizationId: number, userGroupId: number, roleIds: number): Promise<UserGroupInDTO>;
+    verifyApplicationPermissionChanges(organizationId: number, { groupsToAdd, rolesToAdd, groupsToRemove, rolesToRemove }: {
+        groupsToAdd: number[];
+        rolesToAdd: number[];
+        groupsToRemove: number[];
+        rolesToRemove: number[];
+    }): Promise<string[]>;
+    deleteUserGroup(organizationId: number, userGroupId: number): Promise<UserGroupInDTO>;
+    isAuthorized(deviceGroup: string, deviceId: string, organizationId: number, vpnName: string): Promise<UserAuthorizationDTO>;
+    areAuthorized(deviceIds: string[], organizationId: number): Promise<Record<string, UserAuthorizationDTO>>;
+    checkRoleExists(organizationId: number, name: string): Promise<unknown>;
+    fetchRoles(organizationId: number, params?: RoleQueryParamsDTO): Promise<PaginationRestDTO<DetailedRoleInDTO>>;
+    fetchRole(organizationId: number, roleId: number): Promise<DetailedRoleInDTO>;
+    createRole(organizationId: number, data: RoleOutDTO): Promise<RoleInDTO>;
+    editRole(organizationId: number, roleId: number, data: RoleUpdateDTO): Promise<RoleInDTO>;
+    deleteRole(organizationId: number, roleId: number): Promise<DetailedRoleInDTO>;
+    fetchAllApplicationPermissions(): Promise<PaginationRestDTO<ApplicationPermissionInDTO>>;
+    fetchDeviceController(organizationId: number, deviceId: number): Promise<DeviceController>;
+    editDevice(organizationId: number, hwId: string, data: DeviceUpdateDTO): Promise<DeviceOutDTO>;
+    fetchModelPaths(organizationId: number, params?: ModelPathQueryParamsDTO): Promise<PaginationRestDTO<ModelPathInDTO>>;
+    createModelPath(organizationId: number, data: ModelPathOutDTO): Promise<ModelPathInDTO>;
+    createOrganization(data: OrganizationOutDTO): Promise<OrganizationInDTO>;
+    createSubOrganization(organizationId: number, data: OrganizationOutDTO, options?: {
+        addDefaultRoles: boolean;
+        waitLicenseManager: boolean;
+    }): Promise<OrganizationInDTO>;
+    fetchOrganizations(organizationId: number, params?: OrganizationQueryParamsDTO): Promise<PaginationRestDTO<OrganizationInDTO>>;
+    updateSubOrganization(organizationId: number, data: OrganizationUpdateDTO): Promise<OrganizationInDTO>;
+    deleteOrganization(organizationId: number): Promise<OrganizationInDTO>;
+    fetchOrganization(organizationId: string): Promise<OrganizationInDTO>;
+    generateImportToken(organizationId: string): Promise<{
+        token: string;
+    }>;
+    verifyImportToken(token: string): Promise<VerifyTokenOutDTO>;
+    moveDeviceToAnotherOrganization(organizationId: number, hwId: string, organizationImportToken: string): Promise<DeviceOutDTO>;
+    fetchCurrentUserOrganizations(): Promise<OrganizationInDTO[]>;
+    fetchMyIp(): Promise<OrganizationInDTO[]>;
+    fetchSecurityPolicyGroups(organizationId: number, params?: SecurityPolicyQueryParamsDTO): Promise<PaginationRestDTO<SecurityPolicyInDTO>>;
+    createSecurityPolicyGroup(organizationId: number, data: SecurityPolicyOutDTO): Promise<SecurityPolicyInDTO>;
+    fetchSecurityPolicyGroup(organizationId: number, securityPolicyGroupId: number): Promise<SecurityPolicyInDTO>;
+    updateSecurityPolicyGroup(organizationId: number, securityPolicyGroupId: number, data: SecurityPolicyOutDTO): Promise<SecurityPolicyInDTO>;
+    deleteSecurityPolicyGroup(organizationId: number, securityPolicyGroupId: number): any;
+    addDeviceToSecurityGroup(organizationId: number, securityPolicyGroupId: number, deviceId: number): Promise<SecurityPolicyInDTO>;
+    removeDeviceFromSecurityGroup(organizationId: number, securityPolicyGroupId: number, deviceId: number): Promise<SecurityPolicyInDTO>;
+    fetchSecurityPolicyGroupsByParent(organizationId: number, securityPolicyGroupId: number, params?: SecurityPolicyQueryParamsDTO): Promise<PaginationRestDTO<SecurityPolicyInDTO>>;
+    getLoginInfo(organization: string): Promise<OrganizationLoginInfoDTO>;
+    fetchModelPathPermissions(organizationId: number, roleId: string, params?: any): any;
+    fetchDevices(organizationId: number, params?: DeviceQueryParamsDTO): Promise<PaginationRestDTO<DeviceRepositoryDTO>>;
+    searchDevices(organizationId: number, params?: DeviceQueryParamsDTO): Promise<PaginationRestDTO<DeviceRepositoryDTO>>;
+    fetchDeviceByLabel(organizationId: number, deviceLabel: string): Promise<DeviceOutDTO>;
+    userSelfOnboarding(userData: any): Promise<void>;
+    fetchServiceAccountClientSecret(organizationId: number, clientId: string): Promise<SecretOutDto>;
+    refreshServiceAccountClientSecret(organizationId: number, clientId: string): Promise<SecretOutDto>;
+    /**********************************************************************
+     *  AGREEMENTS
+     **********************************************************************/
+    fetchAgreements(organizationId: number, serviceName: AgreementService): Promise<AgreementOutDTO[]>;
+    checkAgreements(organizationId: number, serviceName: AgreementService): Promise<CheckAgreementOutDTO>;
+    acceptAgreements(organizationId: number, idsToAccept: number[]): Promise<AgreementOutDTO[]>;
+    getUserPreferences(params: any): Promise<UserPreferenceInDTO>;
+    getUserPreferencesForLoginOrganization(params: any): Promise<UserPreferenceInDTO>;
+    postUserPreferences(params: any): Promise<unknown>;
+    postUserPreferencesForLoginOrganization(params: any): Promise<unknown>;
+    deleteUserPreferences(userPrefId: number): Promise<any>;
+    deleteUserPreferencesForLoginOrganization(userPrefId: number): Promise<any>;
+    getUserPreference(service: string, prop: string): Promise<string>;
+    setUserPreference(service: string, prop: string, value: string): Promise<string>;
+    getUserApiKeys(username?: string): Promise<ApiKeyInDTO>;
+    postUserApiKey(data: {
+        username?: string;
+    }): Promise<unknown>;
+    deleteUserApiKey(apiKeyId: number, username: string): Promise<any>;
+    fetchApplications(params?: ApplicationsQueryParamsDTO): Promise<PaginationRestDTO<ApplicationOutDTO>>;
+    getApplication(appId: number): Promise<ApplicationOutDTO>;
+    fetchApplicationLike(appId: number): Promise<{
+        appId: number;
+        username: string;
+    } | undefined>;
+    createApplicationLike(appId: number): Promise<{
+        appId: number;
+        username: string;
+    } | undefined>;
+    deleteApplicationLike(appId: number): Promise<{
+        appId: number;
+        username: string;
+    } | undefined>;
+    fetchAppOrganizations(organizationId: number, params?: AppOrganizationsQueryParamsDTO): Promise<PaginationRestDTO<AppOrganizationOutDTO>>;
+    getAppOrganization(organizationId: number, appOrganizationId: number): Promise<AppOrganizationOutDTO>;
+    createAppOrganization(organizationId: number, appOrganization: AppOrganizationCreateBodyDTO): Promise<AppOrganizationOutDTO>;
+    upgradeAppOrganization(organizationId: number, appOrganizationId: number, appOrganizationUpgradeBodyDTO: AppOrganizationUpgradeBodyDTO): Promise<AppOrganizationOutDTO>;
+    deleteAppOrganization(organizationId: number, appOrganizationId: number, force?: boolean): Promise<AppOrganizationOutDTO>;
+    paymentAppOrganization(appOrganizationId: number): Promise<AppOrganizationOutDTO>;
+    rescheduleAppOrganization(appOrganizationId: number): Promise<AppOrganizationOutDTO>;
+    changePlanAppOrganization(appOrganizationId: number, newPlanId: string): Promise<AppOrganizationOutDTO>;
+    fetchUserRealms(): Promise<RealmOutDTO[]>;
+    fetchOrganizationGrants(parentOrg: string): Promise<OrganizationGrantDTO>;
+    fetchAccount(): Promise<AccountDTO>;
+    patchAccount(patch: AccountPatchDTO): Promise<void>;
+    removeAccountCredential(id: string): Promise<void>;
+    removeAccountSession(id: string): Promise<void>;
+}
+declare const _default: CorvinaCoreAxiosInstance;
+export default _default;

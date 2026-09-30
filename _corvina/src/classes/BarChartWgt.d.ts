@@ -1,0 +1,46 @@
+import { DatasetWgt, Value } from '@/corvina-model';
+import CategoricalChartWgt from "./CategoricalChartWgt";
+import DataAdapter from "./DataAdapter";
+import CategoricalDatasetWgt from "./CategoricalDataset";
+import { IChartData } from '@/interfaces/plotly';
+import { BaseWgt } from 'src/corvina-module';
+type CategoricalDataSeries = CategoricalDatasetWgt | DatasetWgt;
+export default class BarChartWgt extends CategoricalChartWgt {
+    wgts: BaseWgt[];
+    orientation: Value<any>;
+    fetchingData: number;
+    refreshCount: number;
+    protected plotlyDataAdapter: DataAdapter<CategoricalDataSeries, IChartData>;
+    private axisColor;
+    private gridColor;
+    private yAxes;
+    private marginsType;
+    private marginBottom;
+    private marginTop;
+    private marginLeft;
+    private marginRight;
+    private y1AxisColor;
+    private y2AxisColor;
+    private y1AxisLabel;
+    private y2AxisLabel;
+    private y1AxisRangeMode;
+    private y1AxisRange;
+    private y2AxisRangeMode;
+    private y2AxisRange;
+    private yAxesVisibile;
+    showAggregation: boolean;
+    constructor(args: any);
+    private _initYAxes;
+    setPropertyValue({ prop, value }: {
+        prop: any;
+        value: any;
+    }): void;
+    addAxis(axis: string): void;
+    getPropertyValue(prop: string): any;
+    serialize(): any;
+    setChartData(generateDynamicDatasets?: boolean): void;
+    updateChartData<QueryDataWgt>(data: QueryDataWgt): void;
+    protected refresh(): void;
+    getDataModelMap(): import("@/corvina-model").WidgetDataModel;
+}
+export {};

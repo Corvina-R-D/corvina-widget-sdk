@@ -1,0 +1,102 @@
+/**
+ * This file is used internally to import in case of circular dependencies.
+ *
+ * If A imports B and B imports C and C imports A  you will end up in C with undefined module.exports of A, since
+ * A has not yet been initialized.
+ *
+ * Instead this file provides immediate exports (without imports) so that circular dependencies are avoided.
+ *
+ */
+export { default as DashboardAxiosInstance } from "./communication/axios/implementation/DashboardAxiosInstance";
+export { default as DeviceSlot } from "./classes/DeviceSlot";
+export { default as DeviceMappingAxiosInstance } from "./communication/axios/implementation/DeviceMappingAxiosInstance";
+export { default as CorvinaCoreAxiosInstance } from "./communication/axios/implementation/CorvinaCoreAxiosInstance";
+export { default as LicenseManagerAxiosInstance } from "./communication/axios/implementation/LicenseManagerAxiosInstance";
+export { default as AlarmsAxiosInstance } from "./communication/axios/implementation/AlarmsAxiosInstance";
+export { default as LimitsAxiosInstance } from "./communication/axios/implementation/LimitsAxiosInstance";
+export { default as ProductsAxiosInstance } from "./communication/axios/implementation/ProductsAxiosInstance";
+export { default as NotificationAxiosInstance } from "./communication/axios/implementation/NotificationAxiosInstance";
+export { default as CorvinaPlatformControllerInstance } from "./communication/axios/implementation/CorvinaPlatformControllerInstance";
+export { default as ThemeAxiosInstance } from "./communication/axios/implementation/ThemeAxiosInstance";
+export { default as VPNAxiosInstance } from './communication/axios/implementation/VPNAxiosInstance';
+export { default as Value } from "./classes/Value";
+export { default as Layout } from "./classes/Layout";
+export { default as Grid } from "./classes/Grid";
+export { default as Column } from "./classes/Column";
+export { default as Row } from "./classes/Row";
+export { default as LayoutConfig } from "./classes/LayoutConfig";
+export { default as GridConfiguration } from "./classes/GridConfiguration";
+export { default as GridLayout } from "./classes/gridlayout";
+export { default as createObservableProperty } from "./classes/createObservableProperty";
+export { default as removeObservableProperty } from "./classes/removeObservableProperty";
+export type { default as IWgtConstructorParams } from "./classes/IWgtConstructorParams";
+export { default as BaseWgt } from "./classes/BaseWgt";
+export type { IWidgetSerialization } from "./classes/BaseWgt";
+export { VariablesDefinitions } from "./classes/VariablesWgt";
+export { default as DataLink } from "./classes/DataLink";
+export type { IDataLinkConstructorArgs } from "./classes/DataLink";
+export { default as BaseDatasourceWgt } from "./classes/BaseDatasourceWgt";
+export { default as DatasourceWgt } from "./classes/DatasourceWgt";
+export { default as TagMgr } from "./classes/TagMgr";
+export { default as LanguageMgr } from "./classes/LanguageMgr";
+export { default as BaseGraphicWgt } from "./classes/BaseGraphicWgt";
+export type { FreeGridLayout } from "./classes/BaseGraphicWgt";
+export type { ConfigurationLayout } from "./classes/BaseGraphicWgt";
+export { BREAKPOINTS_MODE } from "./classes/BaseGraphicWgt";
+export { default as ProjectWgt } from "./classes/ProjectWgt";
+export { default as PageWgt } from "./classes/PageWgt";
+export type { Bounds } from "./classes/PageWgt";
+export { default as GroupWgt } from "./classes/GroupWgt";
+export { default as ComposedWgt } from "./classes/ComposedWgt";
+export { default as ActionWgt } from "./classes/ActionWgt";
+export { default as LegacyWgt } from "./classes/LegacyWgt";
+export { default as SynopticWgt } from "./classes/SynopticWgt";
+export { default as xFormula } from "./classes/xFormula";
+export { default as xForm } from "./classes/xForm";
+export { default as DatasetWgt } from "./classes/DatasetWgt";
+export { default as StubDatasetWgt } from "./classes/StubDatasetWgt";
+export { default as ImageWgt } from "./classes/ImageWgt";
+export { default as TrendDatasetWgt } from "./classes/TrendDatasetWgt";
+export { default as BarChartTimeDrillDatasetWgt } from "./classes/BarChartTimeDrillDatasetWgt";
+export { default as HistoricalDataSet } from "./classes/HistoricalDataSet";
+export { default as ErrorPlaceholderWgt } from "./classes/ErrorPlaceholder";
+export { default as IClickableWgt } from "./classes/IClickableWgt";
+export { default as ClockWgt } from "./classes/ClockWgt";
+export { default as ClockMgrWgt } from "./classes/ClockMgrWgt";
+export { jm4web } from "./classes/WidgetFactory";
+export type { DataValue } from "./communication/axios/model/devicedata";
+export { default as TrendChartWgt } from "./classes/TrendChartWgt";
+export { default as gridController } from "./classes/GridController";
+export { default as BasePropsHandler } from "./classes/widgets/gallery/propertiesHandlers/BasePropsHandler";
+export { default as BaseGallery } from "./classes/widgets/gallery/BaseGallery";
+export { WidgetGallery } from "./classes/WidgetGallery";
+export { default as BaseGraphicPropsHandler } from "./classes/widgets/gallery/propertiesHandlers/BaseGraphicPropsHandler";
+export type { default as IPropertyHandler } from "./classes/widgets/gallery/propertiesHandlers/IPropertyHandler";
+export { default as store } from "./store/store";
+export type { IAddDataLinkArgs } from './classes/Actions/Actions';
+export { MoveWidgetInGrid, AddAction, AddDataLink, AddEvent, AddWidget, AddXForm, ModeWidgetLayoutVisibility, MoveWidget, RemoveAction, RemoveDataLink, RemoveWidget, SetColumnsGlobal, SetLayoutProperty, SetPropertyValue, SetRowsGlobal, WidgetLayoutVisibility } from './classes/Actions/Actions';
+export { gs, setStore } from './classes/GlobalStore';
+export { default as CommunicationSettings } from "./communication/CommunicationSettings";
+export { globalWidgetRegistry } from "./classes/WidgetFactory";
+export type { WidgetModule, WidgetDataModel, WidgetModuleRegistrationParam } from "./classes/WidgetFactory";
+export { initCorvina } from "./main";
+export { registerWidget } from "./classes/widgetCreation";
+export { setCommunicationSettings } from "./communication/CommunicationInitializer";
+export { registerPropControl } from './classes/registerPropControl';
+export { default as Dashboard } from "./classes/Dashboard";
+export { default as Layout1 } from "./classes/ProjectStrategies/Layout1";
+export { default as Layout2 } from "./classes/ProjectStrategies/Layout2";
+export { default as Layout3 } from "./classes/ProjectStrategies/Layout3";
+export { default as Layout4 } from "./classes/ProjectStrategies/Layout4";
+export { default as Layout5 } from "./classes/ProjectStrategies/Layout5";
+export { default as Layout6 } from "./classes/ProjectStrategies/Layout6";
+export { default as Layout7 } from "./classes/ProjectStrategies/Layout7";
+export { CustomWidgetClass, addCustomWidgetToDashboardGallery } from "./classes/loaderCustomWidget";
+export { default as LegacyCustomWidget } from "./classes/LegacyCustomWidget";
+export { default as LegacyCustomWidgetGallery } from "./classes/LegacyCustomWidgetGallery";
+export { default as ModalEnum } from './constant/ModalEnum';
+export { importFont } from "./utils/browserutil";
+export { updateCustomWidgetChild } from "./utils/dashboards/Widget";
+export { useCorvinaI18n } from "./utils/CorvinaI18n";
+import ProjectStore from "./store/Project-store";
+export declare const projectStore: ProjectStore;

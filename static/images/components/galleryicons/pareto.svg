@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="Livello_2"
+   data-name="Livello 2"
+   viewBox="0 0 42 42"
+   width="42" height="42"
+   version="1.1"
+   sodipodi:docname="pareto.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview9"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="4"
+     inkscape:cx="-177.875"
+     inkscape:cy="80.375"
+     inkscape:window-width="2560"
+     inkscape:window-height="1417"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Livello_2"
+     inkscape:snap-grids="false"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-others="false" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.cls-1{fill:#c8c8c8;}</style>
+  </defs>
+  <rect
+     style="fill:#ffffff;fill-opacity:0;stroke:#c8c8c8;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+     id="rect853"
+     width="5.2925911"
+     height="29.42131"
+     x="2.3927002"
+     y="6.4053197" />
+  <rect
+     style="fill:#ffffff;fill-opacity:0;stroke:#c8c8c8;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+     id="rect853-6"
+     width="5.6135597"
+     height="16.622318"
+     x="23.56822"
+     y="19.248821" />
+  <rect
+     style="fill:#ffffff;fill-opacity:0;stroke:#c8c8c8;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+     id="rect853-6-0"
+     width="6.0049138"
+     height="8.7011728"
+     x="33.376053"
+     y="27.191696" />
+  <rect
+     style="fill:#ffffff;fill-opacity:0;stroke:#c8c8c8;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+     id="rect853-6-6"
+     width="5.722188"
+     height="21.542427"
+     x="12.638906"
+     y="14.323047" />
+  <path
+     style="fill:none;fill-opacity:1;stroke:#c8c8c8;stroke-width:1.98952;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 1.2269862,35.885669 c 39.4465468,0 39.4465468,0 39.4465468,0"
+     id="path2786" />
+  <path
+     style="fill:none;stroke:#c8c8c8;stroke-width:1.52488;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 4.5124401,31.36256 C 15.940386,19.612091 15.940386,19.612091 15.940386,19.612091 L 27.50438,10.710221 39.61256,6.1999401"
+     id="path4890" />
+</svg>

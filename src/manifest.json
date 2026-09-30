@@ -1,0 +1,11 @@
+{
+    "name": "org",
+    "source": "sdk",
+    "main": "lib.js",
+    "widgets": ["org.MyWidget"],
+    "resources":
+    {
+        "images": ["corvina-widget1.png"],
+        "icon": ["corvina-widget1.png"]
+    }
+}

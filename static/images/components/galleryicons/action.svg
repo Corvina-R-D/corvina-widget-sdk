@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42" height="42" viewBox="0 0 42 42">
+  <defs>
+    <clipPath id="clip-Action.svg">
+      <rect width="42" height="42"/>
+    </clipPath>
+  </defs>
+  <g id="Action.svg" clip-path="url(#clip-Action.svg)">
+    <rect width="42" height="42" fill="#fff"/>
+    <path id="Path_994" data-name="Path 994" d="M3210.449,3043.31a1,1,0,0,1,.99,1.143l-1.626,11.223H3222.9a1,1,0,0,1,.813,1.582l-16.953,23.665a1,1,0,0,1-1.8-.764l2.488-13.489h-13.5a1,1,0,0,1-.792-1.611l16.489-21.361A1,1,0,0,1,3210.449,3043.31Zm10.509,14.367h-12.3a1,1,0,0,1-.99-1.143l1.246-8.6L3196,3064.67h12.662a1,1,0,0,1,.983,1.181l-1.893,10.265Z" transform="translate(-3187.301 -3041.551)" fill="#c8c8c8"/>
+  </g>
+</svg>

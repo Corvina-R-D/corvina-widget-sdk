@@ -1,0 +1,17 @@
+{
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-syntax-dynamic-import"
+  ],
+  "comments": false,
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": "> 0.25%, not dead",
+        // "debug": true,
+        "modules": "commonjs"
+      }
+    ]
+  ]
+}

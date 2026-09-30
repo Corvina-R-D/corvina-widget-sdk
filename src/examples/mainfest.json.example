@@ -1,0 +1,21 @@
+{
+    "name": "org",
+    "source": "sdk",
+    "main": "lib.js",
+    "widgets": [
+        "org.MyWidget", 
+        "org.MyDataset", 
+        "org.WgtWithDataset",
+        "org.MyRenderWidget",
+        "org.MyLitWidget"
+    ],
+    "resources":
+    {
+        "images": ["corvina-widget1.png", "database-outline.svg", "widgets-outline.svg"],
+        "icon": [ 
+            "corvina-widget1.png",
+            "database-outline.svg", 
+            "widgets-outline.svg"
+        ]
+    }
+}

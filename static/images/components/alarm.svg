@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="37" height="42" viewBox="0 0 37 42">
+  <defs>
+    <clipPath id="clip-alarm">
+      <rect width="37" height="42"/>
+    </clipPath>
+  </defs>
+  <g id="alarm" clip-path="url(#clip-alarm)">
+    <rect width="37" height="42" fill="#fff"/>
+    <g id="Group_1236" data-name="Group 1236" transform="translate(-3052.053 -1694.653)">
+      <path id="Path_352" data-name="Path 352" d="M3070.835,1701.095l-16.819,29.157h33.642Z" transform="translate(0 0)" fill="none" stroke="#c8c8c8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+      <line id="Line_378" data-name="Line 378" y1="9.441" transform="translate(3070.836 1711.365)" fill="none" stroke="#c8c8c8" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+      <line id="Line_379" data-name="Line 379" transform="translate(3070.836 1724.94)" fill="none" stroke="#c8c8c8" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,9 @@
+node_modules
+dist/org
+dist/upload
+# local build of the Corvina SDK bundle (scripts/use-local-corvina.js)
+dist/corvina
+# settings of the local dev server (see .env.example)
+.env
+.env.*
+!.env.example

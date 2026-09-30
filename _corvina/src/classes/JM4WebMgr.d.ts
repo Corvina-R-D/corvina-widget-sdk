@@ -1,0 +1,31 @@
+import "../assets/css/jm4web/core.min.css";
+import "../assets/css/jm4web/lib.min.css";
+export default class JM4WebMgr {
+    props: Map<string, any>;
+    core: any;
+    idSeed: number;
+    keyboardLayer: HTMLElement;
+    templates: HTMLElement;
+    pageName: string;
+    css: any;
+    dProject: any;
+    dPageMgr: any;
+    dPage: any;
+    constructor();
+    startRendering(): void;
+    stopRendering(): void;
+    clearEnvironment(): void;
+    loadEnvoirement(): void;
+    isMounted(instance: any): any;
+    setKeyboardLayer(layer: any): void;
+    addModule(configuration: any): void;
+    getPropertiesDefinition(moduleName: any): any;
+    mount(mountingPoint: any, widgetname: any, state: any, parentWidget: any): any;
+    getModuleBoundingRect(name: any): any;
+    freeInstances(): void;
+    freeInstance(pageId: any, widgetId: any): void;
+    setEnvPageSize(x: any, y: any, width: any, height: any): void;
+    removeGlobalWidget(id: string): void;
+    removeWidgetFromRenderingQueue(widget: any): void;
+    refresh(): void;
+}
