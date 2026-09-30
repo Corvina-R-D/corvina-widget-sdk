@@ -1539,7 +1539,7 @@ __metadata:
     lz-string: "npm:^1.4.4"
     mapbox-gl: "npm:^0.41.0"
     moment: "npm:^2.22.0"
-    phoenix: "npm:^1.3.0"
+    phoenix: "npm:^1.8.9"
     phoenix-channels: "npm:^1.0.0"
     plotly.js: "npm:^1.39.1"
     pug: "npm:^2.0.3"
@@ -13708,10 +13708,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"phoenix@npm:^1.3.0":
-  version: 1.8.1
-  resolution: "phoenix@npm:1.8.1"
-  checksum: 10c0/82c4036aa0201eb8063e89874c87dac08dce455dd7c31521839932dce99868e319cf3efa6e4f41a88979f31132cac537a6b689eacd3e8fa8cb2e02a4b949423a
+"phoenix@npm:^1.8.9":
+  version: 1.8.9
+  resolution: "phoenix@npm:1.8.9"
+  checksum: 10c0/9f661db2c0e3986ec3cce4969ec4906a02e15675bd9123fbb8ae7a8caf61213ce20420be505f52dc0a9de9117021a21e9b1344964400530e26474e45d7819c86
   languageName: node
   linkType: hard
 
