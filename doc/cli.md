@@ -55,7 +55,7 @@ When the package is still named `org` (the name of the SDK examples) the command
 | `lit` | `render()` returns a lit-html template | `lit-html` |
 | `react` | `render()` returns a React element, committed into a React root; component in `<Name>View.tsx` | `react`, `react-dom`, types; `.tsx` in the ts-loader rule and in `resolve.extensions`, `"jsx": "react-jsx"` |
 | `vue3` | mounts a Vue 3 app into `root`, `render()` updates its reactive props; component in `<Name>View.ts` | `vue3` (alias of `vue@3`); Vue 3 flags in a `DefinePlugin` |
-| `vue` | Vue 2 component registered with `component` (classic SDK widget) | `vue` and `vue-template-compiler` 2.6.14, `vue-loader` 15.9.8 (the versions of corvina-frontend), `vue-style-loader`, `vue-typescript-import-dts` as devDependencies; `VueLoaderPlugin`, `.vue` rule and extension, `vue-style-loader` for CSS |
+| `vue` | Vue 2 component registered with `component` (classic SDK widget) | `vue` and `vue-template-compiler` 2.7.16, `vue-loader` ^15.10.0 (the versions of corvina-frontend), `vue-style-loader`, `vue-typescript-import-dts` as devDependencies; `VueLoaderPlugin`, `.vue` rule and extension, `vue-style-loader` for CSS |
 
 All the widgets have the same two properties (`message`, translatable, and `value`, that accepts
 datalinks) and a button with an internal counter, to show the three kinds of state: widget properties,
@@ -122,7 +122,7 @@ that `self`, so it does not depend on the webpack of Corvina. The versions are a
   (5.105.2, 5.9.3), and the created projects inherit it. webpack is held there by
   `yarn set resolution "webpack@npm:^5.104.1" npm:5.105.2` (only in the lockfile): repeat it with the
   new version when the frontend moves;
-- the Vue 2 widgets are compiled with the Vue 2 of corvina-frontend (2.6.14, vue-loader 15.9.8),
+- the Vue 2 widgets are compiled with the Vue 2 of corvina-frontend (2.7.16, vue-loader ^15.10.0),
   the one that runs them.
 
 With the recent webpack versions (5.111, not 5.105) vue-loader 15 gets a warning on the default import

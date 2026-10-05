@@ -46,10 +46,10 @@ const techs = {
      * versions are the ones of corvina-frontend, the templates are compiled for the Vue that runs them
      */
     devDependencies: {
-      "vue": "2.6.14",
-      "vue-loader": "15.9.8",
+      "vue": "2.7.16",
+      "vue-loader": "^15.10.0",
       "vue-style-loader": "^4.1.3",
-      "vue-template-compiler": "2.6.14",
+      "vue-template-compiler": "2.7.16",
       "vue-typescript-import-dts": "^4.0.0"
     },
     setup: ["vue2-sfc"]

@@ -2,7 +2,7 @@
 
 Two files: the class `<Name>.ts` (no `render()`) and the Vue 2 single file component `<Name>.vue`,
 registered with the `component` field of `registerWidget`. The dashboard renders the component with
-the Corvina Vue 2 (2.6) and passes the widget as the prop `wgt`: the widget is reactive, the
+the Corvina Vue 2 (2.7) and passes the widget as the prop `wgt`: the widget is reactive, the
 component reads its properties with `wgt.getPropertyValue( "<name>" )`, which unwraps the `Value`s.
 Created by `corvina-sdk create widget vue`.
 
@@ -49,8 +49,9 @@ For every property: a computed reading `wgt.getPropertyValue`, its use in the te
 | Events that change a widget property | see "Writing a property" in class-and-serialization.md |
 | CSS | `<style scoped>` |
 
-Never `v-html` with property values. Templates are compiled for Vue 2.6: no `<script setup>`, no
-Vue 3 syntax.
+Never `v-html` with property values. Templates are compiled with Vue 2.7, the Vue of Corvina: use the
+Options API, which runs also on the Corvina versions with Vue 2.6 (no `<script setup>`, no Composition
+API imported from `"vue"`), and no Vue 3 syntax.
 
 ## Checklist
 - [ ] the outer element has `:style="widgetStyle"` (`wgt.getStyles()`)
