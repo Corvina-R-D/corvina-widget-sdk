@@ -24,6 +24,11 @@ export interface UserGroupInDTO {
     owner?: UserOwnerEnum;
     groupPoliciesEnabled?: boolean;
     membershipRole?: UserGroupMembershipRole;
+    email: string;
+    fullPath?: string;
+}
+export interface UserGroupName {
+    name: string;
 }
 export interface UserGroupOutDTO extends UserGroupUpdateDTO {
     name: string;
@@ -60,3 +65,9 @@ export type DevicePermissionsCacheEntry = {
 export interface DevicePermissionsCache {
     [deviceId: string]: DevicePermissionsCacheEntry;
 }
+export interface UserGroupMembershipsDTO {
+    adminsOf: number[];
+    usersOf: number[];
+    fullUserOf: number[];
+}
+export declare function GROUP_PREFERENCE_OWNER(groupId: string | number): string;

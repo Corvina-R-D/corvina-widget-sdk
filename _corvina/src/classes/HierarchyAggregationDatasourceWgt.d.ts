@@ -1,5 +1,6 @@
 import { Value, BaseDatasourceWgt, IWidgetSerialization, IDataLinkConstructorArgs, DataLink } from '@/corvina-model';
 import { PlatformFillDataGapsInDTO, PlatformPaddingDataInDTO } from '@/interfaces/IPlatformController';
+import { DataModelTree } from '@/utils/dashboardDeviceModel';
 export interface IAggregation {
     alignment: {
         sampling: {
@@ -23,7 +24,7 @@ export interface IAggregation {
     };
 }
 export default class HierarchyAggregationDatasourceWgt extends BaseDatasourceWgt {
-    root: Value<object>;
+    root: Value<DataModelTree>;
     model: Value<Array<{
         id: string;
         value: string;
@@ -73,6 +74,6 @@ export default class HierarchyAggregationDatasourceWgt extends BaseDatasourceWgt
     private getModelPropertyFilters;
     generateDefaultConfiguration(aggregation: string): IAggregation;
     private getModelProperties;
-    getDataModel(property: string): any;
+    getDataModel(property: string): DataModelTree;
     serialize(): IWidgetSerialization;
 }

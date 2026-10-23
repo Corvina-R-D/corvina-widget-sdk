@@ -1,11 +1,12 @@
 /**
- * Verify compatiblity with current dashboard editor version.
+ * Verify compatibility with current dashboard editor version.
  */
 import DashboardMigration from "./DashboardMigration";
+import { IDashboardSerialization } from "@/interfaces/dashboard";
 declare class CompatibilityChecker {
     private migrations;
     constructor(list: DashboardMigration[]);
-    migrate(initState: any): Promise<void>;
+    migrate(initState: IDashboardSerialization): Promise<boolean>;
 }
 declare const DashboardCompatibilityChecker: CompatibilityChecker;
 export default DashboardCompatibilityChecker;

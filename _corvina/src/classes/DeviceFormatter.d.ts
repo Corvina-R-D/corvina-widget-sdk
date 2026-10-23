@@ -13,5 +13,5 @@ export default class DeviceFormatter {
     static formatUpdatedDeviceGroupNode(node: any, updatedNode: any): void;
     static setDeviceNodeFields(node: any, parentNode: any): void;
     static setDeviceGroupNodeFields(node: any, parentNode: any): void;
-    static isDeviceLabelValid(label: string): boolean | string;
+    static isDeviceLabelValid(label: string, gatewayId?: string): boolean | string;
 }

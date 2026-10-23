@@ -1,7 +1,7 @@
 import { UserOwnerEnum } from '@/constant/UserOwnerEnum';
 import PaginationQueryParamsDTO from './commons/PaginationQueryParamsDTO';
 import { RoleInDTO } from './role';
-import { UserGroupMembershipRole } from './userGroup';
+import { UserGroupInDTO, UserGroupMembershipRole } from './userGroup';
 export interface UserInDTO {
     id: number;
     email: string;
@@ -10,6 +10,8 @@ export interface UserInDTO {
     serviceAccountSecret?: string;
     groupPoliciesEnabled?: boolean;
     membershipRole?: UserGroupMembershipRole;
+    mfaEnabled?: boolean;
+    socialLoginOnly?: boolean;
 }
 export interface DeepSearchUserDTO {
     id: number;
@@ -33,12 +35,14 @@ export interface UserOutDTO {
     memberOf?: number[];
     regularUserOf?: number[];
     adminUserOf?: number[];
+    socialLoginOnly?: boolean;
 }
 export interface UserUpdateDTO {
     email: string;
     password?: string;
     passwordChangeInvitation?: boolean;
     groupPoliciesEnabled?: boolean;
+    socialLoginOnly?: boolean | null;
 }
 export declare enum UserTypes {
     ANY = "ANY",
@@ -52,6 +56,7 @@ export interface UserQueryParamsDTO extends PaginationQueryParamsDTO {
     username?: string;
     type?: UserTypes;
     search?: string;
+    include?: string;
 }
 export interface UserDeepSearchQueryParamsDTO extends PaginationQueryParamsDTO {
     orderBy?: string;
@@ -67,6 +72,7 @@ export interface UserFormData {
     adminUserOf: number[];
     userRoles: number[];
     associatedDevices: number[];
+    groups: Array<UserGroupInDTO>;
 }
 export interface UserDataTable extends UserInDTO {
     organization: string;
@@ -84,11 +90,22 @@ export interface UserPreferenceInDTO {
     orgResourceId: string;
     username: string;
     serviceName: string;
-    value: string;
+    value1?: string;
+    value2?: string;
+    value3?: string;
+    value4?: string;
+    value5?: string;
+    valueJson?: string;
 }
-export interface ApiKeyInDTO {
+export interface ApiKeyDTO {
     id: number;
     orgResourceId: string;
     userId: number;
     key: string;
+}
+export interface ApiKeySummaryDTO {
+    id: number;
+    orgResourceId: string;
+    userId: number;
+    hint: string;
 }

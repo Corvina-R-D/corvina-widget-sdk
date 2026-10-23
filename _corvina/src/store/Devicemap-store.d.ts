@@ -18,6 +18,7 @@ declare const _default: {
             deviceId: any;
             presetId: any;
         }): Promise<void>;
+        applyDeviceEmptyConfiguration(context: any, deviceId: any): Promise<import("axios").AxiosResponse<string, any, {}, any>>;
     };
     getters: {
         getDeviceId(state: any): any;

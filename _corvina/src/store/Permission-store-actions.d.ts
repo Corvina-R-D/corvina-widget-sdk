@@ -1,10 +1,17 @@
 import RolesEnum from '@/constant/Roles';
 import { OrganizationGrantDTO, OrganizationInDTO } from '../interfaces/organization';
 import { AgreementOutDTO, CheckAgreementOutDTO } from '../interfaces/agreements';
-import { SecretOutDto, UserTypes } from '@/interfaces/user';
+import { SecretOutDto, UserInDTO, UserTypes } from '@/interfaces/user';
 import { RealmOutDTO } from '@/interfaces/realm';
 import { RoleInDTO, RoleQueryParamsDTO, RoleUpdateDTO } from '../interfaces/role';
 import { UserAuthorizationDTO } from '@/interfaces/userGroup';
+declare const IAM_ORG_DEFAULTS_LOADERS: {
+    roles: (context: any) => any;
+    appStoreRoles: (context: any) => any;
+    dataRoles: (context: any) => any;
+    groups: (context: any) => any;
+    securityPolicyGroups: (context: any) => any;
+};
 declare const _default: {
     resetUserForm(context: any): void;
     resetGroupForm(context: any): void;
@@ -49,22 +56,22 @@ declare const _default: {
     setOrgsTableSortBy(context: any, val: any): void;
     setOrgsTableDescending(context: any, val: any): void;
     setOrgsTableItemsPerPage(context: any, itemsPerPage: any): void;
-    fetchUserGroupMembers(context: any, groupId: any): Promise<import("@/interfaces/user").UserInDTO[]>;
+    fetchUserGroupMembers(context: any, groupId: any): Promise<UserInDTO[]>;
     fetchUsers(context: any, filter?: {
         page: number;
         pageSize: number;
         username: string;
         type: UserTypes;
-    }): Promise<any[] | import("../interfaces/commons/pagination").PaginationRestDTO<import("@/interfaces/user").UserInDTO>>;
+    }): Promise<any[] | import("../interfaces/commons/pagination").PaginationRestDTO<UserInDTO>>;
     fetchUsersWithPagination(context: any, filter?: {
         page: number;
         pageSize: number;
         username: string;
         type: string;
-    }): Promise<any>;
+    }): Promise<UserInDTO[]>;
     checkUserExists(context: any, username: string): Promise<boolean>;
-    fetchUserByUsername(context: any, username: any): Promise<any[] | import("@/interfaces/user").UserInDTO>;
-    fetchUserById(context: any, userId: any): Promise<any[] | import("@/interfaces/user").UserInDTO>;
+    fetchUserByUsername(context: any, username: any): Promise<any[] | UserInDTO>;
+    fetchUserById(context: any, userId: any): Promise<any[] | UserInDTO>;
     /**
      * Returns true if nameToCheck is duplicated,
      * false otherwise
@@ -77,6 +84,7 @@ declare const _default: {
         pageSize: number;
         name: string;
         adminOnly: boolean;
+        orgId: any;
     }): Promise<any[] | import("../interfaces/commons/pagination").PaginationRestDTO<import("@/interfaces/userGroup").UserGroupInDTO>>;
     fetchGroupById(context: any, groupId: any): Promise<import("@/interfaces/userGroup").UserGroupInDTO>;
     fetchGroupsWithPagination(context: any, filter?: {
@@ -84,7 +92,15 @@ declare const _default: {
         pageSize: number;
         name: string;
     }): Promise<any>;
+    fetchSelfUserGroup(context: any, userId: any): Promise<any>;
     fetchUserGroupsMine(context: any): Promise<any>;
+    fetchIamOrgCached(context: any, { key, loader }: {
+        key: string;
+        loader: () => Promise<any>;
+    }): Promise<any>;
+    fetchIamOrgDefaults(context: any, key: keyof typeof IAM_ORG_DEFAULTS_LOADERS): any;
+    preloadIamOrgData(context: any): Promise<void | any[]>;
+    resetIamOrgCache(context: any): void;
     fetchRoles(context: any, filter?: RoleQueryParamsDTO): Promise<any[] | import("../interfaces/commons/pagination").PaginationRestDTO<import("../interfaces/role").DetailedRoleInDTO>>;
     /**
      * Returns true if duplicate name (id?) (not label), false otherwise
@@ -147,6 +163,8 @@ declare const _default: {
         search: string;
         orderBy: string;
         orderDir: string;
+        onlyFirstLevel: boolean;
+        includeAncestors: boolean;
     }): Promise<any>;
     /**
      * Returns true if organization name is already taken,
@@ -178,6 +196,7 @@ declare const _default: {
         };
         useSelectedSuborg: boolean;
         ignoreResources: boolean;
+        orgId: any;
     }): Promise<import("../interfaces/commons/pagination").PaginationRestDTO<OrganizationInDTO>>;
     fetchSubOrganizations(context: any, filter?: {
         page: number;
@@ -205,18 +224,20 @@ declare const _default: {
     fetchAdditionalGroupDataIfNeeded(context: any, groupId: any): Promise<void>;
     fetchUserRoleIfNeedeed(context: any, userId: any): Promise<void>;
     fetchUserRoles(context: any, userId: any): Promise<void>;
-    createUser(context: any, userData: any): Promise<import("@/interfaces/user").UserInDTO>;
+    createUser(context: any, userData: any): Promise<UserInDTO>;
     updateUser(context: any, data: {
         passwordChangeInvitation: any;
         userId: any;
         newEmail: any;
         newPassword: any;
         groupPoliciesEnabled: any;
-    }): Promise<import("@/interfaces/user").UserInDTO>;
+        socialLoginOnly: any;
+    }): Promise<UserInDTO>;
     createUserGroup(context: any, userGroupData: any): Promise<import("@/interfaces/userGroup").UserGroupInDTO>;
     selectOrganization(context: any, organization: any): void;
     fetchCurrentUserOrganizations(context: any): Promise<void>;
     saveCurrentUserOrganizations(context: any, organizations: any): Promise<void>;
+    removeCurrentUserOrganization(context: any, organizationId: any): void;
     addUserToGroup(context: any, { userGroupId, userId, role }: {
         userGroupId: any;
         userId: any;
@@ -235,6 +256,12 @@ declare const _default: {
         roleIds: any;
     }): Promise<import("@/interfaces/userGroup").UserGroupInDTO>;
     verifyApplicationPermissionChanges(context: any, { groupsToAdd, rolesToAdd, groupsToRemove, rolesToRemove }: {
+        groupsToAdd: any;
+        rolesToAdd: any;
+        groupsToRemove: any;
+        rolesToRemove: any;
+    }): Promise<string[]>;
+    verifyDevicePermissionChanges(context: any, { groupsToAdd, rolesToAdd, groupsToRemove, rolesToRemove }: {
         groupsToAdd: any;
         rolesToAdd: any;
         groupsToRemove: any;
@@ -277,7 +304,7 @@ declare const _default: {
         roleData: any;
     }): Promise<any>;
     deleteUserGroup(context: any, userGroupId: any): Promise<import("@/interfaces/userGroup").UserGroupInDTO>;
-    deleteUser(context: any, userId: any): Promise<import("@/interfaces/user").UserInDTO>;
+    deleteUser(context: any, userId: any): Promise<any>;
     deleteRole(context: any, roleId: any): Promise<import("../interfaces/role").DetailedRoleInDTO>;
     createSubOrg(context: any, { organizationId, orgData, options }: {
         organizationId: any;
@@ -314,6 +341,7 @@ declare const _default: {
     getLoginInfo(context: any, organizationHostname: any): Promise<import("../interfaces/organization").OrganizationLoginInfoDTO>;
     userSelfOnboarding(context: any, userData: any): Promise<void>;
     askRevokePermissionConfirmation(context: any, permissionsRemoved: []): Promise<unknown>;
+    askRevokeDevicePermissionConfirmation(context: any, deviceGroupsRemoved: string[]): Promise<unknown>;
     fetchServiceAccountClientSecret(context: any, clientId: any): Promise<SecretOutDto>;
     refreshServiceAccountClientSecret(context: any, clientId: any): Promise<SecretOutDto>;
     /**********************************************************************
@@ -327,6 +355,10 @@ declare const _default: {
     }): Promise<AgreementOutDTO[]>;
     setAgreementsReminderShownInSession(context: any, shown: boolean): void;
     setLoginError(context: any, loginError: string | null): void;
+    /**********************************************************************
+    *  DATA TEMPORARILY DISABLED REMINDER
+    **********************************************************************/
+    setDataTemporarilyDisabledReminderShownInSession(context: any, shown: boolean): void;
     /**********************************************************************
     *  GLOBAL NOTIFICATIONS
     **********************************************************************/
@@ -343,8 +375,20 @@ declare const _default: {
     *  because the vpn app always sends the selected organization to backend
     *  and not the sub organization in the username
     **********************************************************************/
-    getUserPreferences(context: any, params: any): Promise<import("@/interfaces/user").UserPreferenceInDTO>;
-    getUserPreferencesForLoginOrganization(context: any, params: any): Promise<import("@/interfaces/user").UserPreferenceInDTO>;
+    getUserPreferences(context: any, params: any): Promise<Readonly<{
+        content: readonly any[];
+        last: true;
+        totalElements: 0;
+        totalPages: 0;
+        number: 0;
+    }> | import("@/interfaces/user").UserPreferenceInDTO>;
+    getUserPreferencesForLoginOrganization(context: any, params: any): Promise<Readonly<{
+        content: readonly any[];
+        last: true;
+        totalElements: 0;
+        totalPages: 0;
+        number: 0;
+    }> | import("@/interfaces/user").UserPreferenceInDTO>;
     postUserPreferences(context: any, params: any): Promise<unknown>;
     postUserPreferencesForLoginOrganization(context: any, params: any): Promise<unknown>;
     deleteUserPreferences(context: any, userPrefId: any): Promise<any>;
@@ -353,14 +397,14 @@ declare const _default: {
     /**********************************************************************
     *  USER Api KEYS
     **********************************************************************/
-    getUserApiKeys(context: any, username: string): Promise<import("@/interfaces/user").ApiKeyInDTO>;
+    getUserApiKeys(context: any, username: string): Promise<import("@/interfaces/user").ApiKeySummaryDTO[]>;
     createUserApiKey(context: any, params: {
         username: string;
-    }): Promise<unknown>;
+    }): Promise<import("@/interfaces/user").ApiKeyDTO>;
     deleteUserApiKey(context: any, params: {
         id: number;
         username: string;
-    }): Promise<any>;
+    }): Promise<import("@/interfaces/user").ApiKeyDTO>;
     fetchUserRealms(): Promise<RealmOutDTO[]>;
     fetchOrganizationGrants(context: any, params: {
         parentOrg: string;

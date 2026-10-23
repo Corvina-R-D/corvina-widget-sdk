@@ -30,4 +30,6 @@ export declare class WSUpdate {
         type: string;
         cb: (Object: any) => void;
     }): Promise<void>;
+    static closeAll(type: string): Promise<void>;
+    static countAttachedType(type: string): number;
 }

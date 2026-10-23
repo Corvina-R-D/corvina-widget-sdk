@@ -1,5 +1,6 @@
-import { BaseWgt, DataValue, IDataLinkConstructorArgs, IWgtConstructorParams, IWidgetSerialization } from '@/corvina-model';
+import { BaseWgt, DataLink, DataValue, IDataLinkConstructorArgs, IWgtConstructorParams, IWidgetSerialization } from '@/corvina-model';
 import { DataLinkFunction, DataLinkFunctionType, IDatalinkFunctionSerialization } from "./DataLinkFunction";
+import { IReadHistDataOptions } from "./BaseWgt";
 export interface IXFormSerialization extends IWidgetSerialization {
     function: IDatalinkFunctionSerialization;
     datalinks?: Record<string, IDataLinkConstructorArgs>;
@@ -33,7 +34,7 @@ export default class xForm extends BaseWgt {
         targetId: any;
         permission: any;
         weak: any;
-    }): import("@/corvina-model").DataLink;
+    }): DataLink;
     getPropertyValue(prop: any): any;
     getWatchProperty(prop: string): any;
     private writeInverse;
@@ -53,9 +54,10 @@ export default class xForm extends BaseWgt {
     removeDatalink(dl: any): void;
     unmountLinks(): void;
     updateResult(): any;
-    readHistData(prop: string, from: number, to: number, nSamples: number, downsample?: boolean, aggregation?: any, downsampling?: {
+    readHistData(options: IReadHistDataOptions): Promise<Array<DataValue> | DataValue>;
+    readHistData(prop: string, from: number, to: number, nSamples: number, downsample: boolean, aggregation?: any, downsampling?: {
         size: number;
-    }, _filterCondition?: string, filters?: {
+    }, filterCondition?: string, filters?: {
         filterRawData: string;
     }): Promise<Array<DataValue> | DataValue>;
     apply(value?: any): any;

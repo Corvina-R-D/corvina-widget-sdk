@@ -7,4 +7,5 @@ interface IConstants {
     LANGUAGES_HOST: string;
 }
 export declare const constants: IConstants;
+export declare const SSO_GROUP_REGEX: RegExp;
 export {};

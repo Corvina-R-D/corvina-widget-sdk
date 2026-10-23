@@ -59,9 +59,10 @@ declare const _default: {
         isProductLabelAvailable(_context: any, label: any): Promise<boolean>;
         fetchExpirationDate(context: any, licenseCode: string): Promise<any>;
         createLicense(context: any, data: import("../communication/axios/model/Product").LicenseDTO): Promise<unknown>;
-        updateLicenseAutoRenew(context: any, data: {
+        updateLicense(context: any, data: {
             licenseId: number;
             autoRenew: boolean;
+            expirationDate?: number;
         }): Promise<boolean>;
         renewLicense(context: any, data: {
             licenseId: number;

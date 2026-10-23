@@ -1,6 +1,7 @@
 import { DeviceIn, GeoBounds } from "../interfaces/device";
 declare const _default: {
     getDevices(state: any): Array<DeviceIn>;
+    getDevicesByScope(state: any): (scopeId: string) => any;
     getCorvinaDevices(state: any): any;
     getDeviceById(state: any): (deviceId: string) => DeviceIn;
     getDeviceByLabel(state: any): (deviceLabel: string) => DeviceIn;

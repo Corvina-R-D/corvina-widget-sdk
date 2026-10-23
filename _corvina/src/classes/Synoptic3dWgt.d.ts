@@ -139,11 +139,11 @@ export default class Synoptic3dWgt extends BaseGraphicWgt {
     get modelFileUpload(): string;
     set modelFileUpload(value: string);
     protected createDefaultMaterial(): void;
-    updateLoadingPercentageThrottled: ((newLoadingPercentage: number) => Promise<void>) & import("lodash").Cancelable;
-    dragHighlightThrottled: ((position: {
+    updateLoadingPercentageThrottled: import("lodash").DebouncedFuncLeading<(newLoadingPercentage: number) => Promise<void>>;
+    dragHighlightThrottled: import("lodash").DebouncedFuncLeading<(position: {
         x: any;
         y: any;
-    }, icon: string) => Promise<void>) & import("lodash").Cancelable;
+    }, icon: string) => Promise<void>>;
     completeInitialization(): void;
     loadMesh(): Promise<THREE.Object3D[] | null>;
     recurseAddMesh(parentWgt: BaseWgt, mesh: THREE.Object3D, idx: number): Promise<MeshTransformWgt>;

@@ -145,6 +145,7 @@ export interface TriggerEmailEventContentDTO {
     emailTo: string;
     emailFrom: string;
     emailBcc?: string;
+    emailReplyTo?: string;
     subject: string;
     template: string;
     xdays: string;

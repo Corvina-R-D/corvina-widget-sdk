@@ -1,6 +1,7 @@
-import { LegacyWgt, BaseGraphicWgt } from "@/corvina-model";
+import { LegacyWgt, BaseGraphicWgt, Value } from "@/corvina-model";
 export default class ImageWgt extends LegacyWgt {
-    imageBase64: string;
+    imageBase64: Value<string>;
+    image_url: Value<string>;
     corvinaScale: string;
     fixedHeight: number;
     fixedWidth: number;
@@ -17,8 +18,9 @@ export default class ImageWgt extends LegacyWgt {
     }): void;
     setParentBounds(x: number, y: number, width: number, height: number, parentWgt?: BaseGraphicWgt): void;
     serialize(): import("./BaseGraphicWgt").IBaseGraphicWidgetSerialization;
-    get image(): string;
+    get image(): Value<string>;
     set image(value: string);
+    private applyImageToLegacy;
     getStyles(): {
         [property: string]: string | number;
     };

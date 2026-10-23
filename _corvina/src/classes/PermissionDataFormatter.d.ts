@@ -10,7 +10,7 @@ export default class PermissionDataFormatter {
         label: any;
         description: any;
         name: any;
-        modelPathPermissions: any[];
+        modelPathPermissions: import("lodash").Omit<any, "name" | "id">[];
         deviceGroups: any[];
         type: any;
         deviceGeneralPermission: any;
@@ -48,12 +48,12 @@ export default class PermissionDataFormatter {
     static formatTableRow(elements: any, field: any): string;
     static formatSpanTableRow(elements: any, field: any): string;
     static formatModelPermissionsData(permissions: any): {
-        modelPermissions: any[];
-        modelRole: import("lodash").PartialDeep<{}>;
+        modelPermissions: Pick<any, string | number | symbol>[];
+        modelRole: Partial<{}>;
     };
     static sortPermissions(permissionGroups: any): void;
     static groupsApplicationPermissions(permissions: any, iot: any, vpn: any, dealer: any): {};
-    static formatUserData({ username, email, groups, roles, password, isServiceAccount, serviceAccountClientWebOrigins, passwordChangeInvitation, groupPoliciesEnabled, associatedDevices, }: {
+    static formatUserData({ username, email, groups, roles, password, isServiceAccount, serviceAccountClientWebOrigins, passwordChangeInvitation, groupPoliciesEnabled, associatedDevices, socialLoginOnly, }: {
         username: string;
         email: string;
         groups: Array<UserGroupInDTO>;
@@ -64,6 +64,7 @@ export default class PermissionDataFormatter {
         passwordChangeInvitation: boolean;
         groupPoliciesEnabled: boolean;
         associatedDevices: Array<any>;
+        socialLoginOnly?: boolean;
     }): {
         userData: {
             email: string;
@@ -74,12 +75,14 @@ export default class PermissionDataFormatter {
             serviceAccountClientWebOrigins: string[];
             passwordChangeInvitation: boolean;
             groupPoliciesEnabled: boolean;
+            socialLoginOnly: boolean;
         };
         memberOf: number[];
         regularUserOf: number[];
         adminUserOf: number[];
         userRoles: any[];
         associatedDevices: any[];
+        groups: UserGroupInDTO[];
     };
     static formatGroupData(isUpdating: any, name: any, roles: any, appStoreRoles: any, dataRoles: any, users: any): {
         name: any;

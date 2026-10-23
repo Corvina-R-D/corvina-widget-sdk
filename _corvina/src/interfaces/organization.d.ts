@@ -19,6 +19,7 @@ export interface OrganizationUpdateDTO {
     label: string;
     ipAddressesWhitelist?: string[];
     storeEnabled: boolean;
+    mfaRequired?: boolean;
 }
 export interface OrganizationOutDTO extends OrganizationUpdateDTO {
     name: string;
@@ -34,6 +35,7 @@ export interface OrganizationQueryParamsDTO extends PaginationQueryParamsDTO {
     userId?: number;
     includePrivateAccess?: boolean;
     onlyFirstLevel?: boolean;
+    includeAncestors?: boolean;
 }
 export interface OrganizationLoginInfoDTO {
     realmName: string;
@@ -42,6 +44,7 @@ export interface OrganizationData {
     name?: string;
     label?: string;
     hostname?: string;
+    privateAccess?: boolean;
     allowDisablePrivateAccess?: boolean;
     allowHostname?: boolean;
     hostnameAllowed?: boolean;
@@ -56,6 +59,9 @@ export interface OrganizationData {
     subscriptions?: SubscriptionAggregatedOutputDTO[];
     vpnEnabled: boolean;
     dataEnabled: boolean;
+    storeEnabled: boolean;
+    mfaRequired: boolean;
+    disambiguatedName?: string;
 }
 export interface CurrentUserOrganizations {
     currentUserOrg: OrganizationData[];

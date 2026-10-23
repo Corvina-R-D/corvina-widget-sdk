@@ -1,9 +1,8 @@
 import 'moment/locale/it';
-import VueI18n, { DateTimeFormats } from 'vue-i18n';
+import './utils/promise-with-resolvers-polyfill';
 import { RouteConfig } from 'vue-router';
+export { dateTimeFormats, i18n } from "@/i18n-instance";
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
-export declare const dateTimeFormats: DateTimeFormats;
-export declare const i18n: VueI18n;
 export declare function initCorvina(setupCorvinaInstance: any): Promise<void>;
 export declare function logout(): void;
 export declare function hasPermissionToRouteName(route: string): boolean;

@@ -1,5 +1,10 @@
 declare const _default: {
-    init: (next?: any, roles?: any) => Promise<void>;
+    loadRealm(): Promise<string>;
+    postLogin(): Promise<void>;
+    AMR_ATTR_OTP: "otp";
+    AMR_ATTR_SSO: "sso";
+    init: () => Promise<void>;
+    initAdmin: () => Promise<void>;
     roles: (role: any) => any;
     logout: () => void;
     header: () => {

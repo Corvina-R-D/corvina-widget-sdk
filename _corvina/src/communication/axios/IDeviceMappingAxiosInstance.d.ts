@@ -2,6 +2,7 @@ import { PresetOutDTO, PresetInDTO, PresetsInDTO } from '@/interfaces/preset';
 import { ModelOutDTO, ModelInDTO, ModelIn, ValidateModelOutDTO } from '@/interfaces/model';
 import { DeviceIn, DeviceInDTO } from '@/interfaces/device';
 import { ISearchModelResult } from '@/interfaces/model';
+import { AxiosResponse } from 'axios';
 export default interface IDeviceMappingAxiosInstance {
     createPreset(data: PresetOutDTO, params?: any): Promise<void>;
     fetchPresets(params?: any): Promise<PresetsInDTO>;
@@ -9,6 +10,7 @@ export default interface IDeviceMappingAxiosInstance {
     createModel(data: ModelOutDTO, params?: any): Promise<ModelIn>;
     fetchModels(params?: any): Promise<ModelInDTO>;
     setDeviceConfiguration(deviceId: String, presetId: String): Promise<void>;
+    setDeviceEmptyConfiguration(deviceId: String): Promise<AxiosResponse<string>>;
     getDevices(params?: any): Promise<DeviceInDTO>;
     getDevice(deviceId: String, params?: any): Promise<{
         value: DeviceIn;

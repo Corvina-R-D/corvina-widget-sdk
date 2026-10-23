@@ -8,10 +8,12 @@ import { RouteConfig } from 'vue-router';
  */
 export declare const CorvinaPagesToRoutes: {
     home: string;
+    directaccess: string;
     dashboard: string;
     "device-activate": string;
     "device-manage": string;
     "device-vpn": string;
+    licensing: string;
     "data-configure": string;
     "data-explore": string;
     "data-alarms": string;

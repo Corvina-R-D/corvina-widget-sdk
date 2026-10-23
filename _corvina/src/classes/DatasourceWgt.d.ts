@@ -5,6 +5,7 @@ import { AsyncQueueDebounced } from '@/utils/AsyncQueueDebounced';
 import { TagDataType } from '@/utils/Tag';
 import ReactiveClockCache from './utils/ReactiveClockCache';
 import { SizeUnit } from '@/utils/aggregation/Aggreagator';
+import { IReadHistDataOptions } from "./BaseWgt";
 export interface CorvinaDatasetStatus {
     historical: boolean;
     alignment: boolean;
@@ -53,8 +54,16 @@ export default class DatasourceWgt extends BaseDatasourceWgt {
         ts?: number;
     }): void;
     private setClockData;
-    refresh(): void;
+    /**
+     * @param clockId : if set, refresh only the query that reads with this clock
+     */
+    refresh(clockId?: string): void;
     getCategoricalDatasetType(): DatasetMode;
+    /** The sources of the query as platform-api receives them, see DataSourceQueryWgt.serverQuerySources */
+    serverQuerySources(): Array<{
+        deviceId?: string | null;
+        modelPath?: string | null;
+    }> | undefined;
     getPropertyValue(prop: any): any;
     private initQueryDataWgtForDifferentClock;
     addDatalink(dl: any): DataLink;
@@ -62,6 +71,8 @@ export default class DatasourceWgt extends BaseDatasourceWgt {
     updateQuery(): boolean;
     protected getQueryParameters(): DataSourceQueryParameters;
     protected getQueryParameter(parameter: any): any;
+    /** Warns when the aggregation is moving and its unit is smaller than the alignment unit */
+    private getAggrUnitWarningMessage;
     protected setQueryParameter(parameter: string, value: any): boolean;
     private updateQueryParameters;
     protected updateSources(): boolean;
@@ -81,16 +92,18 @@ export default class DatasourceWgt extends BaseDatasourceWgt {
     private mergeFormat;
     getPropertyType(property: string): TagDataType;
     getDataModel(filterModel?: string): any;
-    readHistData(tagName: string, from: number, to: number, nSamples: number, downsample?: boolean, aggregation?: any, downsampling?: {
+    readHistData(options: IReadHistDataOptions): Promise<Array<DataValue> | DataValue>;
+    readHistData(prop: string, from: number, to: number, nSamples: number, downsample: boolean, aggregation?: any, downsampling?: {
         size: number;
     }, filterCondition?: string, filters?: {
-        filterRawData?: string;
-    }): Promise<Array<DataValue>>;
+        filterRawData: string;
+    }): Promise<Array<DataValue> | DataValue>;
     getColumns(): string[];
     getTimeResolution(): {
         size: number;
         extent: number;
         unit: SizeUnit;
     };
+    isAggregationEnabled(): boolean;
     serialize(): import("@/corvina-model").IWidgetSerialization;
 }

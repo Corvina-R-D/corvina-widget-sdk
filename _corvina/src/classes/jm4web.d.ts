@@ -45,6 +45,7 @@ export declare interface IRowConfiguration {
     bStkColor: string;
     bgColor: string;
     rowPos?: number;
+    autoSize?: number;
 }
 export declare interface IGridLayoutConfiguration {
     gr: IGridConfiguration;

@@ -15,5 +15,8 @@ export declare function compile(code: string, options: FormulaUtilityOptions, va
     };
     firstSelector: string;
 };
+export declare function constantSelectorName(argument: ASTNode): string | undefined;
 export declare function isSelectorFunction(node: ASTNode): boolean;
 export declare function isArgumentLiteral(node: ASTNode): boolean;
+export declare function isLocalSelector(selector: SelectorInfo): boolean;
+export declare function parseTagName(name: string, varName: string, nested: boolean): SelectorInfo;

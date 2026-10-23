@@ -1,4 +1,4 @@
-import { BaseWgt, DataLink, IDataLinkConstructorArgs } from '../corvina-model';
+import { BaseWgt, DataLink } from '../corvina-model';
 import HistoricalDataSet from './HistoricalDataSet';
 import TrendDataWgt from './TrendDataWgt';
 import ChartWgt from './ChartWgt';
@@ -20,6 +20,8 @@ interface IDataStyle {
     yAxis: number;
     lineFilledArea: string;
     lineFillColor: string;
+    inStackGroup: boolean;
+    fillLineToNow: boolean;
 }
 export default class TrendDatasetWgt extends HistoricalDataSet {
     lineFillColor: string;
@@ -38,6 +40,7 @@ export default class TrendDatasetWgt extends HistoricalDataSet {
         unit: string;
     };
     protected downsampling: boolean;
+    protected fillLineToNow: boolean;
     static defaultColor: string;
     constructor(args: any);
     protected setDefaultStyle(): void;
@@ -45,10 +48,11 @@ export default class TrendDatasetWgt extends HistoricalDataSet {
     protected onModelUpdated(): void;
     onDataLinkUpdated(event: any): void;
     clearDataset(): void;
+    shouldUseBoundaryPoints(): boolean;
+    private isLabelDefaultValue;
     refresh(): Promise<any>;
     removeDatalink(dl: DataLink): void;
     protected watchXFormAlias(datalink: DataLink, trendData: TrendDataWgt, trendDataLink: DataLink): void;
-    addDatalink(dl: IDataLinkConstructorArgs): DataLink;
     loadDatalinks(): void;
     updateChartData(trendData: any): void;
     getDataTransformFunction(): any;

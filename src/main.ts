@@ -1,5 +1,5 @@
 declare var adjustPath;
-import { registerWidget} from "corvina";
+import { registerWidget, registerPropControl } from "corvina";
 import manifest from "./manifest.json";
 
 import MyWidget from "./examples/MyWidget/MyWidget";
@@ -18,8 +18,3 @@ registerWidget({
   icon: adjustPath( iconMyWidget ),
   category: "MyGallery"
 }, manifest);
-
-/*
- * Widgets without Vue.js (examples MyRenderWidget and MyLitWidget, registered in examples/main.ts.example)
- * need a Corvina version with the SDK render host: on the previous ones their registration fails.
- */

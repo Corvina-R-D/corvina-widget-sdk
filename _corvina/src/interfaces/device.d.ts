@@ -7,6 +7,9 @@ export interface DeviceIn {
     name: string;
     label: string;
     deviceId: string;
+    iotDisabled?: boolean;
+    gatewayId?: string;
+    isGateway?: boolean;
     presetId: string;
     creationDate: number;
     connected: boolean;
@@ -50,6 +53,7 @@ export interface DataDevice {
     position: number[];
     description?: string;
     serialNumber?: string;
+    activationPassword?: string;
 }
 export interface GeoPoint {
     lat: number;
@@ -84,6 +88,7 @@ export interface DeviceRepositoryDTO {
     deviceAlias: string;
     hwId: string;
     id: string;
+    iotDisabled?: boolean;
     label: string;
     realm: Realm;
     securityPolicyGroups: any[];
@@ -95,8 +100,20 @@ export interface DeviceQueryParamsDTO extends PaginationQueryParamsDTO {
     deviceId?: string;
     securityPolicyGroupId?: string;
 }
+export interface IFiltersSearch {
+    deviceId?: string;
+    deviceIds?: string[];
+    searchField?: string;
+    searchValue?: string;
+    searchFields?: string[];
+    searchValues?: string[];
+    matchAny?: boolean;
+    search?: string;
+    existingFields?: string[];
+}
 export interface DeviceSearchParamsDTO extends PaginationQueryParamsDTO {
     data?: string;
+    filters?: IFiltersSearch;
     scopedOrganization?: string;
     orderBy?: string;
     geoLocation?: {
@@ -156,6 +173,7 @@ export interface GeoDeviceData {
     deleted: boolean;
     orgResourceId: string;
     label: string;
+    iotDisabled?: boolean;
     configurationApplied: boolean;
     connected: boolean;
     attributes: {

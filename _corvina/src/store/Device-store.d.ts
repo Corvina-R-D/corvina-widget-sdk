@@ -3,6 +3,7 @@ declare const _default: {
     state: {
         corvinaDevices: any[];
         devices: any[];
+        devicesByScope: {};
         deviceListPagination: {};
         device: {};
         tags: any[];
@@ -17,12 +18,13 @@ declare const _default: {
         devicesGeoBounds: {};
     };
     mutations: {
-        SAVE_DEVICES(state: any, devices: any): void;
+        SAVE_DEVICES(state: any, payload: any): void;
         SAVE_DEVICE_ALARMS(state: any, { deviceId, alarms }: {
             deviceId: any;
             alarms: any;
         }): void;
         SAVE_APPEND_DEVICES(state: any, devices: any): void;
+        OPEN_SUB_TABLE_DEVICE(state: any, gatewayId: string): void;
         SAVE_DEVICE_LIST_PAGINATION(state: any, devicesPagination: any): void;
         RESET_DEVICE_LIST_PAGINATION(state: any): void;
         RESET_DEVICE(state: any): void;
@@ -61,6 +63,7 @@ declare const _default: {
         SET_WS_ERROR_STATE(state: any, error: any): void;
     };
     actions: {
+        saveDevices(context: any, payload: any): void;
         setModalBusy(context: any, value: boolean): void;
         openModal(context: any): void;
         closeModal(context: any): void;
@@ -78,12 +81,15 @@ declare const _default: {
             devices: any;
             append: any;
             nosave: any;
+            treeView: any;
         }): Promise<any>;
         updateDeviceAlarms(context: any, { deviceId, alarms }: {
             deviceId: any;
             alarms: any;
         }): Promise<void>;
         fetchDevices(context: any, filter?: import("./Device-store-actions").VuexFilterFetchModels): Promise<any>;
+        atLeastOneGatewayExists(context: any): Promise<boolean>;
+        openSubTable(context: any, gatewayId: string): Promise<void>;
         hasDeviceWithModelMapping(context: any, { modelId, presetName }: {
             modelId: string;
             presetName?: string;
@@ -140,6 +146,19 @@ declare const _default: {
             deviceId: any;
         }): Promise<void>;
         fetchDeviceLicense(context: any, deviceId: any): Promise<any>;
+        updateDevicePassword(context: any, { logicalId, password }: {
+            logicalId: any;
+            password: any;
+        }): Promise<void>;
+        confirmRenewal(context: any, { devices, plan }: {
+            devices: any;
+            plan: any;
+        }): Promise<import("../interfaces/devicelicence").VpnBulkRenewalDTO>;
+        renewEstimate(context: any, { numDevices, plan }: {
+            numDevices: any;
+            plan: any;
+        }): Promise<import("../interfaces/devicelicence").VpnBulkRenewalEstimateDTO>;
+        forceEnableDeviceIot(context: any, deviceId: string): Promise<void>;
         createDeviceGroup(context: any, securityPolicyData: import("../interfaces/securitypolicy").SecurityPolicyOutDTO): Promise<import("../interfaces/securitypolicy").SecurityPolicyInDTO>;
         fetchDeviceGroup(context: any, securityPolicyGroupId: any): Promise<import("../interfaces/securitypolicy").SecurityPolicyInDTO>;
         updateDeviceGroup(context: any, { securityPolicyGroupId, securityPolicyGroupData }: {
@@ -182,6 +201,9 @@ declare const _default: {
         setDeviceGroupsTablePage(context: any, page: any): void;
         resetDeviceGroupList(context: any): void;
         updateDevice(context: any, newDevice: any): void;
+        fetchAndUpdateDevicesByIds(context: any, { deviceIds }: {
+            deviceIds: any;
+        }): Promise<void>;
         startWebsocket(context: any, { callback }: {
             callback: any;
         }): Promise<void>;
@@ -204,6 +226,7 @@ declare const _default: {
     };
     getters: {
         getDevices(state: any): Array<import("../interfaces/device").DeviceIn>;
+        getDevicesByScope(state: any): (scopeId: string) => any;
         getCorvinaDevices(state: any): any;
         getDeviceById(state: any): (deviceId: string) => import("../interfaces/device").DeviceIn;
         getDeviceByLabel(state: any): (deviceLabel: string) => import("../interfaces/device").DeviceIn;

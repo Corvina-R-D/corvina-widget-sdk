@@ -2,6 +2,8 @@ import { PureAbility } from '@casl/ability';
 import IAbilityHelper from './../IAbilityHelper';
 export default class AbilityHelper implements IAbilityHelper {
     private ability;
+    private unrestricted;
+    setUnrestricted(value: boolean): void;
     getAbility(): PureAbility;
     updateAbilities(rules: any): void;
     hasPermission(checkPermission: string, entity: string): boolean;

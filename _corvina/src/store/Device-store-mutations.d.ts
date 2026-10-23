@@ -1,10 +1,11 @@
 declare const _default: {
-    SAVE_DEVICES(state: any, devices: any): void;
+    SAVE_DEVICES(state: any, payload: any): void;
     SAVE_DEVICE_ALARMS(state: any, { deviceId, alarms }: {
         deviceId: any;
         alarms: any;
     }): void;
     SAVE_APPEND_DEVICES(state: any, devices: any): void;
+    OPEN_SUB_TABLE_DEVICE(state: any, gatewayId: string): void;
     SAVE_DEVICE_LIST_PAGINATION(state: any, devicesPagination: any): void;
     RESET_DEVICE_LIST_PAGINATION(state: any): void;
     RESET_DEVICE(state: any): void;

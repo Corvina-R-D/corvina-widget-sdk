@@ -22,6 +22,10 @@ export interface ActivateDeviceLicenseInDTO {
     toDateVpn: string;
     fromDateVpn: string;
     numOfSecondsAutoRenewVpn: number;
+    hasPassword?: boolean;
+}
+export interface UpdateDevicePasswordInDTO {
+    password: string;
 }
 export interface ActivationLicenseInDTO {
     apiKey: string;
@@ -35,6 +39,43 @@ export interface ActivateDeviceLicenseVPNInDTO {
     logicalId: string;
     numOfSeconds: number;
     orgResourceId: string;
+}
+export interface VpnLicensePlansDTO {
+    phase: number;
+    enabledModes: string[];
+}
+export interface VpnBulkRenewalEstimateDTO {
+    deviceCount: number;
+    renewalMode: string;
+    creditsPerDevice: number;
+    totalCreditsEstimated: number;
+    hasEnoughCredits: boolean;
+}
+export interface VpnBulkRenewalDTO {
+    operationId?: string;
+    orgResourceId: string;
+    renewalMode: string;
+    devicesRequested: number;
+    devicesSucceeded: number;
+    devicesFailed: number;
+    totalCreditsCharged: number;
+    results: Array<VpnBulkRenewalResultDTO>;
+    entityId?: number;
+    entityStringId?: string;
+    entityType?: string;
+}
+export interface VpnBulkRenewalResultDTO {
+    logicalId: string;
+    success: boolean;
+    creditsCharged: number;
+    errorCode?: string;
+    errorMessage?: string;
+}
+export interface VpnBulkRenewMigratedDTO {
+    operationId?: string;
+    orgResourceId: string;
+    renewalMode: string;
+    devicesRenewed: number;
 }
 export type VpnUsageHistoryAggregatedDTO = {
     numOfSeconds: number;

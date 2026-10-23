@@ -2,7 +2,13 @@ import { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestC
 import IAxiosInstance from '../IAxiosInstance';
 import { ReplyRequestParams } from '../model/ReplyRequestParams';
 export default abstract class AbstractAxiosInstance implements IAxiosInstance {
+    private static readonly MAX_429_RETRIES;
+    private static readonly DEFAULT_429_RETRY_DELAY_MS;
     private axiosInstance;
+    constructor();
+    private set429RetryInterceptor;
+    private parseRetryAfterHeader;
+    private delay;
     getAxiosInstance(): AxiosInstance;
     ejectRequestInterceptor(key: number): void;
     setRequestInterceptor(onFulfilled?: (value: InternalAxiosRequestConfig<any>) => InternalAxiosRequestConfig<any> | Promise<InternalAxiosRequestConfig<any>>, onRejected?: (error: any) => any): number;

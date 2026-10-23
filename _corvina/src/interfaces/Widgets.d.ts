@@ -5,3 +5,7 @@ export interface BaseObject {
         value: any;
     }) => void;
 }
+export interface IAspectRatio {
+    width: number;
+    height: number;
+}

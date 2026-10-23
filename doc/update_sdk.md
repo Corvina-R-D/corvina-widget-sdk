@@ -2,9 +2,14 @@
 
 To update manually the SDK it is necessary:
 
-1. Update the typescript definitions 
-   -  Generate definitions from corvina-app with yarn build-sdk 
-   -  Copy the definitions from corvina-app dist/_corvina, to corvina-sdk ./_corvina/src
+1. Update the typescript definitions (`_corvina`), from the `develop` branch of corvina-frontend:
+   ```bash
+   # in corvina-frontend/frontend-new: writes dist/_corvina (constants.d.ts and src/), about 3 seconds
+   yarn build-sdk-definition
+   # in corvina-sdk: replace the whole folder, the files removed from the frontend must go too
+   rm -rf _corvina && cp -r ../corvina-frontend/frontend-new/dist/_corvina _corvina
+   yarn build
+   ```
 2. Update the corvina-app "binaries"
    -  Build corvina-app, yarn run build
    -  Replace the content of the directory dist/ of corvina-sdk with the content of the directory dist/ of corvina-app

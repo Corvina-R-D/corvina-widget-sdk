@@ -9,41 +9,46 @@ export default class LanguageMgr extends BaseWgt {
     private forceTextView;
     constructor(args: any);
     private checkLanguages;
-    private setAllDefualtValues;
-    updateKeyValueVarListOptions(wgtId: any, prop: any, value: Array<{
+    private buildDefaultArrayNulls;
+    private setAllDefaultValues;
+    updateKeyValueVarListOptions(wgtId: string, prop: string, value: Array<{
         key: string;
         value: string;
     }>, oldValue: Array<{
         key: string;
         value: string;
     }>): void;
-    updateOrderArrayKeyValue(wgtId: any, prop: any, newValue: Array<{
-        value: any;
-        display: string;
-    }>): void;
-    updateKeyValue(wgtId: any, prop: any, value: any): void;
+    updateOrderArrayKeyValue(wgtId: string, prop: string, newValue: Array<any>): void;
+    updateKeyValue(wgtId: string, prop: string, value: any, oldPropValue: any): void;
+    private removeLanguageIndependentKeys;
+    private restoreLanguageIndependentKeys;
     private isDefaultValue;
     private extractPropFromWidget;
     private findLangDifference;
     private findTextDifferences;
+    private showNewValues;
     setPropertyValue({ prop, value }: {
         prop: any;
         value: any;
     }): void;
-    private getIDbyText;
+    private findinChildren;
+    private findGroupWgt;
+    private findWidgetByName;
     decorationChangeData(viewString: string, skipShowErrors?: boolean): JSON;
     private addWidgetToJson;
+    private unflatten;
     private decorationViewData;
-    private updateTextView;
+    updateTextView(): void;
     private updateForceTextView;
     private updateText;
+    private extractFormulaValue;
     getPropertyValue(property: string): any;
     manageUndoRedoActions(keyValueInput: Map<string, Map<string, any>>): void;
-    removeKey(wgtId: any, prop: any): Map<string, Map<string, any>>;
+    removeKey(wgtId: string, prop: string): Map<string, Map<string, any>>;
     removeAllKeys(wgtId: string): Map<string, Map<string, any>>;
     addPropertyValue(keyId: string, textValue: any, propName: string): boolean;
     uploadJSON(newText: JSON): boolean;
-    changeGlobalLanguage(newLanguage: string, force?: boolean): boolean;
+    changeGlobalLanguage(newLanguage: string, forceLoad?: boolean): boolean;
     firstLoadLanguage(comps: Object, defaultLanguage?: any): void;
     changeTextLanguage(): void;
     private resetText;
@@ -69,5 +74,7 @@ export default class LanguageMgr extends BaseWgt {
         language?: string;
         missingProps?: string[];
     }[]): void;
+    private processObject;
+    fetchSchema(): any[];
     serialize(): import("@/corvina-model").IWidgetSerialization;
 }

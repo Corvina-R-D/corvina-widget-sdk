@@ -29,7 +29,11 @@ export default class DataModelConvert {
     static formatTreeviewModel(model: PresetNode, isExistingModel?: boolean, isEditable?: boolean, parentNode?: any): TreeviewModelNode;
     static setObjectNodeField(item: any, model: any, treeviewModel: any): void;
     static deleteObjectNodeField(item: any): void;
-    static formatCorvinaModel(treeviewModel: any): any;
+    static formatCorvinaModel(treeviewModel: any): {
+        properties: {
+            [x: string]: any;
+        };
+    };
     static formatCorvinaMapping(treeviewMapping: any): any;
     static presetExtraFields: Set<string>;
     static convertPresetsToModels(presets: PresetIn[]): ModelIn[];

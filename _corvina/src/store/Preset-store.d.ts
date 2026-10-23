@@ -1,7 +1,7 @@
 import { VuexModule } from 'vuex-module-decorators';
 import { DeviceIn } from '@/interfaces/device';
 import { TreeviewModelNode } from '@/classes/DataModelConvert';
-import { PlatformQueryDataInDTO, PresetTagType, PresetIn, PresetOutDTO, ModelMarker, PresetAdditionalInfo, PresetObject } from '@/interfaces/preset';
+import { PlatformQueryDataInDTO, PresetTagType, PresetIn, PresetOutDTO, PresetAdditionalInfo, PresetObject } from '@/interfaces/preset';
 import { RawTag, SanitizedTag } from '@/utils/ModelPresetUtils';
 export interface PresetSearchFilter {
     search?: string;
@@ -213,15 +213,6 @@ export default class PresetStore extends VuexModule {
     setSelectedDevice(device: DeviceIn): void;
     saveTreeviewPreset(preset: PresetObject): void;
     setTagType(tagType: PresetTagType): void;
-    validateFormula(validation: {
-        formula: {
-            functions: {
-                formula: {
-                    map: String;
-                };
-            };
-        };
-    }): Promise<ModelMarker[]>;
     filterTags({ tags, treeviewMapping, searchTags }: {
         tags: RawTag[];
         treeviewMapping: TreeviewModelNode;

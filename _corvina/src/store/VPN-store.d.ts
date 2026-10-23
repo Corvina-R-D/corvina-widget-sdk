@@ -1,5 +1,5 @@
 import { UserAuthorizationDTO } from '../interfaces/userGroup';
-import { ConnectionStatusDTO, VPNApplication, VPNDeviceEndpoint, VPNDeviceExtended, VpnExecuteActionOutDTO, VPNGatewayDTO, VPNProfile } from '../interfaces/VPNDevice';
+import { ConnectionStatusDTO, VPNApplication, VpnApplicationUserPreferenceMain, VPNDeviceEndpoint, VPNDeviceExtended, VpnExecuteActionOutDTO, VPNGatewayDTO, VPNProfile, VPNRenewalsDTO } from '../interfaces/VPNDevice';
 import { DataOptions, DataPagination } from 'vuetify';
 import { VuexModule } from 'vuex-module-decorators';
 import VPNDevice, { VPNDeviceDTO, VPNJsonActionDTO } from "../interfaces/VPNDevice";
@@ -31,14 +31,32 @@ export type VPNStoreDevices = {
     dataTablePagination: VPNDataTablePagination;
     mapLastUpdate: number;
 };
+export type VPNStoreRenewals = {
+    content: VPNRenewalsDTO[];
+    pagination: VPNPagination;
+    dataTablePagination: VPNDataTablePagination;
+};
+export type VPNRenewalFilter = {
+    expiryFrom: string | null;
+    expiryTo: string | null;
+    orgResourceId: string | null;
+    searchSubOrg: string | null;
+    includeSubOrgs: boolean | undefined;
+};
 export type VPNStoreStatusFilter = {
     status: ConnectionStatusDTO;
 } & IVpnDeviceFilters;
+type GatewayCacheEntry = {
+    timestamp: number;
+    gateway: VPNGatewayDTO;
+};
 export default class VPNStore extends VuexModule {
     vpnLoadingSpinner: boolean;
     profiles: VPNStoreProfiles;
     applications: VPNStoreApplications;
     devices: VPNStoreDevices;
+    renewals: VPNStoreRenewals;
+    renewalFilter: VPNRenewalFilter;
     device: VPNDeviceExtended;
     deviceUpdateRequired: {
         deviceName: string;
@@ -47,11 +65,16 @@ export default class VPNStore extends VuexModule {
     vpnFilter: VPNStoreStatusFilter;
     showApplicationPasswordDialog: boolean;
     applicationPassword: string;
+    gatewayCache: {
+        [gatewayHwIdOrName: string]: GatewayCacheEntry;
+    };
     get vpnAppStore(): VPNAppStore;
     get getDevice(): VPNDeviceExtended;
     get getDevices(): VPNDeviceExtended[];
     get getPagination(): VPNPagination;
     get getDeviceStore(): VPNStoreDevices;
+    get getRenewalStore(): VPNStoreRenewals;
+    get getRenewalFilter(): VPNRenewalFilter;
     get getDeviceMapLastUpdate(): number;
     get getProfiles(): VPNProfile[];
     get getProfilePagination(): VPNPagination;
@@ -86,6 +109,11 @@ export default class VPNStore extends VuexModule {
     SET_DEVICE_PAGINATION(pagination: any): void;
     SET_DEVICE_TABLE_SORTBY(val: any): void;
     SET_DEVICE_TABLE_DESCENDING(val: any): void;
+    SET_RENEWALS(data: VPNRenewalsDTO[]): void;
+    SET_RENEWALS_PAGINATION(pagination: any): void;
+    SET_RENEWAL_FILTER(filter: Partial<VPNRenewalFilter>): void;
+    SET_RENEWAL_TABLE_SORTBY(val: any): void;
+    SET_RENEWAL_TABLE_DESCENDING(val: any): void;
     SET_APPLICATION_PROFILE_FOR_ENDPOINT({ device, endpoint, applicationProfileName }: {
         device: any;
         endpoint: any;
@@ -100,7 +128,7 @@ export default class VPNStore extends VuexModule {
         deviceId: any;
         permissions: any;
     }): void;
-    SET_ENDPOINTS_FOR_GATEWAY({ gatewayId, deviceLabel, endpoints, gateway_disable_virtual_ip, gateway_virtualnetwork_size, preferred_region, use_fallback_config }: {
+    SET_ENDPOINTS_FOR_GATEWAY({ gatewayId, deviceLabel, endpoints, gateway_disable_virtual_ip, gateway_virtualnetwork_size, preferred_region, use_fallback_config, layer2_enabled }: {
         gatewayId: any;
         deviceLabel: any;
         endpoints: any;
@@ -108,32 +136,36 @@ export default class VPNStore extends VuexModule {
         gateway_virtualnetwork_size: any;
         preferred_region: any;
         use_fallback_config: any;
+        layer2_enabled: any;
     }): void;
-    SET_ENDPOINTS_FOR_GATEWAY_DEVICE({ endpoints, gateway_disable_virtual_ip, gateway_virtualnetwork_size, preferred_region, use_fallback_config }: {
+    SET_ENDPOINTS_FOR_GATEWAY_DEVICE({ endpoints, gateway_disable_virtual_ip, gateway_virtualnetwork_size, preferred_region, use_fallback_config, layer2_enabled }: {
         endpoints: any;
         gateway_disable_virtual_ip: any;
         gateway_virtualnetwork_size: any;
         preferred_region: any;
         use_fallback_config: any;
+        layer2_enabled: any;
     }): void;
     SET_ENDPOINT_FOR_GATEWAY({ deviceLabel, endpoint }: {
         deviceLabel: string;
         endpoint: VPNDeviceEndpoint;
     }): void;
-    SET_ONLINE_STATUS_FOR_GATEWAY({ deviceLabel, online, gateway_disable_virtual_ip, gateway_virtualnetwork_size, preferred_region, use_fallback_config }: {
+    SET_ONLINE_STATUS_FOR_GATEWAY({ deviceLabel, online, gateway_disable_virtual_ip, gateway_virtualnetwork_size, preferred_region, use_fallback_config, layer2_enabled }: {
         deviceLabel: any;
         online: any;
         gateway_disable_virtual_ip: any;
         gateway_virtualnetwork_size: any;
         preferred_region: any;
         use_fallback_config: any;
+        layer2_enabled: any;
     }): void;
-    SET_ONLINE_STATUS_FOR_GATEWAY_DEVICE({ online, gateway_disable_virtual_ip, gateway_virtualnetwork_size, preferred_region, use_fallback_config }: {
+    SET_ONLINE_STATUS_FOR_GATEWAY_DEVICE({ online, gateway_disable_virtual_ip, gateway_virtualnetwork_size, preferred_region, use_fallback_config, layer2_enabled }: {
         online: any;
         gateway_disable_virtual_ip: any;
         gateway_virtualnetwork_size: any;
         preferred_region: any;
         use_fallback_config: any;
+        layer2_enabled: any;
     }): void;
     UPDATE_GATEWAY(data: {
         deviceLabel: string;
@@ -148,8 +180,19 @@ export default class VPNStore extends VuexModule {
     SET_VPN_SPINNER_LOADING(val: any): void;
     SET_STATUS_FILTER(val: any): void;
     SET_FILTERS(val: IVpnDeviceFilters): void;
+    SET_GATEWAY_CACHE(data: {
+        gatewayHwIdOrName: string;
+        gateway: VPNGatewayDTO;
+    }): void;
+    INVALIDATE_GATEWAY_CACHE(hwIdOrName: string): void;
     setDeviceTableSortBy(val: any): void;
     setDeviceTableDescending(val: any): void;
+    setRenewalFilter(filter: Partial<VPNRenewalFilter>): void;
+    setRenewalTableSortBy(val: any): void;
+    setRenewalTableDescending(val: any): void;
+    fetchRenewals({ rebuild }?: {
+        rebuild?: boolean;
+    }): Promise<void>;
     fetchDevices({ deviceName, singleDevice, rebuild, noCache, page, itemsPerPage }: {
         deviceName?: string;
         singleDevice: boolean;
@@ -188,11 +231,13 @@ export default class VPNStore extends VuexModule {
     }): Promise<void>;
     fetchAllDevicesPermissions(): Promise<void>;
     private _fetchGateway;
-    fetchGateway({ name, selectedDevice }: {
+    fetchGateway({ name, selectedDevice, noCache }: {
         name: string;
         selectedDevice?: boolean;
+        noCache?: boolean;
     }): Promise<VPNGatewayDTO>;
-    updateGateway(data: any): Promise<unknown>;
+    invalidateGatewayCache(hwIdOrName: string): void;
+    updateGateway(data: any): Promise<VPNGatewayDTO>;
     editOrCreateEndpoint({ gateway, endpoint }: {
         gateway: string;
         endpoint: Partial<VPNDeviceEndpoint>;
@@ -277,14 +322,16 @@ export default class VPNStore extends VuexModule {
     }): Promise<void>;
     fetchUserPreferences({ username }: {
         username: any;
-    }): Promise<import("../interfaces/VPNDevice").UserPreferenceApplicationDTO>;
-    addApplicationToUserPreferences({ username, gateway, endpoint, applicationProfile, application }: {
-        username: any;
-        gateway: any;
-        endpoint: any;
-        applicationProfile: any;
-        application: any;
-    }): Promise<any>;
+    }): Promise<{
+        content: VpnApplicationUserPreferenceMain[];
+        total: number;
+        page: number;
+        records: number;
+    }>;
+    addApplicationToUserPreferences({ username, vpnApplication }: {
+        username: string;
+        vpnApplication: VpnApplicationUserPreferenceMain;
+    }): Promise<unknown>;
     deleteApplicationFromUserPreferences({ vpnUserpreferenceId }: {
         vpnUserpreferenceId: any;
     }): Promise<any>;
@@ -313,3 +360,4 @@ export default class VPNStore extends VuexModule {
     }): Promise<boolean>;
     fetchRegions(): Promise<string[]>;
 }
+export {};

@@ -86,7 +86,18 @@ export declare class WSServerInterface extends ServerInterface {
     readTrend(name: string, startTime: number, endTime: number, nSample: number, deltaTime: number, downsample?: boolean, aggregation?: any, downsampling?: {
         size: number;
     }, filterCondition?: string, filterRawData?: string): Promise<any>;
-    showCircuitBrakerError(propertyName: string): void;
+    /**
+     * The platform could not complete the read within its queryTimeout. `partial` says whether some
+     * of the series did arrive and is being shown: if so this is a warning about incomplete data,
+     * otherwise nothing could be rendered and it is a failed request.
+     */
+    showCircuitBrakerError(propertyName: string, partial: boolean): void;
+    /**
+     * A tag stream that has stopped for good. Shown until it is dismissed, unlike the transient
+     * notices elsewhere: the values behind it are stale from now on, and a toast that clears itself
+     * after ten seconds would leave the user reading them with nothing to say they are frozen.
+     */
+    showWsFatalError(messageKey: string): void;
     showWsIotCreditsError(): void;
     showReadTrendError(error: any, tag: string): void;
     errorMessageAnalysis(data: {
@@ -96,12 +107,14 @@ export declare class WSServerInterface extends ServerInterface {
     }, tag: string): {
         message: string;
     };
+    /** The platform name (deviceId/modelPath) the query gives a configured dashboard tag; undefined without device */
+    platformTagName(tag: string): string | undefined;
     private resolveTagName;
     queryTagsDefinition(queryData: PlatformQueryDataDTO): {
         method: string;
         url: string;
-        params: PlatformQueryDataDTO;
-    };
+        data: PlatformQueryDataDTO;
+    } | undefined;
     prepareQueryTags(queryData: PlatformQueryDataDTO, options?: {
         autoSource: boolean;
     }): PlatformQueryDataDTO;

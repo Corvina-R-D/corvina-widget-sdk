@@ -35,7 +35,12 @@ export default class ModelStore extends VuexModule {
     modelUnits: string[];
     modelTags: string[];
     draftModels: {};
-    cacheModelVersionMap: {};
+    cacheModelVersionMap: {
+        [id: string]: {
+            versions: string[];
+            currentVersion: string | undefined;
+        };
+    };
     cloneModelList: {
         data: ModelIn[];
         pagination: any;
@@ -58,7 +63,12 @@ export default class ModelStore extends VuexModule {
     get getNewModelName(): string;
     get getDraftModels(): {};
     get getModelsPagination(): ModelsPagination;
-    get getCachedModelsVersions(): {};
+    get getCachedModelsVersions(): {
+        [id: string]: {
+            versions: string[];
+            currentVersion: string | undefined;
+        };
+    };
     get getInlineCreatedModels(): string[];
     get getTreeviewModel(): TreeviewModelNode;
     get getSelectedNodes(): TreeviewModelNode[];
@@ -120,10 +130,6 @@ export default class ModelStore extends VuexModule {
         model: any;
         version: any;
     }): void;
-    REMOVE_CACHED_MODEL_VERSION({ model, modelVersion }: {
-        model: any;
-        modelVersion: any;
-    }): void;
     RESET_CACHE_MODELS_VERSION(): void;
     ADD_MODEL_TO_INLINE_CREATED_MODELS(model: string): void;
     REMOVE_MODEL_FROM_INLINE_CREATED_MODELS({ model, index }: {
@@ -164,6 +170,10 @@ export default class ModelStore extends VuexModule {
     }): Promise<{}>;
     initState(): void;
     setInstanceOf({ instanceOf }: VuexInstanceOf): void;
+    cacheSavedModelVersions({ savedModel, organization }: {
+        savedModel: ModelIn;
+        organization: string;
+    }): Promise<void>;
     saveModel(model: ModelOutDTO): Promise<ModelIn | {}>;
     saveLocalModel(model: ModelOutDTO): Promise<ModelIn | {}>;
     validateAndUpdateModel({ modelId, model, isShared }: {
@@ -176,7 +186,7 @@ export default class ModelStore extends VuexModule {
         model: ModelOutDTO;
         isShared: boolean;
     }): Promise<ModelIn>;
-    fetchModelById(modeId: string): Promise<any>;
+    fetchModelById(modeId: string): Promise<ModelIn>;
     fetchMappingById(mappingId: string): Promise<PresetIn>;
     fetchDeviceConfiguration(mappingId: string): Promise<import("../interfaces/IPlatformController").DeviceConfigurationJsonDTO>;
     fetchModels(filter?: VuexFilterFetchModels): Promise<ModelInDTO>;
@@ -201,9 +211,10 @@ export default class ModelStore extends VuexModule {
     resetNewModelName(): void;
     resetModel(): void;
     fetchDraftModels(): void;
-    getModelVersions({ modelName, fullHistory }: {
+    getModelVersions({ modelName, fullHistory, shared }: {
         modelName: string;
         fullHistory?: boolean;
+        shared?: boolean;
     }): Promise<string[]>;
     insertNewFieldName(data: any): Promise<void>;
     setLengthOfArrayNode(data: any): void;
@@ -222,10 +233,10 @@ export default class ModelStore extends VuexModule {
     resetCachedModels(): void;
     saveAppendModel(model: any): void;
     exportModel(modelId: any): Promise<{
-        id: any;
-        name: any;
-        version: any;
-        json: any;
+        id: string;
+        name: string;
+        version: string;
+        json: ModelRoot;
     }>;
     importModels(modelContent: ModelObject[]): Promise<[{
         [key: string]: string;

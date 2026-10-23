@@ -1,6 +1,6 @@
 import AbstractAxiosInstance from "./AbstractAxiosInstance";
 import ILicenseManagerAxiosInstance from "../ILicenseManagerAxiosInstance";
-import { ActivateDeviceLicenseOutDTO, ActivateDeviceLicenseInDTO, ActivationLicenseInDTO, ActivateDeviceLicenseVPNInDTO } from "@/interfaces/devicelicence";
+import { ActivateDeviceLicenseOutDTO, ActivateDeviceLicenseInDTO, ActivationLicenseInDTO, ActivateDeviceLicenseVPNInDTO, VpnLicensePlansDTO, VpnBulkRenewalEstimateDTO, VpnBulkRenewalDTO, VpnBulkRenewMigratedDTO, UpdateDevicePasswordInDTO } from "@/interfaces/devicelicence";
 import { PaginationRestDTO } from "@/interfaces/commons/pagination";
 import { ConsumptionEntry, ConsumptionHistory } from "@/interfaces/consumptionsTable";
 import { ProductResourceType } from "../model/Product";
@@ -25,6 +25,10 @@ export interface ConsumptionsFilter {
 declare class LicenseManagerAxiosInstance extends AbstractAxiosInstance implements ILicenseManagerAxiosInstance {
     constructor();
     updateBaseUrl(): void;
+    renewEstimate(organization: string, numDevices: number, plan: string): Promise<VpnBulkRenewalEstimateDTO>;
+    getRenewalPlanList(): Promise<VpnLicensePlansDTO>;
+    confirmRenewal(orgResourceId: String, devices: string[], plan: string): Promise<VpnBulkRenewalDTO>;
+    renewMigratedLifetime(orgResourceId: string): Promise<VpnBulkRenewMigratedDTO>;
     activateDevice(data: ActivateDeviceLicenseOutDTO): Promise<ActivateDeviceLicenseInDTO>;
     checkActivationCode(activationKey: string): Promise<ActivationLicenseInDTO>;
     validateLicense(licenseCode: string): Promise<any>;
@@ -33,6 +37,7 @@ declare class LicenseManagerAxiosInstance extends AbstractAxiosInstance implemen
     fetchDeviceLicenses(orgResourceId: String, filter: any): Promise<PaginationRestDTO<ActivateDeviceLicenseInDTO>>;
     vpnActivate(data: ActivateDeviceLicenseVPNInDTO): Promise<ActivateDeviceLicenseInDTO>;
     vpnAutorenew(data: ActivateDeviceLicenseVPNInDTO): Promise<ActivateDeviceLicenseInDTO>;
+    updateDevicePassword(logicalId: string, data: UpdateDevicePasswordInDTO): Promise<any>;
     private dateToTs;
     fetchConsumptionTable(filter: ConsumptionsFilter): Promise<ConsumptionHistory | ConsumptionEntry>;
     fetchConsumptionGraph(filter: ConsumptionsFilter): Promise<ConsumptionHistory>;

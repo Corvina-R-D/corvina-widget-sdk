@@ -3,6 +3,7 @@ import { DataValue } from '../communication/axios/model/devicedata';
 import { TagDataType } from '@/utils/Tag';
 import { IPropertyEventDetail } from '@/utils/dashboards/PropertyUpdateEvent';
 import { DatalinkPermission } from '@/interfaces/datalink';
+import { DataModelTree } from '@/utils/dashboardDeviceModel';
 type PropertyName = string;
 type ListOfAssets = Array<{
     name: string;
@@ -59,10 +60,13 @@ export default class BaseWgt {
     set parentWidget(wgt: BaseWgt);
     get emitter(): EventTarget;
     static getWidgetCounter(): number;
+    getPropertyError(propName: string): string | null;
     getProject(): ProjectWgt;
     addChild(child: BaseWgt): void;
     indexOfChild(child: BaseWgt): number;
     removeChild(childIndex: number, widget?: BaseWgt): BaseWgt;
+    supportChildType(type: string): boolean;
+    supportDropTag(): boolean;
     removeChildById(id: string): boolean;
     setParent(parent: BaseWgt): void;
     hasEvent(eventName: string, recursive?: boolean): boolean;
@@ -108,6 +112,12 @@ export default class BaseWgt {
     findChildByNameSanitized(name: string): BaseWgt;
     findChildByNameRecursive(name: string): BaseWgt;
     getWidgetByName(name: string): BaseWgt;
+    findAllChildrenByName(name: string): BaseWgt[];
+    findAllChildrenByNameRecursive(name: string): BaseWgt[];
+    getAllWidgetsByName(name: string): BaseWgt[];
+    findAllChildrenByType(type: string): BaseWgt[];
+    findAllChildrenByTypeRecursive(type: string): BaseWgt[];
+    getAllWidgetsByType(type: string): BaseWgt[];
     /**Exists for compatibility with jm4web */
     getWidget(id: string, unnecesaryBoolean?: boolean): BaseWgt;
     resolveWidgetPath(wPath: string): BaseWgt;
@@ -123,31 +133,35 @@ export default class BaseWgt {
         value: any;
         ts?: number;
     }): void;
-    getPropertyValue(prop: any): any;
+    getPropertyValue(prop: string): any;
     getPropertyValueTimestamp(prop: any): number;
     /**
-     * Read historical data for the property.
+     * Reads historical data for a widget property.
      *
-     * If the timerange is inverted it means values are returned in the reverse order
+     * This function supports two signatures for backward compatibility.
+     * The recommended signature is the one that accepts a single `IReadHistDataOptions` object.
      *
-     * If nSamples is specified, limit the number of samples returned (e.g. from=now(), to=0, nSamples=1 should return the first sample in the past since now)
-     *
-     * @param prop
-     * @param from inclusive from timestamp
-     * @param to inclusive to timestamp
-     * @param nSamples maximum number of samples to return
-     * @param downsample enable downsampling
-     * @param aggregation
-     * @param downsampling
-     * @param filterCondition
-     * @param filters
-     * @returns
+     * @param options An object containing the query parameters.
+     * @returns A promise that resolves to an array of data values or a single data value.
      */
-    readHistData(prop: string, from: number, to: number, nSamples: number, downsample?: boolean, aggregation?: any, downsampling?: {
+    readHistData(options: IReadHistDataOptions): Promise<Array<DataValue> | DataValue>;
+    /**
+     * @deprecated The signature with multiple arguments is deprecated and will be removed in a future version. Please use the options object signature.
+     * @param prop The widget property to read data from.
+     * @param from The start of the time range (inclusive timestamp).
+     * @param to The end of the time range (inclusive timestamp).
+     * @param nSamples The maximum number of raw samples to return.
+     * @param downsample Enable/disable downsampling.
+     * @param aggregation The aggregation type.
+     * @param downsampling The downsampling configuration.
+     * @param filterCondition A condition to filter data.
+     * @param filters Additional filters.
+     */
+    readHistData(prop: string, from: number, to: number, nSamples: number, downsample: boolean, aggregation?: any, downsampling?: {
         size: number;
     }, filterCondition?: string, filters?: {
         filterRawData: string;
-    }): Promise<Array<DataValue> | DataValue>;
+    }, limitAggregatedData?: number): Promise<Array<DataValue> | DataValue>;
     hasDatalinkAttachedtoProp(propName: any): boolean;
     serializeDatalinks(datalinks: any): {};
     serializeChildren(): any[];
@@ -158,8 +172,10 @@ export default class BaseWgt {
      * Return the widget that match the alias
      * Example of alias is *.Label.text
      * It replace the * with the id of the widget and then search the widget among the children
+     * @param alias the alias to search
+     * @param replaceWidgetType if true consider alias as *.<WidgetType>.prop
      */
-    getAliasWidget(alias: string): BaseWgt;
+    getAliasWidget(alias: string, replaceWidgetType?: boolean): BaseWgt;
     getAliasWidgetsForProp(property: string): Array<DataLink>;
     unmountLinks(): void;
     private removeAllDatalinks;
@@ -169,8 +185,8 @@ export default class BaseWgt {
     addDatalink(args: IDataLinkConstructorArgs, options?: ArgsAddDatalinkOptions): DataLink;
     protected markPropertyAsLinked(property: string): void;
     protected removeDataLinkMark(property: string): void;
-    addDatalinkToProperty(property: string, sourceProperty: string, permission?: DatalinkPermission, weak?: boolean): void;
-    getDataModel(submodel?: string): any;
+    addDatalinkToProperty(property: string, sourceProperty: string, permission?: DatalinkPermission, weak?: boolean): DataLink;
+    getDataModel(subModel?: string): DataModelTree;
     removeDatalink(dl: DataLink): void;
     removeDatalinkToProperties(properties: string[]): DataLink[];
     removeDatalinkToDataSource(sourceId: string, propName: string, recursively?: boolean): void;
@@ -200,6 +216,8 @@ export default class BaseWgt {
     }>): Map<string, DataLink>;
     loadDefaultConfiguration(): void;
     addAsset(property: string, assetsName: string[], dashboardId?: string): void;
+    removeAsset(property: string): void;
+    getAssets(property: string): string[];
     /**
      * Initialize widget assets
      */
@@ -221,6 +239,13 @@ export default class BaseWgt {
      * Free assets bind to a widget property
      */
     freePropertyAssets(property: string): void;
+    /**
+     * Release specific assets (by name) from the dashboard manifest.
+     * Used to free previously-referenced assets only after a replacement has been
+     * successfully uploaded, so a failed upload doesn't drop the old asset's
+     * manifest reference (which would lose the image on the next save/reload).
+     */
+    freeAssetsByName(assetNames: string[]): void;
     protected freeAssetsData(serializedWgt: any): void;
     getPropertyReference(propertyName: string): Value<any>;
     update(): void;
@@ -305,5 +330,21 @@ export interface IArgsGetTagOccurrences {
     useCurrentState?: boolean;
     excludeWeakDatalink?: boolean;
     weakTagSet?: Set<string>;
+}
+export interface IReadHistDataOptions {
+    prop: string;
+    from: number;
+    to: number;
+    downsample?: boolean;
+    aggregation?: any;
+    downsampling?: {
+        size: number;
+    };
+    filterCondition?: string;
+    filters?: {
+        filterRawData: string;
+    };
+    limitRawData?: number;
+    limitAggregatedData?: number;
 }
 export {};

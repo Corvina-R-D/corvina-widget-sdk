@@ -3,6 +3,27 @@ import { DashboardOutDTO, DashboardsInDTO, FetchDashboardParams, AssetStorageSta
 import IDashboardAxiosInstance from "../IDashboardAxiosInstance";
 import { PaginatedResponse, PageableFullDTO } from '../model/generic';
 import { FlowDTO } from "@/interfaces/flows";
+export interface IAddPrivilegesInBulkInDTO {
+    ids: string[];
+    readers?: string[];
+    editors?: string[];
+    distributors?: string[];
+}
+export type IDashboardDependenciesBulkOutDTO = Array<IDashboardDependencies>;
+export interface IDashboardDependencies {
+    id: string;
+    name: string;
+    widgets: Array<{
+        id: string;
+        name: string;
+    }>;
+    groups: Array<string>;
+}
+export interface IFlowDependenciesDTO {
+    id: string;
+    name: string;
+    dashboards: IDashboardDependencies[];
+}
 export interface ResponseDashboardVersions extends PaginatedResponse {
     data: [
         {
@@ -40,12 +61,26 @@ declare class DashboardAxiosInstance extends AbstractAxiosInstance implements ID
     getSharedDashboards(params?: FetchDashboardParams): Promise<DashboardsInDTO>;
     getDashboardVersions(id: string, params: any): Promise<ResponseDashboardVersions>;
     createDashboardVersion(id: string, data: any, params: any): Promise<unknown>;
-    getDashboardVersion(id: string, versionName: string, params: any): Promise<unknown>;
+    getDashboardVersion(id: string, versionName: string, params: any): Promise<DashboardOutDTO>;
     exportDashboardDatasourceDataCSV(id: string, params: any): Promise<unknown>;
     makeDashboardVersionCurrent(id: string, versionName: string, params: any): Promise<unknown>;
     deleteDashboardVersion(id: string, versionName: string, params: any): Promise<any>;
     createDerivedDashboardVersion(id: string, oldVersionName: string, newVersionName: string, data: any, params: any): Promise<unknown>;
-    shareDashboard(dashboardId: string, groupName: string, permission: "r" | "r/w", params?: {
+    additiveBulkDashboardSharing(data: IAddPrivilegesInBulkInDTO, params?: any): Promise<void>;
+    additiveBulkFlowSharing(data: IAddPrivilegesInBulkInDTO, params?: any): Promise<void>;
+    getDashboardDependencies(data: {
+        id: string;
+    }, params?: any): Promise<IDashboardDependencies>;
+    getDashboardDependenciesBulk(data: {
+        ids: string[];
+    }, params?: any): Promise<IDashboardDependenciesBulkOutDTO>;
+    getFlowDependencies(data: {
+        id: string;
+    }, params?: any): Promise<IFlowDependenciesDTO>;
+    getFlowDependenciesBulk(data: {
+        ids: string[];
+    }, params?: any): Promise<IFlowDependenciesDTO[]>;
+    shareDashboard(dashboardId: string, groupName: string, permission: "r" | "r/w" | "r/s", params?: {
         organization: any;
     }): Promise<DashboardsInDTO>;
     shareDashboardWithUsers(dashboardId: string, listUsers: Array<{
@@ -63,7 +98,7 @@ declare class DashboardAxiosInstance extends AbstractAxiosInstance implements ID
     unshareDashboard(dashboardId: string, groupName: string, params?: {
         organization: any;
     }): Promise<void>;
-    shareFlow(id: string, groupName: string, permission: "r" | "r/w", params?: {
+    shareFlow(id: string, groupName: string, permission: "r" | "r/w" | "r/s", params?: {
         organization: any;
     }): Promise<DashboardsInDTO>;
     shareFlowWithUsers(id: string, listUsers: Array<{
@@ -90,7 +125,7 @@ declare class DashboardAxiosInstance extends AbstractAxiosInstance implements ID
     getOrganizationGalleryAsset(assetName: any): Promise<OrganizationGalleryAsset>;
     uploadOrganizationGalleryAsset(assetName: string, file: File): Promise<boolean>;
     removeOrganizationGalleryAsset(assetName: string): Promise<any>;
-    fetchUserPreferences(username: string): Promise<UserPreferenceDashboardsDTO>;
+    fetchUserPreferences(username: string, page: number, pageSize: number): Promise<UserPreferenceDashboardsDTO>;
     addDashboardToUserPreferences(username: string, dashboardId: string): Promise<any>;
     deleteDashboardFromUserPreferences(dashbordUserpreferenceId: number): Promise<any>;
 }

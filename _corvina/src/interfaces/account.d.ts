@@ -18,8 +18,12 @@ export interface AccountDTO {
     lastName: string;
     credentials: AccountCredentialsDTO[];
     sessions: UserSessionDTO[];
+    federatedIdentities: FederatedIdentityDTO[];
 }
 export interface AccountPatchDTO {
     firstName: string;
     lastName: string;
+}
+export interface FederatedIdentityDTO {
+    identityProvider: string;
 }

@@ -10,6 +10,15 @@ export default class LoadDashboardAction extends ActionWgt {
         value: any;
     }): void;
     private getClockParams;
+    /**
+     * Resolve the dashboard id to load based on the given dashboard parameter.
+     * If the name is provided, it tries to find the dashboard by name and returns a matching id,
+     * preferring the one whose id matches the provided id when possible. If the resolved id
+     * differs from the provided one, a warning is logged.
+     * This is useful in case of import issues where the id of the imported dashboard is different
+     * from the original one but the name is the same.
+     */
+    private resolveDashboardId;
     execute(event: any): Promise<void>;
     getDashboardFlowId(dashboardTree: Array<DashboardEntryDTO>, dashboardId: string): any;
 }

@@ -1,5 +1,6 @@
 import { RawRule, PureAbility } from "@casl/ability";
 export default interface IAbilityHelper {
+    setUnrestricted(value: boolean): void;
     getAbility(): PureAbility;
     updateAbilities(rules: RawRule[]): void;
     hasPermission(checkPermission: string, entity: string): boolean;

@@ -30,6 +30,11 @@ export default class ProjectWgt extends BaseGraphicWgt {
             medium: number;
             small: number;
         };
+        enabled?: {
+            large: boolean;
+            medium: boolean;
+            small: boolean;
+        };
         mode?: BREAKPOINTS_MODE;
     };
     private dashboard;
@@ -46,6 +51,11 @@ export default class ProjectWgt extends BaseGraphicWgt {
             large: number;
             medium: number;
             small: number;
+        };
+        enabled?: {
+            large: boolean;
+            medium: boolean;
+            small: boolean;
         };
         mode?: BREAKPOINTS_MODE;
     };

@@ -1,8 +1,9 @@
-import type { AppOrganizationCreateBodyDTO, AppOrganizationOutDTO, ApplicationOutDTO, AppOrganizationUpgradeBodyDTO } from "@/interfaces/applications";
+import type { AppOrganizationCreateBodyDTO, AppOrganizationOutDTO, ApplicationOutDTO, AppOrganizationUpgradeBodyDTO, AppUserPreferenceMain } from "@/interfaces/applications";
 import { PaymentPlan } from "@/interfaces/applications";
 import { VuexModule } from "vuex-module-decorators";
 import { RoleInDTO } from "../interfaces/role";
 import { CorvinaHost, ITheme } from "@corvina/corvina-app-connect";
+import { UserInDTO } from "@/interfaces/user";
 export default class AppOrganizationStore extends VuexModule {
     applications: ApplicationOutDTO[];
     /**
@@ -46,6 +47,10 @@ export default class AppOrganizationStore extends VuexModule {
         app: AppOrganizationOutDTO;
         iframeOrigin: string;
     }): Promise<void>;
+    getOrRetrieveAppToken({ appKey, serviceAccountUsername }: {
+        appKey: string;
+        serviceAccountUsername: string;
+    }): Promise<string | undefined>;
     refreshAppsToken(): Promise<void>;
     fetchAppOrganizations(): Promise<AppOrganizationOutDTO[]>;
     fetchAppOrganizationsByOrgId(orgId: number): Promise<AppOrganizationOutDTO[]>;
@@ -57,12 +62,28 @@ export default class AppOrganizationStore extends VuexModule {
     getAppTranslationUrl(appId: number): Promise<string | undefined>;
     fetchRoleToEnableAppOrganization(appOrganization: AppOrganizationOutDTO): Promise<RoleInDTO>;
     fetchRolesToEnableAppOrganization(appOrganization: AppOrganizationOutDTO): Promise<RoleInDTO[]>;
-    fetchUserToEnableAppDeviceAccess(appOrganization: AppOrganizationOutDTO): Promise<RoleInDTO>;
-    fetchUsersToEnableAppDeviceAccess(appOrganization: AppOrganizationOutDTO): Promise<RoleInDTO[]>;
+    fetchUserToEnableAppDeviceAccess(appOrganization: AppOrganizationOutDTO): Promise<UserInDTO | undefined>;
     getOrCreateCorvinaHost(): Promise<CorvinaHost>;
     recomputeDependenciesToInstall(params: {
         app: ApplicationOutDTO;
         includeHiddenApps: boolean;
     }): string[];
+    fetchUserPreferences({ username }: {
+        username: string;
+    }): Promise<{
+        content: (AppUserPreferenceMain & {
+            id: number;
+        })[];
+        total: number;
+        page: number;
+        records: number;
+    }>;
+    addAppToUserPreferences({ username, appKey }: {
+        username: string;
+        appKey: string;
+    }): Promise<unknown>;
+    deleteAppFromUserPreferences({ appUserpreferenceId }: {
+        appUserpreferenceId: number;
+    }): Promise<any>;
 }
 export declare function mapFrontendThemeToCorvinaConnectTheme(theme: any): ITheme;

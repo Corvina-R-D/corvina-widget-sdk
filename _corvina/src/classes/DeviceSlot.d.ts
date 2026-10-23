@@ -9,6 +9,7 @@ type SimulationDescription = any;
 interface DeviceSlotConstructor {
     name: string;
     model: string;
+    supportI18n?: boolean;
     deviceId?: string;
     modelName?: string;
     modelVersion?: string;
@@ -23,6 +24,7 @@ export default class DeviceSlot {
     type: ModelTypeEnum;
     name: string;
     model: string;
+    supportI18n?: boolean;
     deviceId: string;
     modelName: string;
     modelVersion: string;

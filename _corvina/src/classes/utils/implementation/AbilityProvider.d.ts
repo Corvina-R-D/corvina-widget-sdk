@@ -3,6 +3,7 @@ import IAbilityHelper from './../IAbilityHelper';
 declare class AbilityProvider implements IAbilityProvider {
     private rootCompanyAbilityHelper;
     getRootCompanyAbilityHelper(): IAbilityHelper;
+    setUnrestricted(value: boolean): void;
 }
 declare const _default: AbilityProvider;
 export default _default;

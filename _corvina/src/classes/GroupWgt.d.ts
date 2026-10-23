@@ -4,6 +4,7 @@ import { ILayoutConfig } from "@/classes/LayoutConfig";
 import { LayoutType } from "@/constant/Layouts";
 import PlaceholderWgt from './PlaceholderWgt';
 import { IColumnConfiguration as ColumnConfiguration, IRowConfiguration as RowConfiguration } from './jm4web';
+import { IRangeError } from './BaseGraphicWgt';
 export default class GroupWgt extends BaseGraphicWgt {
     grconf: GridConfiguration[];
     curGridConf: GridConfiguration;
@@ -24,10 +25,16 @@ export default class GroupWgt extends BaseGraphicWgt {
     private defaultBackgroundColorChildren;
     elevateOnHover: boolean;
     constructor(args: any);
+    private normalizeRowsAutoSize;
     initGridLayout(): void;
+    private static needsUnboundedRow;
+    getUnboundedRows(): Set<number>;
     initCustomWidgetAliases(wgt: BaseGraphicWgt): void;
     protected addAliasDatalinkToTarget(target: BaseWgt, args: IDataLinkConstructorArgs): void;
     watchAlias(): any;
+    hasWidgetInAutoSizeRow(widget: BaseGraphicWgt): boolean;
+    hasUnboundedAutoSizeRow(): boolean;
+    getGridContentHeight(): number;
     protected setStyleProperties(initState: any): void;
     getStyles(): {
         [property: string]: string | number;
@@ -61,6 +68,7 @@ export default class GroupWgt extends BaseGraphicWgt {
     };
     setBoundsToChildren(scaleFactor: any, parentWgt: any): void;
     getPropertyValue(prop: any): any;
+    getRangeErrors(prop: string): IRangeError[];
     setPropertyValue({ prop, value }: {
         prop: any;
         value: any;
@@ -91,6 +99,7 @@ export default class GroupWgt extends BaseGraphicWgt {
     private getGridForCurrentSize;
     applyGridlayout(): void;
     getChildren(): BaseGraphicWgt[];
+    getContentHeight(availableWidth: number): number;
     addChild(child: BaseWgt): void;
     addChildren(children: BaseWgt[]): void;
     removePlaceholders(placeholders: PlaceholderWgt[]): void;
@@ -100,6 +109,12 @@ export default class GroupWgt extends BaseGraphicWgt {
     generateGridMatrixRecursive(): void;
     populateOccupiedMatrixSpaces(gridMatrix: any): void;
     findEmptyPositionInCurrentGrid(): {
+        row: number;
+        column: number;
+        cSpan: number;
+        rSpan: number;
+    };
+    findEmptyPositionInGrid(size: number): {
         row: number;
         column: number;
         cSpan: number;

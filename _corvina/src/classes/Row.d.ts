@@ -12,5 +12,6 @@ export default class Row {
     tStroke: number;
     bStroke: number;
     stretch: number;
+    autoSize: number;
     constructor(conf?: any);
 }

@@ -1,21 +1,29 @@
 import ModelTypeEnum from "@/constant/ModelTypeEnum";
 import { BaseGraphicWgt, BaseWgt, DataLink, GroupWgt, Layout, PageWgt, ProjectWgt } from "@/corvina-model";
-import { DashboardManifest, DashboardType, IDashboardSerialization, IDeviceSlotsMap } from "../interfaces/dashboard";
+import { DashboardManifest, DashboardType, IDashboardSerialization, IDeviceSlotsMap, IPageConfiguration } from "../interfaces/dashboard";
 import { ConfigurationLayout } from "./BaseGraphicWgt";
 import { IWidgetSerialization } from "./BaseWgt";
 import ColorPaletteWgt from "./ColorPaletteWgt";
-import { DATAWINDOW_MODE } from "./DataWindowWgt";
 import { ModelProperties } from "./DeviceSlot";
 import PlaceholderWgt from "./PlaceholderWgt";
 import { DeviceIn } from "@/interfaces/device";
+import { IClockConfigurationParams } from "@/interfaces/dashboard";
+import { PROJECT_LOAD_STATUS } from "@/interfaces/dashboardStatus";
 interface SlotProps {
     slotType: ModelTypeEnum;
     slotName: string;
     slotModelName: string;
     slotModelProperties: ModelProperties;
     deviceId: string;
+    supportI18n: boolean;
     deviceIntermediatePath: string;
     deviceModelName: string;
+}
+interface IDevicesStatus {
+    active: string[];
+    inactive: string[];
+    missing: string[];
+    details: DeviceIn[];
 }
 export default class Dashboard {
     type: DashboardType;
@@ -29,12 +37,12 @@ export default class Dashboard {
     activeGroup: GroupWgt;
     inEditor: boolean;
     curPage: PageWgt;
-    defaultLanguageLangManager: string;
     deviceSlots: IDeviceSlotsMap;
-    initState: IDashboardSerialization;
+    initState: IDashboardSerialization | null;
     hasMissingDevices: boolean;
     hasDevicesMismatch: boolean;
     listDevicesMismatch: string[];
+    devices: IDevicesStatus;
     version: string;
     onlylocal: boolean;
     manifest: DashboardManifest;
@@ -43,7 +51,14 @@ export default class Dashboard {
     preparedJson?: string;
     dateCreatedStr?: string;
     dateModifiedStr?: string;
-    constructor(isComposedWgt?: boolean);
+    /** True while the project is being loaded (during loadProject or createProject) */
+    projectLoadingStatus: PROJECT_LOAD_STATUS;
+    editors: Array<string>;
+    readers: Array<string>;
+    distributors: Array<string>;
+    private projectLoaded;
+    private markProjectLoaded;
+    constructor(type: DashboardType);
     private loadWithOtherDeviceSlots;
     inFlowViewer(): any;
     flowDeviceSlots(): void;
@@ -54,6 +69,8 @@ export default class Dashboard {
     hasLanguageManagerWidget(): boolean;
     hasDefaultColorPalette(): boolean;
     private setDataWindowState;
+    private initProjectFromState;
+    isProjectLoaded(): Promise<void>;
     loadProject(args: ILoadProjectArgs): Promise<void>;
     confirmPendingOperations(): Promise<boolean>;
     getDefaultColorPalette(): ColorPaletteWgt;
@@ -62,16 +79,12 @@ export default class Dashboard {
     }>;
     getDeviceSlot(slotName: string): any;
     addClockToDeviceSlot(slotName: string, clockId: string): void;
-    addDeviceSlot(slotName: string, model: string, deviceId?: any, modelProperties?: any): Error;
-    addPropertySlotExtended(sp: SlotProps): Error;
-    getActiveDevices(): Promise<{
-        active: string[];
-        inactive: string[];
-        details: DeviceIn[];
-    }>;
+    addDeviceSlot(slotName: string, model: string, deviceId?: any, modelProperties?: any, supportI18n?: any): Error;
+    addPropertySlotExtended(sp: SlotProps, simulationDesc: any): Promise<Error>;
+    fetchDevices(): Promise<IDevicesStatus>;
     isSimulatedDevice(deviceId: string): boolean;
-    setSlotDevice(slotName: string, model: string, modelName: string, deviceId: string): void;
-    setSlotDeviceExtended(sp: SlotProps): void;
+    setSlotDevice(slotName: string, model: string, modelName: string, deviceId: string, supportI18n?: boolean): void;
+    setSlotDeviceExtended(sp: SlotProps, simulationDesc: any): Promise<void>;
     setTagSimulation(slotName: string, tag: string, desc: any): void;
     removeDeviceSlot(slotName: string): void;
     removeDataLinkForDeviceSlot(slotName: string): void;
@@ -109,6 +122,7 @@ export default class Dashboard {
     json(): string;
     getWidget(id: any): BaseWgt;
     getWidgetByName(name: string): BaseWgt;
+    getAllWidgetsByType(type: string): BaseWgt[];
     clearSelectedWgt(): void;
     addDatalink({ sourceId, targetId, srcProp, tgtProp, permission }: {
         sourceId: any;
@@ -119,10 +133,13 @@ export default class Dashboard {
     }): DataLink;
     isLayoutWidget(widget: BaseGraphicWgt): boolean;
     private getTargetValidLayoutType;
-    generateCopiedWidgetInitState(copiedWidget: IWidgetSerialization, targetWidget: BaseGraphicWgt): IWidgetSerialization;
+    generateCopiedWidgetInitState(copiedWidget: IWidgetSerialization, targetWidget: BaseGraphicWgt, position: {
+        x: number;
+        y: number;
+    }): IWidgetSerialization;
     private getProperTargetLayout;
     getCurrentPage(): PageWgt;
-    toggleWidgetLayoutVisibility(id: string): boolean;
+    toggleWidgetLayoutVisibility(id: string, size?: number): boolean;
     hideWidgetInLayout(args: {
         id: string;
         size?: number;
@@ -174,6 +191,7 @@ export default class Dashboard {
      * Get asset url.
      */
     getAssetUrl(name: string, dashboardId?: string): Promise<string>;
+    setPrintConfiguration(configuration: IPageConfiguration): void;
 }
 export interface DashboardConstructorParams {
     projectsCount?: number;
@@ -221,14 +239,8 @@ export interface ILoadProjectArgs {
     variables: {
         [name: string]: any;
     };
-    clock: ClockConfiguration;
+    clock?: IClockConfigurationParams[] | null;
     confirmLanguageManager: string;
-}
-export interface ClockConfiguration {
-    startDate: number;
-    endDate: number;
-    mode: DATAWINDOW_MODE;
-    duration: number;
 }
 export interface IPosition {
     x: number;

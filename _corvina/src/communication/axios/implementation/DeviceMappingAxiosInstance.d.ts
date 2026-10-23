@@ -1,4 +1,5 @@
 import AbstractAxiosInstance from "./AbstractAxiosInstance";
+import { AxiosResponse } from 'axios';
 import { PresetOutDTO, PresetInDTO, PresetsInDTO } from "@/interfaces/preset";
 import { ModelOutDTO, ModelInDTO, ModelIn, ValidateModelOutDTO } from "@/interfaces/model";
 import { DeviceInDTO, DeviceSearchParamsDTO, DeviceSearchInDTO, DeviceIn } from "@/interfaces/device";
@@ -18,6 +19,7 @@ declare class DeviceMappingAxiosInstance extends AbstractAxiosInstance implement
     fetchModels(params?: any): Promise<ModelInDTO>;
     fetchModelsByName(params?: any): Promise<ModelInDTO>;
     setDeviceConfiguration(deviceId: String, presetId: String): Promise<void>;
+    setDeviceEmptyConfiguration(deviceId: String): Promise<AxiosResponse<string>>;
     getDevices(params?: any): Promise<DeviceInDTO>;
     searchDevices(params?: DeviceSearchParamsDTO): Promise<DeviceSearchInDTO>;
     getDevice(deviceId: String, params?: any): Promise<{
@@ -30,7 +32,9 @@ declare class DeviceMappingAxiosInstance extends AbstractAxiosInstance implement
     getModelVersions(modelName: String, params?: any): Promise<{
         data: string[];
     }>;
-    getModelById(modelId: String, params?: any): Promise<any>;
+    getModelById(modelId: String, params?: any): Promise<{
+        value: ModelIn;
+    }>;
     deleteModelById(modelId: String, params?: any): Promise<void>;
     updateModel(modelId: String, model: ModelOutDTO, params?: any): Promise<any>;
     deletePresetById(presetId: String, params?: any): Promise<void>;

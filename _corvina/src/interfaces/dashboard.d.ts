@@ -1,4 +1,5 @@
-import { ICrypto } from "@/utils/DashboardPassowordUtils";
+import { ICrypto } from "@/utils/IDashboardPasswordUtil";
+import { TIME_UNITS } from "./dashboardClock";
 export interface DashboardOutDTO {
     id: string;
     type: DashboardType;
@@ -6,12 +7,14 @@ export interface DashboardOutDTO {
     description: string;
     json: string;
     manifest: DashboardManifest;
+    creationDate?: number;
     updatedAt?: number;
     owner?: string;
     parentId?: string;
     autosave?: boolean;
     readers?: Array<string>;
     editors?: Array<string>;
+    distributors?: Array<string>;
 }
 export interface DashboardItemInDTO {
     type: DashboardType;
@@ -25,10 +28,11 @@ export interface DashboardItemInDTO {
     orgResourceId: string;
     owner: string;
     readers: Array<string>;
+    distributors?: Array<string>;
     realmId: string;
     updatedAt: number;
     version: string;
-    cardStyle?: CardStyleInTO;
+    cardStyle?: CardStyleInDTO;
     writers?: Array<string>;
     inEditor?: boolean;
     preparedJson?: string;
@@ -42,14 +46,15 @@ export interface IDashboardItem extends DashboardItemInDTO {
 export type DashboardsMap = {
     [key: string]: IDashboardItem;
 };
-export interface CardStyleInTO {
+export interface CardStyleInDTO {
     id: string;
     flagColor: string;
     flagShape: string;
     backgroundColor: string;
-    backgroundImageUrl: string;
-    backgroundImageData: string;
+    backgroundImageUrl?: string | null;
+    backgroundImageData?: string | null;
     iconColor: string;
+    iconSet: string;
     iconFontFamily: string;
     iconName: string;
 }
@@ -65,11 +70,14 @@ export interface FetchDashboardParams {
     pageSize?: number;
     organization?: string;
     username?: string;
+    usergroups?: string[];
     search?: string;
     orderBy?: string;
     orderDir?: string;
     append?: boolean;
     whose?: SHOW_MODE;
+    noStore?: boolean;
+    type?: DashboardType;
 }
 export interface DashboardTagDTO {
     name: string;
@@ -77,8 +85,26 @@ export interface DashboardTagDTO {
     creationDate: number;
     updatedAt?: number;
 }
+export type PageFormat = "A4" | "Letter";
+export type PageOrientation = "portrait" | "landscape";
+export interface IPageConfiguration {
+    format: {
+        size: PageFormat;
+        pxSize: {
+            width: number;
+            height: number;
+        };
+        orientation: PageOrientation;
+    };
+    margins: {
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+    };
+}
 export interface DashboardManifest {
-    cardStyle?: CardStyleInTO;
+    cardStyle?: CardStyleInDTO;
     crypto?: ICrypto;
     isComposedWidget?: boolean;
     assets: Array<{
@@ -87,6 +113,8 @@ export interface DashboardManifest {
         counter?: number;
         generation?: number;
     }>;
+    page?: IPageConfiguration;
+    dataCaching?: boolean;
 }
 export interface AssetStorageStatusDTO {
     enabled: boolean;
@@ -143,7 +171,9 @@ export declare enum SHOW_MODE {
 export declare enum DashboardType {
     DASHBOARD = "DASHBOARD",
     WIDGET = "WIDGET",
-    ALL = ""
+    ALL = "",
+    FLOW = "FLOW",
+    REPORT = "REPORT"
 }
 export interface IClockConfiguration {
     id: string;
@@ -167,5 +197,22 @@ export interface IManifest {
     resources: {
         images?: string[];
         icon?: string[];
+    };
+}
+export declare enum DATAWINDOW_MODE {
+    DURATION = 0,// Autoscroll: Form now to X units
+    FIXED_INTERVAL = 1,// Interval: From X to Y
+    RELATIVE = 2,// Relative: From time X to Y units ago ( DURATION + AUTOSCROLL OFF ),
+    CALENDAR = 3
+}
+export interface IClockConfigurationParams {
+    id: string;
+    startDate: number;
+    endDate: number;
+    mode: DATAWINDOW_MODE;
+    duration: number;
+    durationStruct: {
+        value: number;
+        unit: TIME_UNITS;
     };
 }

@@ -9,7 +9,7 @@ export default class TextFormatUtil {
     static formatHexadecimalValue(options: any, newValue: any): any;
     static formatExponentialValue(options: any, newValue: any, expDigits: any, style: any, groupingThousand: any): any;
     static scientificNotation(value: any, decimals: any, coefficentDegree: any, expDigits: any): string;
-    static formatText(options: any, newValue: any, style: any, groupingThousand: any): any;
+    static formatText(options: any, newValue: any, style?: any, groupingThousand?: any): any;
     static getIndexesOfSeparators(format: any): {
         e: number;
         E: number;

@@ -3,8 +3,8 @@ import { VuexModule } from "vuex-module-decorators";
 import { DragOverOperation } from "../interfaces/dashboardeditor";
 export declare const DEFAULT_SIDEPANEL_WIDTH = 340;
 import { WidgetModule } from "../classes/WidgetFactory";
-import { ResponseDashboardVersions } from "../communication/axios/implementation/DashboardAxiosInstance";
-import { DashboardItemInDTO, DashboardManifest, DashboardOutDTO, DashboardType, DashboardsInDTO, DashboardsMap, FetchDashboardParams, IDashboardSerialization } from "../interfaces/dashboard";
+import { ResponseDashboardVersions, IDashboardDependencies, IDashboardDependenciesBulkOutDTO, IFlowDependenciesDTO } from "../communication/axios/implementation/DashboardAxiosInstance";
+import { DashboardItemInDTO, DashboardManifest, DashboardOutDTO, DashboardType, DashboardsInDTO, DashboardsMap, FetchDashboardParams, IDashboardItem, IDashboardSerialization, IPageConfiguration } from "../interfaces/dashboard";
 import { FormulaCompileOptions } from "@/utils/formula/FormulaInterfaces";
 import DataLink from "../classes/DataLink";
 import Layout from "../classes/Layout";
@@ -12,10 +12,12 @@ import { XFORMULA_MODE } from "../classes/xFormula";
 import MeshTransformWgt from "@/classes/MeshWgtTransform";
 import DashboardsFlow from "@/classes/DashboardsFlow";
 import { FlowDTO } from "@/interfaces/flows";
-import { ClockConfiguration } from "@/classes/Dashboard";
+import { IClockConfigurationParams } from "@/interfaces/dashboard";
 import { ProgressData } from "@/communication/axios/IDashboardAxiosInstance";
 import { IXFormSerialization } from "@/classes/xForm";
 import { DragTreePropertyEvent } from "@/interfaces/dashboardeditor";
+import { VpnApplicationUserPreferenceMain } from "@/interfaces/VPNDevice";
+import { AppOrganizationOutDTO } from "@/interfaces/applications";
 export interface ExportedDashboard extends Dashboard {
     metadata: {
         modelDeps: Array<any>;
@@ -52,6 +54,7 @@ export interface IMarginHighlighter {
     direction?: "inner" | "outer";
     children?: boolean;
 }
+type BreakpointSize = "small" | "medium" | "large";
 export default class ProjectStore extends VuexModule {
     _loading: boolean;
     flows: {
@@ -59,6 +62,7 @@ export default class ProjectStore extends VuexModule {
     };
     projects: DashboardsMap;
     widgets: DashboardsMap;
+    reports: DashboardsMap;
     widgetsGallery: DashboardsMap;
     widgetsGalleryNameToId: {
         [name: string]: string;
@@ -66,6 +70,11 @@ export default class ProjectStore extends VuexModule {
     curProject: Dashboard;
     currentFlow: DashboardsFlow;
     favourites: {};
+    hasFavoriteItems: boolean | null;
+    _favoriteDashboards: IDashboardItem[];
+    _favoriteFlows: IDashboardItem[];
+    _favoriteVpnPreferences: VpnApplicationUserPreferenceMain[];
+    _favoriteStoreApps: AppOrganizationOutDTO[];
     movingWidget: BaseGraphicWgt;
     isResizingSidebar: boolean;
     sidebars: {
@@ -76,6 +85,7 @@ export default class ProjectStore extends VuexModule {
         };
     };
     sidePanel: {
+        isVisible: boolean;
         dashboardProperties: {
             isOpen: boolean;
             mode: string;
@@ -86,6 +96,7 @@ export default class ProjectStore extends VuexModule {
     showDevices: boolean;
     showHierarchy: boolean;
     isSaving: boolean;
+    _saveGuardCount: number;
     saveOp: any;
     dropArea: {};
     dragCancelled: boolean;
@@ -98,12 +109,18 @@ export default class ProjectStore extends VuexModule {
     movingWidgetX: number;
     movingWidgetY: number;
     isMovingWidget: boolean;
+    _isFullscreenMode: boolean;
+    _fullscreenWidget: BaseGraphicWgt;
     lastAddedWidget: BaseWgt;
     newFormulaId: string;
     justSelectedAWidget: boolean;
     hasPasted: boolean;
     copiedWidget: IWidgetSerialization;
     pasteTarget: BaseGraphicWgt;
+    lastMousePosition: {
+        clientX: number;
+        clientY: number;
+    };
     flowsPagination: {
         number: number;
         totalElements: number;
@@ -117,6 +134,12 @@ export default class ProjectStore extends VuexModule {
         last: boolean;
     };
     widgetsPagination: {
+        number: number;
+        totalElements: number;
+        totalPages: number;
+        last: boolean;
+    };
+    reportsPagination: {
         number: number;
         totalElements: number;
         totalPages: number;
@@ -139,8 +162,13 @@ export default class ProjectStore extends VuexModule {
             medium: number;
             small: number;
         };
-        currentSize: string;
+        currentSize: BreakpointSize;
         mode: BREAKPOINTS_MODE;
+        enabled: {
+            large: boolean;
+            medium: boolean;
+            small: boolean;
+        };
     };
     keyboardEvent: {
         lastKeyboardEvent: any;
@@ -148,6 +176,7 @@ export default class ProjectStore extends VuexModule {
     controls: {
         viewportSimulator: boolean;
     };
+    requestViewportSize: number | null;
     _customWidgetEnabled: boolean;
     _panelAddCustomWidgetVisible: boolean;
     _panelAddCustomWidgetFile: any;
@@ -159,6 +188,7 @@ export default class ProjectStore extends VuexModule {
     _panelTagSimulationProperties: any;
     _panelAddVariablesVisible: any;
     _panelAddVariablesId: any;
+    _panelSharingOpen: boolean;
     lastOrganizationAssetsFetch: any;
     _contextMenuType: any;
     _contextMenuX: any;
@@ -174,6 +204,10 @@ export default class ProjectStore extends VuexModule {
         };
     };
     gridlayoutTools: boolean;
+    gridInspectMode: boolean;
+    gridInspectGroupId: string | null;
+    gridSelectedRowIndex: number | null;
+    gridSelectedColIndex: number | null;
     directAccess: boolean;
     draggingDeviceSlotType: string;
     _allowDraggingDeviceSlot: boolean;
@@ -203,9 +237,39 @@ export default class ProjectStore extends VuexModule {
         status: "open" | "closed";
         data: any;
     };
+    reportHeaderFooterHeight: {
+        header: number;
+        footer: number;
+    };
+    editorProfile: {
+        _configuration: import("../classes/EditorProfile/types").EditorProfileConfiguration;
+        isDashboardTypeEnabled(type: DashboardType): boolean;
+        enableDashboardType(type: DashboardType): void;
+        disableDashboardType(type: DashboardType): void;
+        getDashboardProfile(args: {
+            dashboardType: DashboardType;
+        }): import("../classes/EditorProfile/types").DashboardProfile;
+    };
+    _organizationAssetsManifest: {
+        gallery?: string[];
+    };
+    get profile(): {
+        _configuration: import("../classes/EditorProfile/types").EditorProfileConfiguration;
+        isDashboardTypeEnabled(type: DashboardType): boolean;
+        enableDashboardType(type: DashboardType): void;
+        disableDashboardType(type: DashboardType): void;
+        getDashboardProfile(args: {
+            dashboardType: DashboardType;
+        }): import("../classes/EditorProfile/types").DashboardProfile;
+    };
+    get isSharingPanelOpen(): boolean;
     get getHelpSidePanel(): {
         status: "open" | "closed";
         data: any;
+    };
+    get getReportHeaderFooterHeight(): {
+        header: number;
+        footer: number;
     };
     get getDefaultNullColor(): string;
     get loading(): boolean;
@@ -217,7 +281,11 @@ export default class ProjectStore extends VuexModule {
     get getDropTgtParentId(): string;
     get getInEditor(): boolean;
     get getGridLayoutTools(): boolean;
-    get getProject(): (id: any) => import("../interfaces/dashboard").IDashboardItem;
+    get getGridInspectMode(): boolean;
+    get getGridInspectGroupId(): string | null;
+    get getGridSelectedRowIndex(): number | null;
+    get getGridSelectedColIndex(): number | null;
+    get getProject(): (id: any) => IDashboardItem;
     get getHasPasted(): boolean;
     get getPasteTarget(): BaseGraphicWgt;
     get getCopiedWidget(): IWidgetSerialization;
@@ -233,13 +301,22 @@ export default class ProjectStore extends VuexModule {
     get getWidgetByName(): (name: any) => BaseWgt;
     get getWidgetsByType(): (type: string) => BaseWgt[];
     get getMovingWidget(): BaseGraphicWgt;
+    get fullscreenWidget(): BaseGraphicWgt;
+    SET_SHARING_PANEL_OPEN(isOpen: boolean): void;
+    setFullscreenWidget(widget: BaseGraphicWgt): void;
+    SET_FULLSCREEN_WIDGET(widget: BaseGraphicWgt): void;
+    get isFullscreenMode(): boolean;
+    setIsFullscreenMode(val: boolean): void;
+    SET_FULLSCREEN_MODE(value: boolean): void;
+    setSidepanelIsVisible(value: boolean): void;
+    SET_SIDEPANEL_IS_VISIBLE(value: boolean): void;
     get getIsMovingWidget(): boolean;
     get getMovingWidgetX(): number;
     get getMovingWidgetY(): number;
     get getLastAddedWidget(): BaseWgt;
     get getWidgetById(): (id: any) => BaseWgt;
     get getWidgetValue(): (id: any, prop: any) => any;
-    get getAllWidgets(): {};
+    get getAllWidgets(): Record<string, BaseWgt>;
     get getSelectedWidget(): BaseWgt;
     get getActiveGroup(): GroupWgt;
     get getCurPage(): import("@/corvina-model").PageWgt;
@@ -283,17 +360,30 @@ export default class ProjectStore extends VuexModule {
         totalPages: number;
         last: boolean;
     };
+    get getReportsPagination(): {
+        number: number;
+        totalElements: number;
+        totalPages: number;
+        last: boolean;
+    };
+    get getAllReports(): DashboardsMap;
     get getDashboardTopBarVisibility(): boolean;
     get getCanSave(): boolean;
     get getConfirmSaveDialogOpen(): boolean;
-    get getBreakpoint(): string;
+    get getBreakpoint(): BreakpointSize;
     get getBreakpointSizes(): {
         large: number;
         medium: number;
         small: number;
     };
+    get getBreakpointEnabled(): {
+        large: boolean;
+        medium: boolean;
+        small: boolean;
+    };
     get getLastKeyoardEvent(): any;
     get getViewportSimualtorStatus(): boolean;
+    get getRequestViewportSize(): number | null;
     get getDefaultSidepanelWidth(): number;
     get getSidebars(): {
         projectSidebar: {
@@ -331,6 +421,9 @@ export default class ProjectStore extends VuexModule {
     get getDirectAccess(): boolean;
     get getSidePanelDashboardPropertiesIsOpen(): boolean;
     get getSidePanelDashboardPropertiesMode(): string;
+    get getOrganizationAssetsManifest(): {
+        gallery?: string[];
+    };
     get getPendingOperations(): {
         id: string;
         operation: string;
@@ -347,10 +440,10 @@ export default class ProjectStore extends VuexModule {
     INIT_STATE(): void;
     START_LOADING(): void;
     STOP_LOADING(): void;
-    CREATE_PROJECT({ strategy, dashboardName, isComposedWgt }: {
+    CREATE_PROJECT({ strategy, dashboardName, type }: {
         strategy: (dashboard: Dashboard) => void;
         dashboardName: string;
-        isComposedWgt?: boolean;
+        type: DashboardType;
     }): void;
     IN_EDITOR(inEditor: boolean): void;
     LOAD_PROJECT_INIT_STATE(dashboardInitState: DashboardItemInDTO): void;
@@ -399,6 +492,15 @@ export default class ProjectStore extends VuexModule {
     toggleHelpSidePanel({ data }: {
         data: any;
     }): void;
+    SET_REPORT_HEADER_FOOTER_HEIGHT({ role, height }: {
+        role: "header" | "footer";
+        height: number;
+    }): void;
+    setReportHeaderFooterHeight(payload: {
+        role: "header" | "footer";
+        height: number;
+    }): void;
+    updateDashboardPrintConfiguration(configuration: IPageConfiguration): void;
     switchWidgetImpl({ wgtToRemove, wgtToAdd, record, }: {
         wgtToRemove: BaseGraphicWgt;
         wgtToAdd: {
@@ -426,6 +528,9 @@ export default class ProjectStore extends VuexModule {
         }>;
     }): void;
     RESET_PROJECTS(): void;
+    ADD_REPORT(report: any): void;
+    REMOVE_REPORT(projectId: any): void;
+    RESET_REPORTS(): void;
     RESET_FLOWS(): void;
     RESET_WIDGETS(): void;
     REMOVE_PROJECT(projectId: any): void;
@@ -495,6 +600,13 @@ export default class ProjectStore extends VuexModule {
         value: any;
     }): void;
     SET_GRID_LAYOUT_TOOLS(value: any): void;
+    SET_GRID_INSPECT_MODE({ enabled, groupId }: {
+        enabled: boolean;
+        groupId: string | null;
+    }): void;
+    SET_GRID_SELECTED_ROW(index: number | null): void;
+    SET_GRID_SELECTED_COL(index: number | null): void;
+    CLEAR_GRID_SELECTION(): void;
     ADD_DATALINK({ args, record }: {
         args: {
             inputArgs: any;
@@ -517,11 +629,13 @@ export default class ProjectStore extends VuexModule {
     ADD_TAG(tagName: string): void;
     REMOVE_TAG(tagName: string): void;
     UPDATE_DEFAULT_LANGUAGE(lang: string): void;
+    UPDATE_TEXT_LANGUAGE_MANAGER(): void;
     SET_TEXT_LANGUAGE_AFTER_UNDO_REDO_ACTION(keyValueInput: any): void;
-    SET_TEXT_LANGUAGE({ wgtId, prop, value }: {
+    SET_TEXT_LANGUAGE({ wgtId, prop, newValue, oldValue }: {
         wgtId: any;
         prop: any;
-        value: any;
+        newValue: any;
+        oldValue: any;
     }): void;
     UPDATE_ORDER_ARRAY_TEXT_LANGUAGE({ wgtId, prop, value }: {
         wgtId: any;
@@ -559,6 +673,10 @@ export default class ProjectStore extends VuexModule {
     COPY(): void;
     SET_HAS_PASTED(hasPasted: any): void;
     SET_PASTE_TARGET(pasteTarget: any): void;
+    SET_LAST_MOUSE_POSITION(position: {
+        clientX: number;
+        clientY: number;
+    }): void;
     PASTE(): void;
     SET_ACTIVE_GROUP_BY_ID(groupId: any): void;
     SET_MAIN_GROUP_AS_ACTIVE(): void;
@@ -569,6 +687,8 @@ export default class ProjectStore extends VuexModule {
         isVisible: any;
     }): void;
     SET_IS_SAVING(isSaving: any): void;
+    BEGIN_SAVE_GUARD(): void;
+    END_SAVE_GUARD(): void;
     SET_SAVE_ERROR(error: any): void;
     SET_SAVE_OP(saveOp: any): void;
     FLUSH_SAVE_OP(): void;
@@ -604,6 +724,8 @@ export default class ProjectStore extends VuexModule {
     RESET_FLOWS_PAGINATION(): void;
     RESET_DASHBOARDS_PAGINATION(): void;
     RESET_WIDGETS_PAGINATION(): void;
+    SET_REPORTS_PAGINATION(reportsPagination: any): void;
+    RESET_REPORTS_PAGINATION(): void;
     SHOW_DASHBOARD_PASSWORD_DIALOG({ resolve, reject, manifest }: {
         resolve: any;
         reject: any;
@@ -640,24 +762,35 @@ export default class ProjectStore extends VuexModule {
     }): void;
     DASHBOARD_TOPBAR_VISIBILITY(newVisibility: any): void;
     UPDATE_CURRENT_BREAKPOINT(viewportSize: number): void;
+    REFRESH_CURRENT_GRID_LAYOUT(): void;
+    refreshCurrentGridLayout(): void;
+    UPDATE_BREAKPOINT_ENABLED(enabledBreakpoints: {
+        small: boolean;
+        medium: boolean;
+        large: boolean;
+    }): void;
     SET_BREAKPOINT_SIZE({ breakpoint, size }: {
         breakpoint: any;
         size: any;
     }): void;
-    TOGGLE_WIDGET_LAYOUT_VISIBILITY({ widgetId, record }: {
+    TOGGLE_WIDGET_LAYOUT_VISIBILITY({ widgetId, record, breakpoint }: {
         widgetId: any;
         record: any;
+        breakpoint: any;
     }): void;
-    HIDE_WIDGET_IN_LAYOUT({ widgetId, record }: {
+    HIDE_WIDGET_IN_LAYOUT({ widgetId, record, breakpoint }: {
         widgetId: any;
         record: any;
+        breakpoint: any;
     }): void;
-    SHOW_WIDGET_IN_LAYOUT({ widgetId, record }: {
+    SHOW_WIDGET_IN_LAYOUT({ widgetId, record, breakpoint }: {
         widgetId: any;
         record: any;
+        breakpoint: any;
     }): void;
     EVENT_KEYBOARD(event: any): void;
     SET_VIEWPORT_SIM_STATUS(status: any): void;
+    SET_REQUEST_VIEWPORT_SIZE(size: number | null): void;
     SET_GRID_PROPERTY({ groupId, element, prop, value, breakpoint }: {
         groupId: any;
         element: any;
@@ -709,10 +842,12 @@ export default class ProjectStore extends VuexModule {
     }): void;
     UPDATE_PROJECT_IN_LIST(project: Dashboard | DashboardItemInDTO): void;
     SET_LAST_ORGANIZATION_ASSETS_FETCH(lastOrganizationAssetsFetch: any): void;
+    SET_ORGANIZATION_ASSETS_MANIFEST(organizationAssetsManifest: any): void;
     ADD_FLOW_DEVICESLOT_ARRAY(deviceSlots: any): void;
     CLEAR_FLOW_DEVICESLOT_ARRAY({ flowId }: {
         flowId: any;
     }): void;
+    setDefaultSidepanelWidth(width: number): void;
     SET_DEFAULT_SIDEPANEL_WIDTH(width: any): void;
     SET_DASHBOARD_VISIBILITY({ visible }: {
         visible: any;
@@ -725,6 +860,9 @@ export default class ProjectStore extends VuexModule {
     resetFlowPagination(): void;
     resetWidgetPagination(): void;
     resetDashboardPagination(): void;
+    resetReportPagination(): void;
+    resetReport(): void;
+    fetchReports(optionsIn: FetchDashboardParams): Promise<DashboardItemInDTO[]>;
     initState(): Promise<void>;
     setInEditor(inEditor: any): void;
     setMovingWidget(widget: any): void;
@@ -737,6 +875,21 @@ export default class ProjectStore extends VuexModule {
         isVisible: any;
     }): void;
     setIsSaving(): void;
+    /**
+     * Raise/lower the manual save guard. While the guard is up, getIsSaving stays
+     * true regardless of the debounced save's own state, so the editor can keep
+     * navigation blocked across a multi-step persist (upload + save) without the
+     * indicator flickering between the steps.
+     */
+    beginSaveGuard(): void;
+    endSaveGuard(): void;
+    /**
+     * Force the pending debounced save to run immediately and wait for it to
+     * finish. Used by callers that need the project to be persisted before
+     * proceeding (e.g. after an asset upload whose image was rendered
+     * optimistically).
+     */
+    flushSave(): Promise<void>;
     loadDashboard(name: string): Promise<void>;
     fetchProjectJson({ id, version }: {
         id: string;
@@ -763,10 +916,10 @@ export default class ProjectStore extends VuexModule {
         variables?: {
             [name: string]: any;
         };
-        clock?: ClockConfiguration;
+        clock?: IClockConfigurationParams[];
     }): Promise<boolean>;
     isLanguageManagerPresent(initState: any): Promise<boolean>;
-    confirmPendingOperations(): Promise<boolean>;
+    showDefaultLanguageSelector(): Promise<boolean>;
     loadFlow({ flowId }: {
         flowId: any;
     }): Promise<any>;
@@ -784,9 +937,9 @@ export default class ProjectStore extends VuexModule {
         dashboardId: any;
         version: any;
     }): Promise<void>;
-    createProject({ strategy, isComposedWgt }: {
+    createProject({ strategy, type }: {
         strategy: any;
-        isComposedWgt: any;
+        type: DashboardType;
     }): Promise<void>;
     importProject(args: {
         data: string;
@@ -837,6 +990,32 @@ export default class ProjectStore extends VuexModule {
     removeFlow({ flowId }: {
         flowId: any;
     }): Promise<void>;
+    additiveBulkShareDashboardsWithUsers({ listDashboards, listUsers }: {
+        listDashboards: string[];
+        listUsers: Array<{
+            name: string;
+            permission: string;
+        }>;
+    }): Promise<void>;
+    additiveBulkShareFlowsWithUsers({ listFlows, listUsers }: {
+        listFlows: string[];
+        listUsers: Array<{
+            name: string;
+            permission: string;
+        }>;
+    }): Promise<void>;
+    getFlowDependencies({ id }: {
+        id: string;
+    }): Promise<IFlowDependenciesDTO>;
+    getFlowDependenciesBulk({ ids }: {
+        ids: string[];
+    }): Promise<IFlowDependenciesDTO[]>;
+    getDashboardDependencies({ id }: {
+        id: string;
+    }): Promise<IDashboardDependencies>;
+    getDashboardDependenciesBulk({ ids }: {
+        ids: string[];
+    }): Promise<IDashboardDependenciesBulkOutDTO>;
     shareDashboardWithUsers({ dashboardId, listUsers }: {
         dashboardId: string;
         listUsers: Array<{
@@ -884,7 +1063,7 @@ export default class ProjectStore extends VuexModule {
     getDashboardVersion({ version, dashboardId }: {
         version: any;
         dashboardId: any;
-    }): Promise<unknown>;
+    }): Promise<DashboardOutDTO>;
     deleteDashboardVersion({ dashboardId, version }: {
         dashboardId: any;
         version: any;
@@ -909,7 +1088,7 @@ export default class ProjectStore extends VuexModule {
         variables?: {
             [name: string]: any;
         };
-        clock?: ClockConfiguration;
+        clock?: IClockConfigurationParams[];
     }): Promise<void>;
     loadDashboardEditor({ dashboardId, version }: {
         dashboardId: any;
@@ -959,22 +1138,25 @@ export default class ProjectStore extends VuexModule {
         composedWidget?: any;
         name?: string;
         initState?: any;
-    }): void;
+    }): BaseWgt;
     removeWidget({ widgetId, record }: {
         widgetId: string;
         record?: boolean;
     }): void;
-    toggleWidgetLayoutVisibility({ widgetId, record }: {
+    toggleWidgetLayoutVisibility({ widgetId, record, breakpoint }: {
         widgetId: any;
         record: any;
+        breakpoint: any;
     }): void;
-    showWidgetInLayout({ widgetId, record }: {
+    showWidgetInLayout({ widgetId, record, breakpoint }: {
         widgetId: any;
         record: any;
+        breakpoint: any;
     }): void;
-    hideWidgetInLayout({ widgetId, record }: {
+    hideWidgetInLayout({ widgetId, record, breakpoint }: {
         widgetId: any;
         record: any;
+        breakpoint: any;
     }): void;
     switchWidgets({ tgt, type, version, allLayouts, state, record, save }: {
         tgt: BaseGraphicWgt;
@@ -1026,6 +1208,32 @@ export default class ProjectStore extends VuexModule {
         widgetId: any;
         record: any;
     }): void;
+    /**
+     * Replaces an array-typed widget property and, in the SAME undo step, retargets or removes
+     * any datalink/formula whose `tgtProp` addresses an item by index inside that array (e.g.
+     * "items.v[2].visible"). Without this, reordering or removing an item leaves those datalinks
+     * pointing at whatever item now occupies the old index, since nothing else keeps them in sync
+     * with the array. `remap` moves a datalink from `oldTgtProp` to `newTgtProp` (removed then
+     * re-added, preserving its xForm/source), `remove` deletes a datalink outright (the item it
+     * targeted no longer exists). Removals are applied before re-additions so a `newTgtProp` that
+     * is currently occupied by another item's soon-to-be-moved datalink is never overwritten.
+     * The array is replaced between removals and re-additions, so each datalink is only ever
+     * attached while the array its index refers to is current: undo/redo replay these steps in
+     * reverse/forward order, and a datalink re-attached by undo evaluates (e.g. a formula) and
+     * writes its value right away - before the array was restored, it wrote it into the item
+     * that occupied the same index in the reordered array.
+     */
+    remapIndexedDatalinks({ widgetId, prop, value, remap, remove, record }: {
+        widgetId: string;
+        prop: string;
+        value: any;
+        remap: Array<{
+            oldTgtProp: string;
+            newTgtProp: string;
+        }>;
+        remove: string[];
+        record: boolean;
+    }): void;
     setRowsGlobal({ grRows, groupWgt, record, breakpoint }: {
         grRows: any;
         groupWgt: any;
@@ -1057,12 +1265,18 @@ export default class ProjectStore extends VuexModule {
     copy(): void;
     setHasPasted(hasPasted: any): void;
     setPasteTarget(pasteTarget: any): void;
+    setLastMousePosition(position: {
+        clientX: number;
+        clientY: number;
+    }): void;
+    updateTextViewLanguageManager(): void;
     updateGlobalLanguage(pasteTarget: any): void;
     updateTextLanguageAfterUndoRedoAction(keyValueInput: any): void;
-    addTextLanguage({ wgtId, prop, value }: {
+    addTextLanguage({ wgtId, prop, newValue, oldValue }: {
         wgtId: any;
         prop: any;
-        value: any;
+        newValue: any;
+        oldValue: any;
     }): void;
     updateOrderArrayTextLanguage({ wgtId, prop, value }: {
         wgtId: any;
@@ -1133,7 +1347,7 @@ export default class ProjectStore extends VuexModule {
         actionType: any;
         parentId: any;
         record: any;
-    }): void;
+    }): BaseWgt;
     removeAction({ eventName, actionWgtId, parentId, record }: {
         eventName: any;
         actionWgtId: any;
@@ -1141,6 +1355,11 @@ export default class ProjectStore extends VuexModule {
         record: any;
     }): void;
     setDashboardTopBarVisibility(newVisibility: any): void;
+    setBreakpointEnabled({ small, medium, large }: {
+        small: any;
+        medium: any;
+        large: any;
+    }): void;
     updateBreakpoint(width: any): void;
     setBreakpointSize({ breakpoint, size }: {
         breakpoint: any;
@@ -1151,6 +1370,7 @@ export default class ProjectStore extends VuexModule {
     }): void;
     sendKeyboard(event: any): void;
     viewportSimulatorStatus(status: any): void;
+    setRequestViewportSize(size: number | null): void;
     enableCustomWidget(status: any): void;
     /**
      * Add an asset to a widget (specific function for widget assets)
@@ -1229,7 +1449,7 @@ export default class ProjectStore extends VuexModule {
         tagInfo: any;
     }): void;
     resetTagSimulationModal(): void;
-    saveTagSimulation(info: any): void;
+    saveTagSimulation(info: any): Promise<void>;
     showMenuAddWidget(description: {
         position: {
             x: number;
@@ -1277,6 +1497,13 @@ export default class ProjectStore extends VuexModule {
     }): void;
     hideContextMenu(): void;
     enableGridLayoutTools(value: boolean): void;
+    setGridInspectMode({ enabled, groupId }: {
+        enabled: boolean;
+        groupId: string | null;
+    }): void;
+    setGridSelectedRow(index: number): void;
+    setGridSelectedCol(index: number): void;
+    clearGridSelection(): void;
     addDataLinkToTagMgr(params: {
         widgetID: string;
         property: string;
@@ -1299,9 +1526,22 @@ export default class ProjectStore extends VuexModule {
         widget: any;
         source: any;
     }): Promise<void>;
-    fetchUserPreferences({ username }: {
-        username: any;
+    fetchUserPreferences({ username, page, pageSize }: {
+        username: string;
+        page?: number;
+        pageSize?: number;
     }): Promise<import("../communication/axios/implementation/DashboardAxiosInstance").UserPreferenceDashboardsDTO>;
+    SET_HAS_FAVORITE_ITEMS(value: boolean | null): void;
+    SET_FAVORITE_DASHBOARDS(value: IDashboardItem[]): void;
+    SET_FAVORITE_FLOWS(value: IDashboardItem[]): void;
+    SET_FAVORITE_VPN_PREFERENCES(value: VpnApplicationUserPreferenceMain[]): void;
+    SET_FAVORITE_STORE_APPS(value: AppOrganizationOutDTO[]): void;
+    get getHasFavoriteItems(): boolean | null;
+    get getFavoriteDashboards(): IDashboardItem[];
+    get getFavoriteFlows(): IDashboardItem[];
+    get getFavoriteVpnPreferences(): VpnApplicationUserPreferenceMain[];
+    get getFavoriteStoreApps(): AppOrganizationOutDTO[];
+    checkFavoriteDirectAccessItems(): Promise<boolean>;
     addDashboardToUserPreferences({ username, dashboardId }: {
         username: any;
         dashboardId: any;
@@ -1378,3 +1618,4 @@ export default class ProjectStore extends VuexModule {
     get marginHighlighterChildren(): boolean;
 }
 export declare function getComposedWidgetRoot(initState: IDashboardSerialization | Dashboard): IWidgetSerialization;
+export {};

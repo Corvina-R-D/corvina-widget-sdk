@@ -10,6 +10,7 @@ export declare enum TRENDCHARTMODE {
     GLOBAL = 1,
     MANUAL = 2
 }
+export type TrendChartBarMode = "group" | "stack";
 export default class TrendChartWgt extends ChartWgt {
     wgts: BaseWgt[];
     startDate: Value<Date>;
@@ -36,6 +37,7 @@ export default class TrendChartWgt extends ChartWgt {
     private legendOrientation;
     private legendVisibility;
     private legendFontColor;
+    private barMode;
     protected plotlyDataAdapter: DataAdapter<TrendDataWgt, IChartData>;
     private y1AxisColor;
     private y2AxisColor;
@@ -52,7 +54,7 @@ export default class TrendChartWgt extends ChartWgt {
     private marginLeft;
     private marginRight;
     private dbRefresh;
-    private globalDuration;
+    private queueTimeRangeDataUpdate;
     private dragmode;
     private limitTrendData;
     private limitFilter;
@@ -62,6 +64,11 @@ export default class TrendChartWgt extends ChartWgt {
     private _initYAxes;
     addAxis(axis: string): void;
     protected createDataAdapter(): void;
+    /**
+     * Public accessor for the protected `plotlyDataAdapter` so templates/components
+     * can retrieve it without casting to `any`.
+     */
+    getPlotlyDataAdapter(): DataAdapter<TrendDataWgt, IChartData>;
     notifyDataColor(color: string): void;
     getDataColor(): string;
     updateTimeRangeFromDuration(): void;
@@ -81,10 +88,14 @@ export default class TrendChartWgt extends ChartWgt {
     updateModel(): Promise<void>;
     protected onModelUpdated(): void;
     getPropertyValue(prop: string): any;
-    hasDataWgt(labelID: string): boolean;
+    /**
+     * Tell whether a datawgt of this chart uses the given labelId.
+     * @param exclude datawgt to skip, typically the one the labelId was read from: without it the
+     *                search always matches its own source and the answer is unconditionally true.
+     */
+    hasDataWgt(labelID: string, exclude?: BaseWgt): boolean;
     private getDataInterval;
     serialize(): any;
-    private isAutoscrollUpdate;
     updateTimeRangeData(): void;
     setChartData(): void;
     applyBounds(): void;
