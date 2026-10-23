@@ -145,6 +145,7 @@ export declare const DEFAULT_VPN_CREDITS_UNIT: number;
 export declare const DEFAULT_IOT_CREDITS_UNIT = 4096;
 export declare const DEFAULT_VPN_CREDITS_UNIT_NAME = "months";
 export declare const DEFAULT_PRODUCT_VALIDITY: number;
+export declare const DEFAULT_LICENSE_VALIDITY: number;
 export declare const DEFAULT_CREDITS_GENERIC_UNIT = 1000;
 export declare const scaleResource: (resource: {
     resourceType: ProductResourceType;

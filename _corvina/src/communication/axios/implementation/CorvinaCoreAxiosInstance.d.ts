@@ -1,6 +1,6 @@
 import { PaginationRestDTO } from '@/interfaces/commons/pagination';
-import { UserInDTO, UserOutDTO, UserQueryParamsDTO, SecretOutDto, UserPreferenceInDTO, ApiKeyInDTO, UserDeepSearchQueryParamsDTO, DeepSearchUserDTO } from '@/interfaces/user';
-import { UserAuthorizationDTO, UserGroupInDTO, UserGroupMembershipRole, UserGroupOutDTO, UserGroupQueryParamsDTO, UserGroupUpdateDTO } from '@/interfaces/userGroup';
+import { UserInDTO, UserOutDTO, UserQueryParamsDTO, SecretOutDto, UserPreferenceInDTO, ApiKeyDTO, UserDeepSearchQueryParamsDTO, DeepSearchUserDTO, ApiKeySummaryDTO } from '@/interfaces/user';
+import { UserAuthorizationDTO, UserGroupInDTO, UserGroupMembershipRole, UserGroupMembershipsDTO, UserGroupOutDTO, UserGroupQueryParamsDTO, UserGroupUpdateDTO } from '@/interfaces/userGroup';
 import { RoleInDTO, RoleOutDTO, RoleUpdateDTO, RoleQueryParamsDTO, DetailedRoleInDTO } from '@/interfaces/role';
 import { ApplicationPermissionInDTO } from '@/interfaces/applicationpermission';
 import { DeviceController } from '@/interfaces/devicecontroller';
@@ -15,6 +15,7 @@ import { ApplicationsQueryParamsDTO, ApplicationOutDTO, AppOrganizationOutDTO, A
 import { InstanceDTO } from '@/interfaces/instance';
 import { RealmOutDTO } from '@/interfaces/realm';
 import { AccountDTO, AccountPatchDTO } from '@/interfaces/account';
+import { FeatureFlagsOutDTO } from '@/interfaces/featureFlags';
 declare class CorvinaCoreAxiosInstance extends AbstractAxiosInstance implements ICorvinaCoreAxiosInstance {
     constructor();
     updateBaseUrl(): void;
@@ -26,16 +27,13 @@ declare class CorvinaCoreAxiosInstance extends AbstractAxiosInstance implements 
     fetchUserMine(): Promise<UserInDTO>;
     fetchUserByUsername(organizationId: number, username: string): Promise<UserInDTO>;
     createUser(organizationId: number, data: UserOutDTO): Promise<UserInDTO>;
-    updateUser(organizationId: number, userId: number, newEmail: string, newPassword: string, passwordChangeInvitation: boolean, groupPoliciesEnabled: boolean): Promise<UserInDTO>;
+    updateUser(organizationId: number, userId: number, newEmail: string, newPassword: string, passwordChangeInvitation: boolean, groupPoliciesEnabled: boolean, socialLoginOnly?: boolean | null): Promise<UserInDTO>;
     deleteUser(organizationId: number, userId: number): Promise<UserInDTO>;
     getUserSecurityPolicyGroups(organizationId: number, userId: number): Promise<SecurityPolicyInDTO[]>;
     addUserSecurityPolicyGroups(organizationId: number, userId: number, securityPolicyIds: number[]): Promise<SecurityPolicyInDTO>;
     removeUserSecurityPolicyGroups(organizationId: number, userId: number, securityPolicyIds: number[]): Promise<SecurityPolicyInDTO>;
     fetchUserGroups(organizationId: number, params?: UserGroupQueryParamsDTO): Promise<PaginationRestDTO<UserGroupInDTO>>;
-    fetchUserGroupsMineMembers(organizationId: number): Promise<{
-        adminsOf: number[];
-        usersOf: number[];
-    }>;
+    fetchUserGroupsMineMembers(organizationId: number): Promise<UserGroupMembershipsDTO>;
     fetchUserGroup(organizationId: number, userGroupId: number): Promise<UserGroupInDTO>;
     fetchUserGroupMembers(organizationId: number, userGroupId: number): Promise<UserInDTO[]>;
     createUserGroup(organizationId: number, data: UserGroupOutDTO): Promise<UserGroupInDTO>;
@@ -45,6 +43,12 @@ declare class CorvinaCoreAxiosInstance extends AbstractAxiosInstance implements 
     removeUserFromGroup(organizationId: number, userGroupId: number, userId: number): Promise<UserGroupInDTO>;
     removeRolesFromGroup(organizationId: number, userGroupId: number, roleIds: number): Promise<UserGroupInDTO>;
     verifyApplicationPermissionChanges(organizationId: number, { groupsToAdd, rolesToAdd, groupsToRemove, rolesToRemove }: {
+        groupsToAdd: number[];
+        rolesToAdd: number[];
+        groupsToRemove: number[];
+        rolesToRemove: number[];
+    }): Promise<string[]>;
+    verifyDevicePermissionChanges(organizationId: number, { groupsToAdd, rolesToAdd, groupsToRemove, rolesToRemove }: {
         groupsToAdd: number[];
         rolesToAdd: number[];
         groupsToRemove: number[];
@@ -73,6 +77,7 @@ declare class CorvinaCoreAxiosInstance extends AbstractAxiosInstance implements 
     updateSubOrganization(organizationId: number, data: OrganizationUpdateDTO): Promise<OrganizationInDTO>;
     deleteOrganization(organizationId: number): Promise<OrganizationInDTO>;
     fetchOrganization(organizationId: string): Promise<OrganizationInDTO>;
+    fetchFeatureFlags(organizationResourceId: string): Promise<FeatureFlagsOutDTO>;
     generateImportToken(organizationId: string): Promise<{
         token: string;
     }>;
@@ -93,6 +98,7 @@ declare class CorvinaCoreAxiosInstance extends AbstractAxiosInstance implements 
     fetchDevices(organizationId: number, params?: DeviceQueryParamsDTO): Promise<PaginationRestDTO<DeviceRepositoryDTO>>;
     searchDevices(organizationId: number, params?: DeviceQueryParamsDTO): Promise<PaginationRestDTO<DeviceRepositoryDTO>>;
     fetchDeviceByLabel(organizationId: number, deviceLabel: string): Promise<DeviceOutDTO>;
+    forceEnableDeviceIot(organizationId: number, hwId: string): Promise<void>;
     userSelfOnboarding(userData: any): Promise<void>;
     fetchServiceAccountClientSecret(organizationId: number, clientId: string): Promise<SecretOutDto>;
     refreshServiceAccountClientSecret(organizationId: number, clientId: string): Promise<SecretOutDto>;
@@ -110,11 +116,11 @@ declare class CorvinaCoreAxiosInstance extends AbstractAxiosInstance implements 
     deleteUserPreferencesForLoginOrganization(userPrefId: number): Promise<any>;
     getUserPreference(service: string, prop: string): Promise<string>;
     setUserPreference(service: string, prop: string, value: string): Promise<string>;
-    getUserApiKeys(username?: string): Promise<ApiKeyInDTO>;
+    getUserApiKeys(username?: string): Promise<ApiKeySummaryDTO[]>;
     postUserApiKey(data: {
         username?: string;
-    }): Promise<unknown>;
-    deleteUserApiKey(apiKeyId: number, username: string): Promise<any>;
+    }): Promise<ApiKeyDTO>;
+    deleteUserApiKey(apiKeyId: number, username: string): Promise<ApiKeyDTO>;
     fetchApplications(params?: ApplicationsQueryParamsDTO): Promise<PaginationRestDTO<ApplicationOutDTO>>;
     getApplication(appId: number): Promise<ApplicationOutDTO>;
     fetchApplicationLike(appId: number): Promise<{

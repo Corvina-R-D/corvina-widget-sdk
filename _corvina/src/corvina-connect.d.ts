@@ -3,6 +3,8 @@
  */
 export { initCorvina } from "./main";
 export { setCommunicationSettings } from "./communication/CommunicationInitializer";
+export { default as AdminNotificationsAxiosInstance } from "./communication/axios/implementation/AdminNotificationsAxiosInstance";
+export { default as AuditAxiosInstance } from "./communication/axios/implementation/AuditAxiosInstance";
 export { default as DeviceMappingAxiosInstance } from "./communication/axios/implementation/DeviceMappingAxiosInstance";
 export { default as CorvinaCoreAxiosInstance } from "./communication/axios/implementation/CorvinaCoreAxiosInstance";
 export { default as LicenseManagerAxiosInstance } from "./communication/axios/implementation/LicenseManagerAxiosInstance";
@@ -15,3 +17,5 @@ export { default as ThemeAxiosInstance } from "./communication/axios/implementat
 export { default as VPNAxiosInstance } from './communication/axios/implementation/VPNAxiosInstance';
 export { default as DashboardAxiosInstance } from "./communication/axios/implementation/DashboardAxiosInstance";
 export { default as CommunicationSettings } from "./communication/CommunicationSettings";
+export { default as TriggerAxiosInstance } from "./communication/axios/implementation/TriggerAxiosInstance";
+export { default as PamAxiosInstance } from "./communication/axios/implementation/PamAxiosInstance";

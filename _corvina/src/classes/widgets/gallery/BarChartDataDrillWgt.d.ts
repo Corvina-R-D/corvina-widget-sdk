@@ -2,6 +2,7 @@ import { BarChartGallery } from "./BarChart";
 import BarChartPropsHandler from "./propertiesHandlers/BarChartPropsHandler";
 import IPropertyHandler from "./propertiesHandlers/IPropertyHandler";
 import Value from "@/classes/Value";
+import { WidgetDataModel } from "@/corvina-module";
 export declare const horizontalOrientationMode: {
     horizontalTop: string;
     horizontalBottom: string;
@@ -37,7 +38,7 @@ declare class BarChartDataDrillWgtGallery extends BarChartGallery {
         width: number;
         height: number;
     };
-    getDataModel(): any;
+    getDataModel(): WidgetDataModel;
 }
 export declare const BarChartDataDrillWgt: BarChartDataDrillWgtGallery;
 export {};

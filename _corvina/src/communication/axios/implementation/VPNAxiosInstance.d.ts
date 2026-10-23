@@ -1,15 +1,36 @@
 import AbstractAxiosInstance from './AbstractAxiosInstance';
-import { DeviceLogsDTO, UserPreferenceApplicationDTO, VPNDeviceDTO, VPNDeviceEndpoint, VPNJsonActionDTO, VpnExecuteActionOutDTO, VPNRegionsDTO } from '@/interfaces/VPNDevice';
+import { DeviceLogsDTO, VPNDeviceDTO, VPNDeviceEndpoint, VPNJsonActionDTO, VpnExecuteActionOutDTO, VPNRegionsDTO, VPNRenewalsDTO, OpenVpnConfigBrand } from '@/interfaces/VPNDevice';
 import { ActionProfileRequestDTO, ActionDTO, ActionFullDTO, VPNEndpointDTO, VPNGatewayDTO } from "@/interfaces/VPNDevice";
 import { ClientOs } from '../../../utils/Features';
 declare class VPNAxiosInstance extends AbstractAxiosInstance {
     constructor();
+    updateBaseUrl(): void;
     static aliveTimer: any;
     private formatClientOS;
     fetchEndpoints(orgResId: string, data: any): Promise<void>;
     fetchDomainGateways(orgResourceId: any, filter: any): Promise<{
         serverTimestamp: number;
         content: VPNDeviceDTO[];
+    }>;
+    deviceStats({ orgResourceId, orderBy, orderDir, page, pageSize, organizationFilter, organizations, deviceIds, fromDateVpn, toDateVpn, includeSubOrgs }: {
+        orgResourceId: string;
+        orderBy?: string;
+        orderDir?: string;
+        page?: number;
+        pageSize?: number;
+        organizationFilter?: string;
+        organizations?: string[];
+        deviceIds?: string[];
+        fromDateVpn?: string;
+        toDateVpn?: string;
+        includeSubOrgs?: boolean;
+    }): Promise<{
+        content: VPNRenewalsDTO[];
+        size: number;
+        last: boolean;
+        number: number;
+        totalElements: number;
+        totalPages: number;
     }>;
     fetchGateway(orgResourceId: any, deviceLabel: string): Promise<VPNGatewayDTO>;
     postEndpoint(newEndpoint: VPNEndpointDTO): Promise<unknown>;
@@ -20,9 +41,15 @@ declare class VPNAxiosInstance extends AbstractAxiosInstance {
         policies: any;
     }): Promise<unknown>;
     cloneGateway(gateway: string, domain: string, originDeviceId: number): Promise<unknown>;
+    private postForFile;
+    private parseContentDispositionFileName;
     downloadEdgeConfigFile(gateway: string, domain: string, activationKey: string): Promise<{
         blob: Blob;
-        fileName: any;
+        fileName: string;
+    }>;
+    downloadOpenVpnConfigFile(gateway: string, domain: string, brand: OpenVpnConfigBrand, activationKey: string): Promise<{
+        blob: Blob;
+        fileName: string;
     }>;
     deleteEndpoint({ gateway, domain, endpoint }: {
         gateway: string;
@@ -55,9 +82,6 @@ declare class VPNAxiosInstance extends AbstractAxiosInstance {
     createApplication(orgResourceId: any, data: any): Promise<unknown>;
     editApplication(orgResourceId: any, data: ActionFullDTO): Promise<ActionFullDTO>;
     deleteApplication(orgResourceId: any, actionName: string): Promise<any>;
-    fetchUserPreferences(username: string): Promise<UserPreferenceApplicationDTO>;
-    addApplicationToUserPreferences(username: string, gatewayName: string, endpointName: string, applicationProfile: string, applicationName: string): Promise<any>;
-    deleteApplicationFromUserPreferences(vpnUserpreferenceId: number): Promise<any>;
     executeAction(gatewayName: string, endpointName: string, actionName: string, clientOs: ClientOs): Promise<VpnExecuteActionOutDTO>;
     executeActionOnDomain(orgResourceId: string, gatewayName: string, endpointName: string, actionName: string, clientOs: ClientOs): Promise<VpnExecuteActionOutDTO>;
     setApplicationPassword(value: {

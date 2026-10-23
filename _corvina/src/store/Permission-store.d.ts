@@ -4,7 +4,6 @@ declare const _default: {
     state: {
         iot: boolean;
         vpn: boolean;
-        vpnPairingMode: string;
         otpRequired: boolean;
         organizations: {
             data: any[];
@@ -73,6 +72,10 @@ declare const _default: {
             expanded: {};
         };
         userGroupsMine: any[];
+        iamOrgCache: {
+            orgId: any;
+            data: {};
+        };
         roles: {
             data: any[];
             pagination: {};
@@ -109,6 +112,9 @@ declare const _default: {
         agreements: {
             reminderShownInSession: boolean;
         };
+        dataTemporarilyDisabled: {
+            reminderShownInSession: boolean;
+        };
         trial: {
             expirationDate: any;
         };
@@ -142,6 +148,12 @@ declare const _default: {
         SAVE_USER_GROUPS(state: any, data: any): void;
         SAVE_USER_GROUPS_PAGINATION(state: any, pagination: any): void;
         SAVE_USER_GROUPS_MINE(state: any, data: any): void;
+        SAVE_IAM_ORG_CACHE(state: any, { orgId, key, value }: {
+            orgId: any;
+            key: any;
+            value: any;
+        }): void;
+        RESET_IAM_ORG_CACHE(state: any): void;
         SAVE_ROLES(state: any, data: any): void;
         SAVE_MODEL_ROLES(state: any, data: any): void;
         SAVE_DATA_ROLES(state: any, data: any): void;
@@ -150,6 +162,8 @@ declare const _default: {
         SAVE_MODEL_ROLES_PAGINATION(state: any, pagination: any): void;
         SELECT_ORGANIZATION_ID(state: any, organization: any): void;
         SAVE_CURRENT_USER_ORGANIZATIONS(state: any, data: any): void;
+        ADD_CURRENT_USER_ORGANIZATION(state: any, organization: any): void;
+        REMOVE_CURRENT_USER_ORGANIZATION(state: any, organizationId: any): void;
         SAVE_ORGANIZATIONS(state: any, data: any): void;
         SAVE_ORGANIZATIONS_CONTROLLERS(state: any, data: Array<any>): void;
         SAVE_CURRENT_RESOURCES(state: any, resources: any): void;
@@ -208,6 +222,10 @@ declare const _default: {
             userId: any;
             data: any;
         }): void;
+        SAVE_USER_SELF_GROUP(state: any, { userId, selfGroup }: {
+            userId: any;
+            selfGroup: any;
+        }): void;
         SAVE_ADDITIONAL_GROUP_DATA(state: any, { groupId, data }: {
             groupId: any;
             data: any;
@@ -215,6 +233,7 @@ declare const _default: {
         SET_HAS_RPT_TOKEN(state: any, hasRptToken: any): void;
         SET_LOGIN_ERROR(state: any, loginError: string | null): void;
         SET_AGREEMENTS_REMINDER_SHOWN_IN_SESSION(state: any, shown: any): void;
+        SET_DATA_TEMPORARILY_DISABLED_REMINDER_SHOWN_IN_SESSION(state: any, shown: boolean): void;
         SET_TRIAL_EXPIRATION_DATE(state: any, expirationDate: any): void;
         SET_ACCESS_TOKEN(state: any, accessToken: any): void;
         SET_REFRESH_PERMISSIONS_REQUIRED(state: any): void;
@@ -280,7 +299,7 @@ declare const _default: {
             pageSize: number;
             username: string;
             type: string;
-        }): Promise<any>;
+        }): Promise<import("../interfaces/user").UserInDTO[]>;
         checkUserExists(context: any, username: string): Promise<boolean>;
         fetchUserByUsername(context: any, username: any): Promise<any[] | import("../interfaces/user").UserInDTO>;
         fetchUserById(context: any, userId: any): Promise<any[] | import("../interfaces/user").UserInDTO>;
@@ -290,6 +309,7 @@ declare const _default: {
             pageSize: number;
             name: string;
             adminOnly: boolean;
+            orgId: any;
         }): Promise<any[] | import("../interfaces/commons/pagination").PaginationRestDTO<import("../interfaces/userGroup").UserGroupInDTO>>;
         fetchGroupById(context: any, groupId: any): Promise<import("../interfaces/userGroup").UserGroupInDTO>;
         fetchGroupsWithPagination(context: any, filter?: {
@@ -297,7 +317,15 @@ declare const _default: {
             pageSize: number;
             name: string;
         }): Promise<any>;
+        fetchSelfUserGroup(context: any, userId: any): Promise<any>;
         fetchUserGroupsMine(context: any): Promise<any>;
+        fetchIamOrgCached(context: any, { key, loader }: {
+            key: string;
+            loader: () => Promise<any>;
+        }): Promise<any>;
+        fetchIamOrgDefaults(context: any, key: "groups" | "roles" | "appStoreRoles" | "dataRoles" | "securityPolicyGroups"): any;
+        preloadIamOrgData(context: any): Promise<void | any[]>;
+        resetIamOrgCache(context: any): void;
         fetchRoles(context: any, filter?: import("../interfaces/role").RoleQueryParamsDTO): Promise<any[] | import("../interfaces/commons/pagination").PaginationRestDTO<import("../interfaces/role").DetailedRoleInDTO>>;
         fetchDuplicatedApplicationRoles(context: any, duplicateName: any): Promise<boolean>;
         fetchDuplicatedApplicationRolesLabel(context: any, duplicateLabel: any): Promise<boolean | import("../interfaces/role").DetailedRoleInDTO>;
@@ -334,6 +362,8 @@ declare const _default: {
             search: string;
             orderBy: string;
             orderDir: string;
+            onlyFirstLevel: boolean;
+            includeAncestors: boolean;
         }): Promise<any>;
         fetchDuplicateOrganizations(context: any, { parentOrgId, subOrgNameToCheck }: {
             parentOrgId: any;
@@ -351,6 +381,7 @@ declare const _default: {
             };
             useSelectedSuborg: boolean;
             ignoreResources: boolean;
+            orgId: any;
         }): Promise<import("../interfaces/commons/pagination").PaginationRestDTO<import("../interfaces/organization").OrganizationInDTO>>;
         fetchSubOrganizations(context: any, filter?: {
             page: number;
@@ -385,11 +416,13 @@ declare const _default: {
             newEmail: any;
             newPassword: any;
             groupPoliciesEnabled: any;
+            socialLoginOnly: any;
         }): Promise<import("../interfaces/user").UserInDTO>;
         createUserGroup(context: any, userGroupData: any): Promise<import("../interfaces/userGroup").UserGroupInDTO>;
         selectOrganization(context: any, organization: any): void;
         fetchCurrentUserOrganizations(context: any): Promise<void>;
         saveCurrentUserOrganizations(context: any, organizations: any): Promise<void>;
+        removeCurrentUserOrganization(context: any, organizationId: any): void;
         addUserToGroup(context: any, { userGroupId, userId, role }: {
             userGroupId: any;
             userId: any;
@@ -408,6 +441,12 @@ declare const _default: {
             roleIds: any;
         }): Promise<import("../interfaces/userGroup").UserGroupInDTO>;
         verifyApplicationPermissionChanges(context: any, { groupsToAdd, rolesToAdd, groupsToRemove, rolesToRemove }: {
+            groupsToAdd: any;
+            rolesToAdd: any;
+            groupsToRemove: any;
+            rolesToRemove: any;
+        }): Promise<string[]>;
+        verifyDevicePermissionChanges(context: any, { groupsToAdd, rolesToAdd, groupsToRemove, rolesToRemove }: {
             groupsToAdd: any;
             rolesToAdd: any;
             groupsToRemove: any;
@@ -450,7 +489,7 @@ declare const _default: {
             roleData: any;
         }): Promise<any>;
         deleteUserGroup(context: any, userGroupId: any): Promise<import("../interfaces/userGroup").UserGroupInDTO>;
-        deleteUser(context: any, userId: any): Promise<import("../interfaces/user").UserInDTO>;
+        deleteUser(context: any, userId: any): Promise<any>;
         deleteRole(context: any, roleId: any): Promise<import("../interfaces/role").DetailedRoleInDTO>;
         createSubOrg(context: any, { organizationId, orgData, options }: {
             organizationId: any;
@@ -487,6 +526,7 @@ declare const _default: {
         getLoginInfo(context: any, organizationHostname: any): Promise<import("../interfaces/organization").OrganizationLoginInfoDTO>;
         userSelfOnboarding(context: any, userData: any): Promise<void>;
         askRevokePermissionConfirmation(context: any, permissionsRemoved: []): Promise<unknown>;
+        askRevokeDevicePermissionConfirmation(context: any, deviceGroupsRemoved: string[]): Promise<unknown>;
         fetchServiceAccountClientSecret(context: any, clientId: any): Promise<import("../interfaces/user").SecretOutDto>;
         refreshServiceAccountClientSecret(context: any, clientId: any): Promise<import("../interfaces/user").SecretOutDto>;
         fetchAgreements(_context: any, orgId: number): Promise<import("../interfaces/agreements").AgreementOutDTO[]>;
@@ -497,27 +537,40 @@ declare const _default: {
         }): Promise<import("../interfaces/agreements").AgreementOutDTO[]>;
         setAgreementsReminderShownInSession(context: any, shown: boolean): void;
         setLoginError(context: any, loginError: string | null): void;
+        setDataTemporarilyDisabledReminderShownInSession(context: any, shown: boolean): void;
         fetchGlobalNotifications(_context: any, orgId: number): Promise<import("../interfaces/agreements").AgreementOutDTO[]>;
         checkGlobalNotifications(_context: any, orgId: number): Promise<import("../interfaces/agreements").CheckAgreementOutDTO>;
         acceptGlobalNotifications(_context: any, args: {
             orgId: number;
             idsToAccept: number[];
         }): Promise<import("../interfaces/agreements").AgreementOutDTO[]>;
-        getUserPreferences(context: any, params: any): Promise<import("../interfaces/user").UserPreferenceInDTO>;
-        getUserPreferencesForLoginOrganization(context: any, params: any): Promise<import("../interfaces/user").UserPreferenceInDTO>;
+        getUserPreferences(context: any, params: any): Promise<Readonly<{
+            content: readonly any[];
+            last: true;
+            totalElements: 0;
+            totalPages: 0;
+            number: 0;
+        }> | import("../interfaces/user").UserPreferenceInDTO>;
+        getUserPreferencesForLoginOrganization(context: any, params: any): Promise<Readonly<{
+            content: readonly any[];
+            last: true;
+            totalElements: 0;
+            totalPages: 0;
+            number: 0;
+        }> | import("../interfaces/user").UserPreferenceInDTO>;
         postUserPreferences(context: any, params: any): Promise<unknown>;
         postUserPreferencesForLoginOrganization(context: any, params: any): Promise<unknown>;
         deleteUserPreferences(context: any, userPrefId: any): Promise<any>;
         deleteUserPreferencesForLoginOrganization(context: any, userPrefId: any): Promise<any>;
         deleteAllUserPreferences(context: any, userPrefIds: number[]): Promise<void>;
-        getUserApiKeys(context: any, username: string): Promise<import("../interfaces/user").ApiKeyInDTO>;
+        getUserApiKeys(context: any, username: string): Promise<import("../interfaces/user").ApiKeySummaryDTO[]>;
         createUserApiKey(context: any, params: {
             username: string;
-        }): Promise<unknown>;
+        }): Promise<import("../interfaces/user").ApiKeyDTO>;
         deleteUserApiKey(context: any, params: {
             id: number;
             username: string;
-        }): Promise<any>;
+        }): Promise<import("../interfaces/user").ApiKeyDTO>;
         fetchUserRealms(): Promise<import("../interfaces/realm").RealmOutDTO[]>;
         fetchOrganizationGrants(context: any, params: {
             parentOrg: string;
@@ -537,7 +590,6 @@ declare const _default: {
         getCurrentOrganizationIOTEnabled(state: any): any;
         getCurrentOrganizationVPNEnabled(state: any): any;
         getCurrentOrganizationOPTRequired(state: any): any;
-        getCurrentOrganizationVPNPairingMode(state: any): any;
         getCurrentFormUser(state: any): any;
         getCurrentFormGroup(state: any): any;
         getCurrentFormRole(state: any): any;
@@ -561,8 +613,11 @@ declare const _default: {
         getHasRptToken(state: any): any;
         getLoginError(state: any): string | null;
         getAgreementsReminderShownInSession(state: any): any;
+        getDataTemporarilyDisabledReminderShownInSession(state: any): any;
         getOrganizationAllowRegister(state: any, getters: any, rootState: any, rootGetters: any): boolean;
         getLoggedUser(state: any): any;
+        isUserServiceAccount(state: any): any;
+        getTokenHasAmrValid(state: any, getters: any): boolean;
         getIsTrial(state: any): boolean;
         getTrialExpirationDate(state: any): any;
         getIsEditingSuborg(state: any): boolean;
@@ -570,6 +625,9 @@ declare const _default: {
         getSelectedSubOrganization(state: any): any;
         getAccessToken(state: any): any;
         getRefreshPermissionsRequired(state: any): number;
+        getMgmtSsoGroups(state: any): string[];
+        isMgmtSsoUser(state: any, getters: any): boolean;
+        isSsoSudoer(state: any, getters: any): boolean;
     };
 };
 export default _default;

@@ -1,6 +1,8 @@
 import PaginationQueryParamsDTO from './commons/PaginationQueryParamsDTO';
 import { ApplicationPermissionInDTO } from './applicationpermission';
 import { RoleOwnerEnum } from '../constant/RoleOwnerEnum';
+import { UserGroupType } from './userGroup';
+import RolesEnum from '../constant/Roles';
 export interface RoleInDTO {
     createdAt: string;
     deleted: boolean;
@@ -10,11 +12,19 @@ export interface RoleInDTO {
     name: string;
     label: string;
     updatedAt: string;
+    type?: RolesEnum;
     owner: RoleOwnerEnum;
     owners: RoleOwnerEnum[];
     ownerRef?: string;
     enableAccessToApp: boolean;
     defaultStar: boolean;
+    direct?: boolean;
+    inherited?: boolean;
+    grantedBy?: RoleGrantorDTO[];
+}
+export interface RoleGrantorDTO {
+    id: number;
+    type: UserGroupType;
 }
 export declare const isRoleToAccessApp: (role: RoleInDTO) => boolean;
 export declare const formatRoleLabel: (role: RoleInDTO) => RoleInDTO;

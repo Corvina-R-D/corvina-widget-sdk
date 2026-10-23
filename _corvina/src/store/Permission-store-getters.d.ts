@@ -3,7 +3,6 @@ declare const _default: {
     getCurrentOrganizationIOTEnabled(state: any): any;
     getCurrentOrganizationVPNEnabled(state: any): any;
     getCurrentOrganizationOPTRequired(state: any): any;
-    getCurrentOrganizationVPNPairingMode(state: any): any;
     getCurrentFormUser(state: any): any;
     getCurrentFormGroup(state: any): any;
     getCurrentFormRole(state: any): any;
@@ -27,8 +26,11 @@ declare const _default: {
     getHasRptToken(state: any): any;
     getLoginError(state: any): string | null;
     getAgreementsReminderShownInSession(state: any): any;
+    getDataTemporarilyDisabledReminderShownInSession(state: any): any;
     getOrganizationAllowRegister(state: any, getters: any, rootState: any, rootGetters: any): boolean;
     getLoggedUser(state: any): any;
+    isUserServiceAccount(state: any): any;
+    getTokenHasAmrValid(state: any, getters: any): boolean;
     getIsTrial(state: any): boolean;
     getTrialExpirationDate(state: any): any;
     getIsEditingSuborg(state: any): boolean;
@@ -36,5 +38,8 @@ declare const _default: {
     getSelectedSubOrganization(state: any): any;
     getAccessToken(state: any): any;
     getRefreshPermissionsRequired(state: any): number;
+    getMgmtSsoGroups(state: any): string[];
+    isMgmtSsoUser(state: any, getters: any): boolean;
+    isSsoSudoer(state: any, getters: any): boolean;
 };
 export default _default;

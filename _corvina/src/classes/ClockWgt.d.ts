@@ -1,28 +1,20 @@
 import { BaseWgt, Value } from "@/corvina-model";
-import { IClockConfiguration } from "../interfaces/dashboard";
-export declare enum DATAWINDOW_MODE {
-    DURATION = 0,// Autoscroll: Form now to X units
-    FIXED_INTERVAL = 1,// Interval: From X to Y
-    RELATIVE = 2
-}
+import { IClockConfiguration, DATAWINDOW_MODE } from "../interfaces/dashboard";
+import { TIME_UNITS } from "@/interfaces/dashboardClock";
 export declare enum CLOCK_MODE {
-    INDIPENDENT = 0,
+    INDEPENDENT = 0,
     LINKED = 1
 }
-declare enum SHIFT_DIRECTION {
+export declare enum SHIFT_DIRECTION {
     BACKWARD = "backward",
     FORWARD = "forward"
 }
-declare enum TIME_UNITS {
-    MILLISECONDS = "milliseconds",
-    MINUTES = "minutes",
-    HOURS = "hours",
-    DAYS = "days",
-    WEEKS = "weeks",
-    YEARS = "years"
-}
-interface IShift {
+export interface IShift {
     direction: SHIFT_DIRECTION;
+    value: number;
+    unit: TIME_UNITS;
+}
+export interface IDurationStruct {
     value: number;
     unit: TIME_UNITS;
 }
@@ -37,33 +29,59 @@ declare class ClockWgt extends BaseWgt {
     protected duration: number;
     protected autoscroll: boolean;
     protected autoscrollTimerID: number;
-    protected futureIntervalTimerID: number;
+    protected beatIntervalTimerID: number;
     protected shift: IShift;
-    protected humanDuration: {
+    protected durationStruct: {
         value: number;
         unit: TIME_UNITS;
     };
     protected realtimeTimer: any;
     constructor(args: any);
-    protected updateHumanDuration(): void;
+    protected updateDurationStructFromDuration(): void;
+    protected calcDurationFromStruct(): number;
     protected castValueToDate(value: Value<Date> | number | string | Date): Date;
-    private setRealtimeTimer;
+    private scheduleNotificationReachNow;
     getClockConfiguration(): IClockConfiguration;
     private attachToLinkedClock;
     private detachLinkedClock;
+    private applyCalendarShift;
     private applyShift;
     private getShiftMillis;
     getPropertyValue(prop: string): any;
     private emitDateIntervalUpdated;
+    private _handleDateIntervalChange;
+    private _handleStartDateChange;
+    private _handleEndDateChange;
+    private _handleShiftChange;
+    private _handleClockModeChange;
+    private _handleModeChange;
+    private _handleLinkedClockIdChange;
+    private _handleDurationStructChange;
+    private durationFromStructValue;
+    private validateDuration;
+    private _handleDurationChange;
+    private _isCalendarUnit;
+    private _handleAutoscrollChange;
     setPropertyValue({ prop, value }: {
         prop: any;
         value: any;
     }): void;
-    protected updateFutureIntervalRefresh(): void;
-    protected disableFutureIntervalRefresh(): void;
+    getRefreshInterval(): number;
+    protected getAutoscrollRefreshInterval(): number;
+    protected getBeatDataRefreshInterval(): number;
+    protected enableBeatDataPolling(): void;
+    protected disableBeatDataPolling(): void;
     protected startAutoscroll(): void;
     protected stopAutoscroll(): void;
     protected updateTimeRangeFromDuration(): void;
+    calendarIntervalTo(durationStruct: {
+        value: number;
+        unit: TIME_UNITS;
+    }, date: Date): {
+        startDate: Date;
+        endDate: Date;
+    };
+    protected updateTimeRangeFromCalendar(): void;
     stop(): void;
     serialize(): any;
 }

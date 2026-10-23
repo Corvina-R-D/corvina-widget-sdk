@@ -24,6 +24,12 @@ declare const _default: {
     SAVE_USER_GROUPS(state: any, data: any): void;
     SAVE_USER_GROUPS_PAGINATION(state: any, pagination: any): void;
     SAVE_USER_GROUPS_MINE(state: any, data: any): void;
+    SAVE_IAM_ORG_CACHE(state: any, { orgId, key, value }: {
+        orgId: any;
+        key: any;
+        value: any;
+    }): void;
+    RESET_IAM_ORG_CACHE(state: any): void;
     SAVE_ROLES(state: any, data: any): void;
     SAVE_MODEL_ROLES(state: any, data: any): void;
     SAVE_DATA_ROLES(state: any, data: any): void;
@@ -32,6 +38,8 @@ declare const _default: {
     SAVE_MODEL_ROLES_PAGINATION(state: any, pagination: any): void;
     SELECT_ORGANIZATION_ID(state: any, organization: any): void;
     SAVE_CURRENT_USER_ORGANIZATIONS(state: any, data: any): void;
+    ADD_CURRENT_USER_ORGANIZATION(state: any, organization: any): void;
+    REMOVE_CURRENT_USER_ORGANIZATION(state: any, organizationId: any): void;
     SAVE_ORGANIZATIONS(state: any, data: any): void;
     SAVE_ORGANIZATIONS_CONTROLLERS(state: any, data: Array<any>): void;
     SAVE_CURRENT_RESOURCES(state: any, resources: any): void;
@@ -90,6 +98,10 @@ declare const _default: {
         userId: any;
         data: any;
     }): void;
+    SAVE_USER_SELF_GROUP(state: any, { userId, selfGroup }: {
+        userId: any;
+        selfGroup: any;
+    }): void;
     SAVE_ADDITIONAL_GROUP_DATA(state: any, { groupId, data }: {
         groupId: any;
         data: any;
@@ -97,6 +109,7 @@ declare const _default: {
     SET_HAS_RPT_TOKEN(state: any, hasRptToken: any): void;
     SET_LOGIN_ERROR(state: any, loginError: string | null): void;
     SET_AGREEMENTS_REMINDER_SHOWN_IN_SESSION(state: any, shown: any): void;
+    SET_DATA_TEMPORARILY_DISABLED_REMINDER_SHOWN_IN_SESSION(state: any, shown: boolean): void;
     SET_TRIAL_EXPIRATION_DATE(state: any, expirationDate: any): void;
     SET_ACCESS_TOKEN(state: any, accessToken: any): void;
     SET_REFRESH_PERMISSIONS_REQUIRED(state: any): void;

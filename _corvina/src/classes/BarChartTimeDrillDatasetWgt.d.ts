@@ -40,5 +40,6 @@ export default class BarChartTimeDrillDatasetWgt extends TrendDatasetWgt {
     }): void;
     getPropertyValue(prop: string): any;
     removeChild(childIndex: number): BaseWgt;
+    shouldUseBoundaryPoints(): boolean;
     serialize(): any;
 }

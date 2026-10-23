@@ -216,6 +216,9 @@ module.exports = {
     runtimeChunk: false
   },
   devtool: 'eval-source-map',
+  // vue-loader 15 imports the <style> blocks as default exports, used only by CSS modules:
+  // the warning of the recent webpack versions about them is harmless
+  ignoreWarnings: [ /export 'default' \(imported as 'style\d+'\) was not found/ ],
   plugins: [
     // One file per package: Corvina runs only lib.js, the chunks of dynamic imports would never be loaded
     new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),

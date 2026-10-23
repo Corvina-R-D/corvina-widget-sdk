@@ -7,6 +7,7 @@ interface IFetchHistoricalDataArgs {
     from: number;
     to: number;
     maxSamples?: number;
+    maxAggregationSamples?: number;
     aggregation?: any;
     downsampling?: {
         size: number;
@@ -50,6 +51,11 @@ export default class DataLink {
     stop(): void;
     getDatalinkWithDuplicateTarget(): DataLink;
     refreshValue(): void;
+    /**
+     * Returns the current value of the source property (variables resolved, array tags deconstructed),
+     * regardless of linkToModel.
+     */
+    getSourceValue(): any;
     private resolveVariable;
     private initXForm;
     addXForm(xForm: any): void;
@@ -66,8 +72,8 @@ export default class DataLink {
     getTargetWidget(): BaseWgt | xForm;
     private watchModel;
     private watch;
-    getClockCongfiguration(): import("../interfaces/dashboard").IClockConfiguration;
-    fetchHistoricalData({ from, to, maxSamples, aggregation, downsampling, filters }: IFetchHistoricalDataArgs): Promise<DataValue[]>;
+    getClockConfiguration(): import("../interfaces/dashboard").IClockConfiguration;
+    fetchHistoricalData({ from, to, maxSamples, maxAggregationSamples, aggregation, downsampling, filters }: IFetchHistoricalDataArgs): Promise<DataValue[]>;
     static clockIdToName(id: string): string;
     static clockNameToId(name: string): string;
     static idToName(expression: string): string;
@@ -76,7 +82,7 @@ export default class DataLink {
         prop: string;
         id: string;
     };
-    getSourcePropertyInfo(): import("@/corvina-model").DeviceSlot | import("./utils/ModelUtility").DataModelDeviceSlot | import("./utils/ModelUtility").PropertyMetaInfo;
+    getSourcePropertyInfo(): import("@/corvina-model").DeviceSlot | import("../utils/dashboardDeviceModel").DataModelDeviceSlot | import("../utils/dashboardDeviceModel").PropertyMetaInfo;
     getXForm(): any;
     setPermission(permission: 'readonly' | 'read/write' | 'write'): void;
 }

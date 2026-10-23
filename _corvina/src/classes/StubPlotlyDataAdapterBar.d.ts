@@ -1,4 +1,4 @@
-import DataAdapter, { DataTransformFunction } from "./DataAdapter";
+import DataAdapter from "./DataAdapter";
 import { IChartData } from "@/interfaces/plotly";
 import { BaseObject } from "src/interfaces/Widgets";
 export interface StubIChartData extends IChartData {
@@ -19,7 +19,7 @@ export default class StubDataAdapterBar<DataSerie extends BaseObject> extends Da
         isLeaf: boolean[];
     };
     protected __removeSlotName(str: string): string | false;
-    protected fillChartData(source: DataSerie, targetData: StubIChartData, style?: any, transformations?: DataTransformFunction[]): void;
+    protected fillChartData(source: DataSerie, targetData: StubIChartData, style?: any): void;
     protected getDataTemplate(): StubIChartData;
     private extractStyle;
     protected normalizeUniqueCurveNames(): void;

@@ -102,6 +102,7 @@ widgets from a specification or from HTML code; the projects created by the CLI 
 
 - Developer Portal: [Overview](https://docs.corvina.cloud/docs/sdk-dashboard-widget/Overview),
   [Installation](https://docs.corvina.cloud/docs/sdk-dashboard-widget/Installation),
+  [Images and assets](https://docs.corvina.cloud/docs/sdk-dashboard-widget/image_assets),
   [Changelogs](https://docs.corvina.cloud/docs/category/changelogs)
 - In this repository: [doc/cli.md](doc/cli.md), [doc/widgets_without_vue.md](doc/widgets_without_vue.md),
   [Changelog.md](Changelog.md)

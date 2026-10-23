@@ -35,7 +35,7 @@ export default class TagValue {
     static isSimpleType(type: string): boolean;
     static isNumericType(type: string): boolean;
     static isArray(type: string): boolean;
-    static makeValue(type: string): false | "" | 0 | Date;
+    static makeValue(type: string): false | 0 | "" | Date;
     static cast(value: any, type: string): any;
     static getInvalidValue(value: any): any;
     static getTypeFromValue(value: any): TagDataType;

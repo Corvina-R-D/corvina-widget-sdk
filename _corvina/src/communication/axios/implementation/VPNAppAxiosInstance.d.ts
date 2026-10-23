@@ -33,6 +33,7 @@ declare class VPNAppAxiosInstance {
     private axiosInstance;
     constructor();
     setHostnameAndPort(hostname: string, port: number): void;
+    get baseURL(): string;
     testServiceIsRunning(hostname: string, port: number): Promise<any>;
     getConfigApp(): Promise<any>;
     setConfigApp(data: any): Promise<unknown>;

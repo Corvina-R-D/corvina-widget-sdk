@@ -1,5 +1,6 @@
 export declare enum AgreementType {
     TERM = "TERM",
+    TERM_IT = "TERM_IT",
     PRIVACY = "PRIVACY",
     MAINTENANCE = "MAINTENANCE"
 }
@@ -11,6 +12,8 @@ export interface CheckAgreementOutDTO {
 }
 export interface AgreementOutDTO {
     acceptanceField: string;
+    acceptanceFieldHtml: string | null;
+    noticeHtml: string | null;
     createdAt: number;
     defaultName: string;
     id: number;

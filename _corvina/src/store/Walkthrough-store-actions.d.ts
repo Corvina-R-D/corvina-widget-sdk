@@ -10,6 +10,7 @@ declare const _default: {
         deviceId: any;
         presetId: any;
     }): Promise<void>;
+    applyDeviceEmptyConfiguration(context: any, deviceId: any): Promise<void>;
     saveDevice(context: any, device: any): void;
     fetchDeviceByHwId(context: any, deviceId: string): Promise<import("@/interfaces/device").DeviceIn>;
     checkActivationCode(context: any, activationCode: any): Promise<import("../interfaces/devicelicence").ActivationLicenseInDTO>;

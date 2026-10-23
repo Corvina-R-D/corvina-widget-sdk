@@ -51,6 +51,8 @@ export { default as ComposedWgt } from "./classes/ComposedWgt";
 export { default as ActionWgt } from "./classes/ActionWgt";
 export { default as LegacyWgt } from "./classes/LegacyWgt";
 export { default as SynopticWgt } from "./classes/SynopticWgt";
+export { default as AbsoluteLayoutWgt } from "./classes/AbsoluteLayoutWgt";
+export { default as ReportHeaderFooterWgt } from "./classes/ReportHeaderFooterWgt";
 export { default as xFormula } from "./classes/xFormula";
 export { default as xForm } from "./classes/xForm";
 export { default as DatasetWgt } from "./classes/DatasetWgt";

@@ -10,13 +10,14 @@ import { SecurityPolicyQueryParamsDTO, SecurityPolicyOutDTO, SecurityPolicyInDTO
 import { DeviceQueryParamsDTO, DeviceRepositoryDTO, DeviceOutDTO } from '@/interfaces/device';
 import { ApplicationOutDTO, ApplicationsQueryParamsDTO } from '@/interfaces/applications';
 import { AccountDTO, AccountPatchDTO } from '@/interfaces/account';
+import { FeatureFlagsOutDTO } from '@/interfaces/featureFlags';
 export default interface ICorvinaCoreAxiosInstance {
     fetchUsers(organizationId: number, params?: UserQueryParamsDTO): Promise<PaginationRestDTO<UserInDTO>>;
     deepSearchUsers(params?: UserDeepSearchQueryParamsDTO): Promise<PaginationRestDTO<DeepSearchUserDTO>>;
     fetchUser(organizationId: number, userId: number): Promise<UserInDTO>;
     fetchUserByUsername(organizationId: number, username: string): Promise<UserInDTO>;
     createUser(organizationId: number, data: UserOutDTO): Promise<UserInDTO>;
-    updateUser(organizationId: number, userId: number, newEmail: string | null, newPassword: string | null, passwordChangeInvitation: boolean | null, groupPoliciesEnabled: boolean | null): Promise<UserInDTO>;
+    updateUser(organizationId: number, userId: number, newEmail: string | null, newPassword: string | null, passwordChangeInvitation: boolean | null, groupPoliciesEnabled: boolean | null, socialLoginOnly?: boolean | null): Promise<UserInDTO>;
     deleteUser(organizationId: number, userId: number): Promise<UserInDTO>;
     fetchUserGroups(organizationId: number, params?: UserGroupQueryParamsDTO): Promise<PaginationRestDTO<UserGroupInDTO>>;
     fetchUserGroup(organizationId: number, userGroupId: number): Promise<UserGroupInDTO>;
@@ -42,6 +43,7 @@ export default interface ICorvinaCoreAxiosInstance {
         waitLicenseManager: boolean;
     }): Promise<OrganizationInDTO>;
     fetchOrganization(organizationId: string): Promise<OrganizationInDTO>;
+    fetchFeatureFlags(organizationResourceId: string): Promise<FeatureFlagsOutDTO>;
     updateSubOrganization(organizationId: number, data: OrganizationUpdateDTO): Promise<OrganizationInDTO>;
     deleteOrganization(organizationId: number): Promise<OrganizationInDTO>;
     fetchCurrentUserOrganizations(): Promise<OrganizationInDTO[]>;
@@ -58,6 +60,7 @@ export default interface ICorvinaCoreAxiosInstance {
     fetchSecurityPolicyGroupsByParent(organizationId: number, securityPolicyGroupId: number, params?: SecurityPolicyQueryParamsDTO): Promise<PaginationRestDTO<SecurityPolicyInDTO>>;
     fetchDevices(organizationId: number, params?: DeviceQueryParamsDTO): Promise<PaginationRestDTO<DeviceRepositoryDTO>>;
     fetchDeviceByLabel(organizationId: number, deviceLabel: string): Promise<DeviceOutDTO>;
+    forceEnableDeviceIot(organizationId: number, hwId: string): Promise<void>;
     fetchApplications(params?: ApplicationsQueryParamsDTO): Promise<PaginationRestDTO<ApplicationOutDTO>>;
     fetchAccount(): Promise<AccountDTO>;
     patchAccount(patch: AccountPatchDTO): Promise<void>;

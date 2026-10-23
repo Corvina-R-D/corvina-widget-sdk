@@ -34,12 +34,11 @@ declare class ProductsAxiosInstance extends AbstractAxiosInstance {
     getLicense(orgResId: string, licenseId: any): Promise<any>;
     createLicense(license: LicenseDTO): Promise<unknown>;
     deleteLicense(licenseId: string): Promise<any>;
-    updateLicenseAutorenew(licenseId: number, autoRenew: boolean): Promise<any>;
+    updateLicense(licenseId: number, autoRenew?: boolean, expirationDate?: number): Promise<any>;
     renewLicense(licenseId: number): Promise<any>;
     activateLicense(orgId: string, licenseCode: string): Promise<any>;
     licensesCount(): Promise<any>;
     getProduct(id: number): Promise<any>;
-    DBGPrintToken(): Promise<void>;
     getTrialExpiration(orgId: string): Promise<number>;
 }
 declare const _default: ProductsAxiosInstance;

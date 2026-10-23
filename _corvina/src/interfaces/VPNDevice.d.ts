@@ -1,5 +1,10 @@
 import { UserAuthorizationDTO } from './userGroup';
 export type ConnectionStatusDTO = 'online' | 'offline' | 'connected' | 'in-use' | 'busy' | 'all';
+export interface Layer2AgentArchitecture {
+    name: string;
+    version: string;
+    url: string;
+}
 export interface VPNConnectedUser {
     name: string;
     domain: string;
@@ -7,6 +12,7 @@ export interface VPNConnectedUser {
 export interface VPNDeviceDTO extends ActivateDeviceLicenseInDTO {
     status: ConnectionStatusDTO;
     resetRequired?: boolean;
+    licenseVendor?: LicenseVendor;
     connectedUsers?: VPNConnectedUser[];
     remark?: string;
     name: string;
@@ -23,6 +29,8 @@ export interface VPNDeviceDTO extends ActivateDeviceLicenseInDTO {
     connectedFrom?: string;
     userPingQuality?: VPNDevicePingQuality;
     devicePingQuality?: VPNDevicePingQuality;
+    currentUserConnected?: boolean;
+    safeMode?: boolean;
     alias: string;
     fromDateVpn: string;
     label: string;
@@ -68,16 +76,45 @@ export default interface VPNDevice {
     gateway_virtualnetwork_size?: string;
     preferred_region?: string;
     use_fallback_config?: boolean;
+    layer2_enabled?: boolean;
     bytesReceived?: number;
     bytesSent?: number;
     connectedFrom?: string;
     userPingQuality?: VPNDevicePingQuality;
     devicePingQuality?: VPNDevicePingQuality;
+    currentUserConnected?: boolean;
+    safeMode?: boolean;
     __endpointConnections__unstable__?: Partial<VPNDeviceEndpoint>[];
     otpRequired?: boolean;
     vpnReady?: boolean;
     policies?: string[];
     enabled?: boolean;
+    licenseVendor?: LicenseVendor;
+}
+export declare enum OpenVpnConfigBrand {
+    EWON = "ewon"
+}
+export declare enum LicenseVendor {
+    OPENVPN = "openvpn",
+    ANY = "*"
+}
+export interface VPNRenewalsDTO {
+    deviceId: string;
+    realmId: string;
+    id: string;
+    orgResourceId: string;
+    organizationId: string;
+    name: string;
+    description: string;
+    groups: string[];
+    lastConnectionAt: string | null;
+    connectionHoursOverPeriod: number;
+    usageCountsOverPeriod: number;
+    numOfSecondsAutoRenewVpn: number | null;
+    toDateVpn: string | null;
+    fromDateVpn: string | null;
+    lastUsageAt: string | null;
+    isExpired: boolean;
 }
 export interface VPNDeviceExtended extends VPNDevice {
     cc1Position?: [string, string];
@@ -99,7 +136,9 @@ export interface VPNGatewayDTO {
     gateway_virtualnetwork_size: string;
     preferred_region?: string;
     use_fallback_config?: boolean;
+    layer2_enabled?: boolean;
     policies?: string[];
+    hwId: string;
 }
 export type VPNDeviceEndpointType = 'gateway' | 'device' | 'network';
 export interface VPNEndpointDTO {
@@ -174,6 +213,9 @@ export interface VPNApplicationSSH extends VPNApplicationAdvancedConfiguration {
     terminalColorScheme: string;
     font: string;
     fontSize: number;
+    passwordSet?: boolean;
+    privateKeySet?: boolean;
+    passphraseSet?: boolean;
 }
 export interface VPNApplicationTelnet extends VPNApplicationAdvancedConfiguration {
     type: 'telnet';
@@ -185,6 +227,7 @@ export interface VPNApplicationTelnet extends VPNApplicationAdvancedConfiguratio
     terminalColorScheme: string;
     font: string;
     fontSize: number;
+    passwordSet?: boolean;
 }
 export interface VPNApplicationVNC extends VPNApplicationAdvancedConfiguration {
     type: 'vnc';
@@ -200,6 +243,7 @@ export interface VPNApplicationVNC extends VPNApplicationAdvancedConfiguration {
     chatEnabled: boolean;
     disableCopy: boolean;
     disablePaste: boolean;
+    passwordSet?: boolean;
 }
 export declare enum VPNApplicationRDPSecurity {
     ANY = "Any",
@@ -260,6 +304,7 @@ export interface VPNApplicationRDP extends VPNApplicationAdvancedConfiguration {
     remoteAppName: string;
     remoteAppWorkingDirectory: string;
     remoteAppArguments: string;
+    passwordSet?: boolean;
 }
 export interface VPNCustomData {
     id: number;
@@ -295,6 +340,9 @@ export interface VPNApplication {
     linuxExternalAppArguments?: string;
     configuration?: VPNApplicationAdvancedConfiguration | VPNApplicationCustomConfiguration | VPNApplicationSSH | VPNApplicationRDP | VPNApplicationVNC | VPNApplicationTelnet;
     new?: boolean;
+    password_clear?: boolean;
+    ssh_private_key_clear?: boolean;
+    ssh_passphrase_clear?: boolean;
 }
 export interface VPNProfile {
     id: string;
@@ -396,6 +444,9 @@ export interface ActionRequestDTO {
     vnc_swap_red_blue?: boolean;
     windows_clientless_application?: boolean;
     windows_external_application?: boolean;
+    password_clear?: boolean;
+    ssh_private_key_clear?: boolean;
+    ssh_passphrase_clear?: boolean;
 }
 export interface ActionSimpleDTO {
     id?: string;
@@ -475,22 +526,18 @@ export interface ActionFullDTO extends ActionSimpleDTO {
     telnet_username_regex?: any;
     telnet_password_regex?: any;
     telnet_font_size?: any;
+    password_set?: boolean;
+    ssh_private_key_set?: boolean;
+    ssh_passphrase_set?: boolean;
+    password_clear?: boolean;
+    ssh_private_key_clear?: boolean;
+    ssh_passphrase_clear?: boolean;
 }
-import { PageableFullDTO } from '../communication/axios/model/generic';
 import { ActivateDeviceLicenseInDTO } from './devicelicence';
 export interface UserPreferenceVpnApplicationMain {
     gateway: string;
     endpoint: string;
-    applicationProfile: string;
     application: string;
-}
-export interface UserPreferenceVpnApplicationFull extends UserPreferenceVpnApplicationMain {
-    id: number;
-    username: string;
-    orgResourceId: string;
-}
-export interface UserPreferenceApplicationDTO extends PageableFullDTO {
-    content: UserPreferenceVpnApplicationFull[];
 }
 export interface DeviceLogsDTO {
     action: string;
@@ -552,10 +599,11 @@ export type VPNEndpointJsonActions = {
     [deviceLabel: string]: VPNJsonActionDTO;
 };
 export interface VpnApplicationUserPreferenceMain {
-    gateway: string;
-    endpoint: string;
-    applicationProfile: string;
+    id?: number;
+    gatewayId: string;
+    endpointId: string;
     application: string;
+    json?: string;
 }
 export interface VpnExecuteActionOutDTO {
     clientlessApplication?: boolean;
@@ -582,4 +630,29 @@ export interface VpnExecuteActionOutDTO {
 }
 export interface VPNRegionsDTO {
     regions: string[];
+}
+export declare class DirectAccessApplicationPreference implements UserPreferenceVpnApplicationMain {
+    private _gateway;
+    private _endpoint;
+    private _applicationName;
+    constructor(gateway: VPNGatewayDTO, endpoint: VPNEndpointDTO, applicationName: string);
+    get gateway(): string;
+    get gatewayId(): string;
+    get endpoint(): string;
+    get endpointId(): string;
+    get application(): string;
+    get name(): string;
+    get path(): string;
+    get gatewayObj(): {
+        id: string;
+        hwId: string;
+        name: string;
+    };
+    get endpointObj(): {
+        id: string;
+        name: string;
+        actionProfile: string;
+    };
+    static fromPath(vpnStore: any, gatewayHwIdOrName: string, endpointIdOrName: string, applicationName: string): Promise<DirectAccessApplicationPreference | null>;
+    static fromJson(json: string): Promise<DirectAccessApplicationPreference | null>;
 }

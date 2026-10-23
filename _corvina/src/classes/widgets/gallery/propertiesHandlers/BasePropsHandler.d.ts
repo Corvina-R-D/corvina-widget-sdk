@@ -21,4 +21,6 @@ export default class BasePropsHandler {
         tooltip: string;
     }[];
     fetchAsyncModelProperties(wgt: BaseWgt, prop: string): Promise<IAsyncModelProperty[]>;
+    getPropertyHandler(prop: string): any;
+    setPropertyHandler(prop: string, value: any): void;
 }

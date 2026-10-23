@@ -6,7 +6,10 @@ declare const _default: {
     };
     getters: {
         getQueryKeys(state: any): (key: any) => any;
-        getSortingValues(state: any): (key: any) => any;
+        getSortingValues(state: any): (key: any) => {
+            text: any;
+            value: string;
+        }[];
     };
     actions: {
         addSortingValues(context: any, data: [{

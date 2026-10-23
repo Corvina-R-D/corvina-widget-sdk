@@ -6,9 +6,10 @@ import { DataValue } from '../communication/axios/model/devicedata';
 import { PlatformQueryDataDTO } from "../interfaces/IPlatformController";
 import { TagConf, IClockConfiguration } from '@/interfaces/dashboard';
 import DeviceMetadataMgr from './DeviceMetadataMgr';
-import { DataModelDeviceSlot, DataModelDeviceSlotProperty, PropertyMetaInfo } from './utils/ModelUtility';
+import { DataModelDeviceSlot, DataModelNode, PropertyMetaInfo } from '@/utils/dashboardDeviceModel';
 import Tag from "./Tag";
 export { default as Tag } from "./Tag";
+import { IReadHistDataOptions } from "./BaseWgt";
 interface TagMap {
     [key: string]: Tag;
 }
@@ -54,8 +55,13 @@ export default class TagMgr extends BaseDatasourceWgt {
     updateTagClock(clock: IClockConfiguration): Promise<void>;
     getTagsByClock(clockId: string): string[];
     addTagConfiguration(tagName: string): void;
+    private tagConfigurationOf;
+    /**
+     * The platform name (deviceId/modelPath) the query sent to platform-api gives the tag, also for a tag not
+     * configured yet, e.g. one just written in a formula; undefined when the tag has no device
+     */
+    platformTagName(tagName: string): string | undefined;
     addTag(tagName: string, v?: Value<any>, occurences?: number): void;
-    addTagWithoutClock(tagName: string, v?: Value<any>, occurences?: number): void;
     addTagWithClock(tagName: string, v?: Value<any>, occurences?: number): void;
     private resolveProxyModelPath;
     private isDeviceSlotProxy;
@@ -63,19 +69,29 @@ export default class TagMgr extends BaseDatasourceWgt {
     private findTag;
     verifyTagReferenceCounter(mapTags: Map<string, number>): void;
     connect(tagInfo: TagConf): void;
-    readHistData(tagName: string, from: number, to: number, nSamples: number, downsample?: boolean, aggregation?: any, downsampling?: {
+    readHistData(options: IReadHistDataOptions): Promise<Array<DataValue> | DataValue>;
+    readHistData(prop: string, from: number, to: number, nSamples: number, downsample: boolean, aggregation?: any, downsampling?: {
         size: number;
     }, filterCondition?: string, filters?: {
         filterRawData: string;
-    }): Promise<Array<DataValue>>;
+    }): Promise<Array<DataValue> | DataValue>;
     queryData(query: PlatformQueryDataDTO, options?: {
         autoSource: boolean;
     }): Promise<Array<DataValue>>;
     getQueryDataDefinition(query: PlatformQueryDataDTO): {
         method: string;
         url: string;
-        params: PlatformQueryDataDTO;
-    };
+        data: PlatformQueryDataDTO;
+    } | undefined;
+    resetDeviceName(slotName: string): Promise<void>;
+    private setDeviceSlotModelProperties;
+    private updateDeviceSlotModel;
+    private isVersionCompatible;
+    private fetchCompatibleDevice;
+    private initDeviceSlots;
+    private initServiceInterface;
+    private initTags;
+    private hasMetadataTags;
     private init;
     getDataModel(filterModel?: string): DataModelDeviceSlot;
     getTagInfo(tagName: string): DeviceSlot | DataModelDeviceSlot | PropertyMetaInfo;
@@ -84,7 +100,7 @@ export default class TagMgr extends BaseDatasourceWgt {
     getReferenceCounter(): {
         [tagName: string]: number;
     };
-    getTagPropertyChain(fullName: string, property: string): [string | DataModelDeviceSlotProperty];
+    getTagPropertyChain(fullName: string, property: string): [string | DataModelNode];
     isReady(): Promise<any>;
     private calculateTagsMap;
 }

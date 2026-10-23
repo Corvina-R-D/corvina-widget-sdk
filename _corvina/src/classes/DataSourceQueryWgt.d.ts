@@ -51,11 +51,12 @@ export default class DataSourceQueryWgt extends BaseWgt {
     private clockId;
     constructor(args: IWgtConstructorParams<IWidgetSerialization>);
     refresh(pStart?: number, pEnd?: number): Promise<void>;
+    getClockId(): string;
     private getStartDate;
     private getEndDate;
     private initMode;
     private getData;
-    fetchData(pStart?: number, pEnd?: number, limit?: number): Promise<{
+    fetchData(pStart?: number, pEnd?: number, limitRawData?: number, limitAggregatedData?: number): Promise<{
         data: DataValue[];
         timestamps: number[];
         values: any[];
@@ -68,15 +69,23 @@ export default class DataSourceQueryWgt extends BaseWgt {
         value: any;
     }): void;
     getPropertyValue(property: string): any;
-    private isLabelDefaultValue;
     clearTrendData(): void;
     private getDataLimit;
+    private getAggregationDataLimit;
     private createQuery;
+    /**
+     * The sources of the query as platform-api receives them. [] when platform-api takes them from the maps (the
+     * sources are not sent); undefined when the query cannot be built, e.g. a tag without configuration.
+     */
+    serverQuerySources(): Array<{
+        deviceId?: string | null;
+        modelPath?: string | null;
+    }> | undefined;
     getQueryDefinition(): {
         method: string;
         url: string;
-        params: PlatformQueryDataDTO;
-    };
+        data: PlatformQueryDataDTO;
+    } | undefined;
     private fetchFormula;
     private fetchTag;
     private getAggregation;

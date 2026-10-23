@@ -1,8 +1,10 @@
 import { BaseWgt } from "@/corvina-module";
+import type { ServerFormulaOptions } from "@/utils/formula/ServerFormulaValidation";
 export declare enum ShowPropContext {
     ALL = 0,
     TwoD = 1,
-    ThreeD = 2
+    ThreeD = 2,
+    REPORT = 3
 }
 export interface ArbitraryPropControlOptions {
     [options: string]: any;
@@ -15,6 +17,7 @@ export interface InputPropControlOptions {
     emptyStringsAsUndefined?: boolean;
     appendIcon?: string;
     appendIconTooltip?: string;
+    appendIconProperty?: string;
 }
 export interface DatalinkPropControlOptions {
     hideRemoveButton?: boolean;
@@ -31,6 +34,8 @@ export interface FormulaPropControlOptions {
     dropable?: boolean;
     showErrorFromMonacoEditor?: boolean;
     weakDependencies?: boolean;
+    /** The formula is evaluated by platform-api: validate it there while it is edited */
+    serverFormula?: ServerFormulaOptions;
 }
 export interface PropHandlerSet {
     [propName: string]: IPropertyHandler;
@@ -48,12 +53,18 @@ export interface CardPropControlOptions {
     showAddButton?: boolean;
     useValueWithAttachEnabled?: boolean;
     maxItems?: number;
+    /** When the number of items reaches this value, a warning message is shown next to the add button */
+    warningMessageThreshold?: number;
 }
 export interface FlatCardPropControlOptions {
     /** Handler for the inner properties */
     propertyHandler?: IPropertyHandler | PropHandlerGenerator;
 }
-export type PropControlOptions = ArbitraryPropControlOptions | InputPropControlOptions | DatalinkPropControlOptions | FormulaPropControlOptions | CardPropControlOptions | FlatCardPropControlOptions;
+export interface DatasetListPropControlOptions {
+    datasetType: string;
+    datasetTitlePropName: string;
+}
+export type PropControlOptions = ArbitraryPropControlOptions | InputPropControlOptions | DatalinkPropControlOptions | FormulaPropControlOptions | CardPropControlOptions | FlatCardPropControlOptions | DatasetListPropControlOptions;
 export interface IPropHandlerSelectOption {
     value: any;
     display: string;
@@ -102,6 +113,8 @@ export default interface IPropertyHandler {
     exposed?: boolean;
     /** The property is used to drive the visibility of the property */
     helpReference?: string;
+    /** Property is available only in specified profiles */
+    profile?: string[];
 }
 export type IAsyncModelProperty = IPropertyHandler & {
     id: string;

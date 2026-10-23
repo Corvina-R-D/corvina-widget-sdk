@@ -83,6 +83,9 @@ export interface AppOrganizationOutDTO {
     freeTrial?: boolean;
     serviceAccountUsername?: string;
 }
+export interface AppUserPreferenceMain {
+    appKey: string;
+}
 export interface ApplicationOutDTO extends Hooks {
     id: number;
     key: string;
@@ -90,6 +93,7 @@ export interface ApplicationOutDTO extends Hooks {
     version: string;
     description: ManifestLocalizable;
     coverImageUrl: string;
+    iconUrl: string;
     images: ApplicationOutImage[];
     translations?: ManifestTranslations;
     status: APP_STATUS;
@@ -166,6 +170,7 @@ export interface Manifest {
     baseUrl: string;
     enableDeviceAccess: boolean;
     coverImageUrl: string;
+    iconUrl: string;
     authentication: Authentication;
     vendor: Vendor;
     lifecycle: Lifecycle;

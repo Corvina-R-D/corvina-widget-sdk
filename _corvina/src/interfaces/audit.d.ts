@@ -5,6 +5,7 @@ export interface AuditInDTO extends PaginationDTO {
 export interface AuditIn {
     actorUsername: string;
     impersonatedUsername: string;
+    mgmtSsoGroup: boolean;
     entityId: string | number;
     entityIdString: string;
     entityType: string;

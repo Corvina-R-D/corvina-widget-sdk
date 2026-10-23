@@ -23,5 +23,6 @@ export default class BaseDatasourceWgt extends BaseWgt {
         extent: number;
         unit: SizeUnit;
     };
+    isAggregationEnabled(): boolean;
 }
 export {};

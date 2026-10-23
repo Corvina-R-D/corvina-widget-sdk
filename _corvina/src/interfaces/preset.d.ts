@@ -28,11 +28,12 @@ export interface PresetAdditionalInfo {
     sendPolicy?: PresetSendPolicy;
     datalink?: PresetDatalink;
 }
+export type PresetFormulaFunctionOperator = 'sum' | 'average' | 'max' | 'min' | 'sum_time' | 'count' | 'deltaCounter' | 'first' | 'last' | 'closest';
 export interface PresetFormulaFunction {
     map: string;
     reduce?: {
-        operator: string;
-        param?: any;
+        operator: PresetFormulaFunctionOperator;
+        params?: any;
     };
 }
 export interface PlatformQueryDataInDTO {

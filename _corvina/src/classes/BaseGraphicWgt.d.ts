@@ -79,10 +79,13 @@ export interface IBaseGraphicWidgetSerialization extends IWidgetSerialization {
     elevation?: number;
     showPermissions: boolean;
     usePermissions: boolean;
-    enabledForUsers: Array<number>;
-    enabledForGroups: Array<number>;
-    visibleForUsers: Array<number>;
-    visibleForGroups: Array<number>;
+    enabledForGroups: Array<string>;
+    visibleForGroups: Array<string>;
+}
+/** A numeric property out of range: it must be less/greater or equal to another property of the widget or to a constant */
+export interface IRangeError {
+    mustBe: "lessOrEqual" | "greaterOrEqual";
+    bound: string | number;
 }
 export default abstract class BaseGraphicWgt extends BaseWgt {
     parent: BaseGraphicWgt;
@@ -153,8 +156,8 @@ export default abstract class BaseGraphicWgt extends BaseWgt {
     protected defaultPosition: string;
     showPermissions: boolean;
     usePermissions: boolean;
-    enabledForGroups: Array<number>;
-    visibleForGroups: Array<number>;
+    enabledForGroups: Array<string>;
+    visibleForGroups: Array<string>;
     inEditor: boolean;
     static styleProps: ({
         name: string;
@@ -175,7 +178,7 @@ export default abstract class BaseGraphicWgt extends BaseWgt {
     })[];
     mtxChainInfo: ChainElements;
     constructor(args: IWgtConstructorParams<IBaseGraphicWidgetSerialization>);
-    matchGroupOrUser(permittedGroups: Array<number>): boolean;
+    matchGroupOrUser(permittedGroups: Array<string | number>): boolean;
     get isVisiblePermitted(): boolean;
     get isEnabledPermitted(): boolean;
     get top(): number;
@@ -221,6 +224,24 @@ export default abstract class BaseGraphicWgt extends BaseWgt {
     protected _mapRect(mtx: number[][], rect: IBounds): IBounds;
     protected getCompleteTransform(targetParent: BaseGraphicWgt): Array<Array<number>>;
     setAsVisible(isVisible: any): void;
+    /**
+     * Return the intrinsic content height (in pixels) the widget needs to fully
+     * display its content for the given available width. Used by the grid layout
+     * Auto-Size Row feature (see GridLayoutClass.computeAutoSizeRowHeights).
+     *
+     * The width parameter is essential for widgets whose content height depends on
+     * the available horizontal space (e.g. word-wrapping text blocks).
+     *
+     * Concrete widget subclasses override this method according to their content
+     * type (text length/line-height for labels, row count for tables, etc.).
+     *
+     * @param availableWidth - The width available to the widget, already resolved
+     *                         by the layout's widthCalc step.
+     * @returns The required content height in pixels, or -1 when the widget does
+     *          not support intrinsic height calculation (default). A widget that
+     *          returns -1 is excluded from the auto-size computation for its row.
+     */
+    getContentHeight(availableWidth: number): number;
     get boundingRect(): IBounds;
     get boundingRectWidth(): number;
     set boundingRectWidth(value: number);
@@ -230,9 +251,10 @@ export default abstract class BaseGraphicWgt extends BaseWgt {
     setLayout(layout: LayoutConfig, size: string): void;
     setLayoutProp(prop: string, value: any, applyAlgorithm?: boolean, size?: number): void;
     updateLayout(): void;
-    setPropertyValue({ prop, value }: {
+    setPropertyValue({ prop, value, ts }: {
         prop: any;
         value: any;
+        ts?: number;
     }): void;
     /**
      * Schedules a new render() of an SDK widget registered without a Vue component (see SdkRender).
@@ -241,6 +263,19 @@ export default abstract class BaseGraphicWgt extends BaseWgt {
      */
     requestUpdate(): void;
     getPropertyValue(prop: any): any;
+    /**
+     * Range errors of a numeric property, to be shown by its property control.
+     * Override it in the widgets that validate their properties
+     */
+    getRangeErrors(prop: string): IRangeError[];
+    /** i18n keys and params of the errors of a property, read by the property control as `<prop>_errorMessages` */
+    getErrorMessages(prop: string): Array<{
+        key: string;
+        params: {
+            [name: string]: string | number;
+        };
+    }>;
+    getCustomCSSClasses(): string[];
     setHeight(height: number): void;
     setWidth(width: number): void;
     setRectHeight(height: number): void;
@@ -263,6 +298,11 @@ export default abstract class BaseGraphicWgt extends BaseWgt {
     getColSpan(size: number): number;
     getGridPosition(size: number): any;
     hasPositionInGridLayout(): boolean;
+    /**
+     * Transformation matrix actually rendered by getStyles(): mtx plus the 2D translation (tx, ty)
+     * and rotation (rx) when transform2D is enabled.
+     */
+    getRenderedTransform(): number[][];
     private applyTransformation;
     private cloneMatrix;
     private translate;

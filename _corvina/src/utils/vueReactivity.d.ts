@@ -11,7 +11,7 @@
  * observing them is pure overhead.
  */
 /**
- * Marks `value` so Vue 2 will never observe it, wherever it is stored later on — including
+ * Marks `value` so Vue will never observe it, wherever it is stored later on — including
  * reactive properties of other widgets and component `data`. The value stays a plain, mutable
  * array/object. Idempotent, and a no-op on primitives and non-extensible values (Vue already
  * skips those).

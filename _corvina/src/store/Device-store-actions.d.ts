@@ -12,8 +12,11 @@ export interface VuexFilterFetchModels {
     orderBy?: string;
     orderDir?: 'ASC' | 'DESC' | 'asc' | 'desc';
     nosave: boolean;
+    treeView?: boolean;
+    withAlarms?: boolean;
 }
 declare const _default: {
+    saveDevices(context: any, payload: any): void;
     setModalBusy(context: any, value: boolean): void;
     openModal(context: any): void;
     closeModal(context: any): void;
@@ -31,12 +34,15 @@ declare const _default: {
         devices: any;
         append: any;
         nosave: any;
+        treeView: any;
     }): Promise<any>;
     updateDeviceAlarms(context: any, { deviceId, alarms }: {
         deviceId: any;
         alarms: any;
     }): Promise<void>;
     fetchDevices(context: any, filter?: VuexFilterFetchModels): Promise<any>;
+    atLeastOneGatewayExists(context: any): Promise<boolean>;
+    openSubTable(context: any, gatewayId: string): Promise<void>;
     hasDeviceWithModelMapping(context: any, { modelId, presetName }: {
         modelId: string;
         presetName?: string;
@@ -93,6 +99,19 @@ declare const _default: {
         deviceId: any;
     }): Promise<void>;
     fetchDeviceLicense(context: any, deviceId: any): Promise<any>;
+    updateDevicePassword(context: any, { logicalId, password }: {
+        logicalId: any;
+        password: any;
+    }): Promise<void>;
+    confirmRenewal(context: any, { devices, plan }: {
+        devices: any;
+        plan: any;
+    }): Promise<import("../interfaces/devicelicence").VpnBulkRenewalDTO>;
+    renewEstimate(context: any, { numDevices, plan }: {
+        numDevices: any;
+        plan: any;
+    }): Promise<import("../interfaces/devicelicence").VpnBulkRenewalEstimateDTO>;
+    forceEnableDeviceIot(context: any, deviceId: string): Promise<void>;
     createDeviceGroup(context: any, securityPolicyData: SecurityPolicyOutDTO): Promise<import("../interfaces/securitypolicy").SecurityPolicyInDTO>;
     fetchDeviceGroup(context: any, securityPolicyGroupId: any): Promise<import("../interfaces/securitypolicy").SecurityPolicyInDTO>;
     updateDeviceGroup(context: any, { securityPolicyGroupId, securityPolicyGroupData }: {
@@ -135,6 +154,9 @@ declare const _default: {
     setDeviceGroupsTablePage(context: any, page: any): void;
     resetDeviceGroupList(context: any): void;
     updateDevice(context: any, newDevice: any): void;
+    fetchAndUpdateDevicesByIds(context: any, { deviceIds }: {
+        deviceIds: any;
+    }): Promise<void>;
     startWebsocket(context: any, { callback }: {
         callback: any;
     }): Promise<void>;

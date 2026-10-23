@@ -7,7 +7,11 @@ export interface IModalData {
     isVisible: boolean;
     title: string;
     message: string;
-    htmlMessage?: string;
+    messagePath?: string;
+    link?: {
+        label: string;
+        href: string;
+    };
     snackbarType?: SnackbarType;
     snackbarPosition?: SnackbarPosition;
     error?: any;
@@ -22,7 +26,11 @@ export interface IModalArgs {
     id: ModalEnum;
     title: string;
     message: string;
-    htmlMessage?: string;
+    messagePath?: string;
+    link?: {
+        label: string;
+        href: string;
+    };
     isVisible?: boolean;
     list?: string;
     type?: string;

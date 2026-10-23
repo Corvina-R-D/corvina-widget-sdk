@@ -3,7 +3,7 @@ export { globalWidgetRegistry, BasePropsHandler, BaseGallery, BaseGraphicPropsHa
 export type { IPropertyHandler, WidgetDataModel } from "@/corvina-model";
 export { CommunicationSettings, DataLink, Value, Layout, gs, setStore, store, GridLayout, DeviceMappingAxiosInstance, DashboardAxiosInstance, DeviceSlot, } from "@/corvina-model";
 export type { IDataLinkConstructorArgs, } from "@/corvina-model";
-export { BaseWgt, BaseGraphicWgt, TrendDatasetWgt, BarChartTimeDrillDatasetWgt, ProjectWgt, PageWgt, GroupWgt, ComposedWgt, xForm, xFormula, ActionWgt, TagMgr, DatasetWgt, StubDatasetWgt, LegacyWgt, ErrorPlaceholderWgt, SynopticWgt } from "@/corvina-model";
+export { BaseWgt, BaseGraphicWgt, TrendDatasetWgt, BarChartTimeDrillDatasetWgt, ProjectWgt, PageWgt, GroupWgt, ComposedWgt, xForm, xFormula, ActionWgt, TagMgr, DatasetWgt, StubDatasetWgt, LegacyWgt, ErrorPlaceholderWgt, SynopticWgt, AbsoluteLayoutWgt, } from "@/corvina-model";
 export type { IWidgetSerialization } from "@/corvina-model";
 export { useCorvinaI18n } from "@/corvina-model";
 export type { IRenderableWidget, IRenderableWidgetClass, WidgetRenderer, WidgetRenderSize, WidgetStyle, WidgetStyles } from "@/classes/SdkRender";

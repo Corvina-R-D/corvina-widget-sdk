@@ -1,9 +1,6 @@
-import { BaseWgt, GroupWgt } from "@/corvina-model";
+import { BaseGraphicWgt, GroupWgt } from "@/corvina-model";
 import { LayoutType } from "@/constant/Layouts";
-interface IAspectRatio {
-    width: number;
-    height: number;
-}
+import { IAspectRatio } from "@/interfaces/Widgets";
 export default class SynopticWgt extends GroupWgt {
     aspectRatio: IAspectRatio;
     dimensionReference: number;
@@ -14,7 +11,10 @@ export default class SynopticWgt extends GroupWgt {
     private getGreatestCommondivisor;
     private getImgSize;
     getLayoutType(): LayoutType;
-    addChild(child: BaseWgt): void;
+    /**
+     * Adapts a widget just added by the user (e.g. dropped from the gallery): a widget larger than 1/2.5 of the
+     * synoptic is scaled down. Not applied in addChild, so pasted or restored widgets (undo/redo) keep their bounds.
+     */
+    fitNewChild(child: BaseGraphicWgt): void;
     private scaleChild;
 }
-export {};

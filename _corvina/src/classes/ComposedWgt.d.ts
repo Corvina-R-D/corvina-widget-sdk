@@ -1,14 +1,14 @@
-import { Dashboard, DeviceSlot, GroupWgt, IDataLinkConstructorArgs, IWgtConstructorParams, IWidgetSerialization, Layout } from "@/corvina-model";
-import { CardStyleInTO, IDashboardSerialization } from "@/interfaces/dashboard";
+import { Dashboard, DeviceSlot, GroupWgt, IDataLinkConstructorArgs, IWgtConstructorParams, IWidgetSerialization, Layout, LanguageMgr } from "@/corvina-model";
+import { CardStyleInDTO, IDashboardSerialization } from "@/interfaces/dashboard";
 import PlaceholderWgt from "./PlaceholderWgt";
 import { IBaseGraphicWidgetSerialization } from "./BaseGraphicWgt";
 import { TagDataType } from "@/utils/Tag";
 import { DataValue } from '../communication/axios/model/devicedata';
-import { ArgsAddDatalinkOptions } from "./BaseWgt";
+import { ArgsAddDatalinkOptions, IReadHistDataOptions } from "./BaseWgt";
 export interface IComposedWidgetSerialization extends IBaseGraphicWidgetSerialization {
     content: {
         dashboardId?: string;
-        cardStyle?: CardStyleInTO;
+        cardStyle?: CardStyleInDTO;
         name: string;
         version: string;
     };
@@ -34,11 +34,12 @@ export default class ComposedWgt extends ComposedWgt_base {
     content: {
         deviceSlots?: Array<DeviceSlot>;
         datalinks?: Array<IDataLinkConstructorArgs>;
-        cardStyle?: CardStyleInTO;
+        cardStyle?: CardStyleInDTO;
         name: string;
         dashboardId: string;
         version: string;
     };
+    languageMgr: LanguageMgr;
     private readyForDatalinks;
     private contentLoadedResolve;
     private contentLoaded;
@@ -52,7 +53,6 @@ export default class ComposedWgt extends ComposedWgt_base {
     loadDatalinksRecursive(addTagsToManager?: boolean, needSkipTagMgr?: boolean): void;
     private loadChildrenDataLinks;
     private loadChildrenActions;
-    initChildren(isLoading: boolean): void;
     setPropertyValue({ prop, value }: {
         prop: string;
         value: any;
@@ -72,9 +72,13 @@ export default class ComposedWgt extends ComposedWgt_base {
             record: boolean;
         }>;
     };
-    readHistData(prop: string, from: number, to: number, nSamples: number, downsample?: boolean, aggregation?: any, downsampling?: {
+    readHistData(options: IReadHistDataOptions): Promise<Array<DataValue> | DataValue>;
+    readHistData(prop: string, from: number, to: number, nSamples: number, downsample: boolean, aggregation?: any, downsampling?: {
         size: number;
+    }, filterCondition?: string, filters?: {
+        filterRawData: string;
     }): Promise<Array<DataValue> | DataValue>;
 }
 export declare function getComposedWidgetRoot(initState: IDashboardSerialization | Dashboard): IWidgetSerialization;
+export declare function getComposedLanguageMgr(initState: IDashboardSerialization | Dashboard): LanguageMgr;
 export {};

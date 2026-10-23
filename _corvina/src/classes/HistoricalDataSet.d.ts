@@ -1,7 +1,8 @@
 import { BaseWgt, DataLink, IDataLinkConstructorArgs, Value } from '@/corvina-model';
 import TrendDataWgt from './TrendDataWgt';
 import ChartWgt from './ChartWgt';
-export default class HistoricalDataSet extends BaseWgt {
+import TrendDataDatasetWgt from './TrendDataDatasetWgt';
+export default class HistoricalDataSet extends TrendDataDatasetWgt {
     parent: ChartWgt;
     protected trendName: string;
     protected fetchingDataCounter: number;
@@ -29,6 +30,7 @@ export default class HistoricalDataSet extends BaseWgt {
     protected lineFilledArea: string;
     protected barBorderWidth: number;
     protected barBorderColor: string;
+    protected inStackGroup: boolean;
     protected autoColors: boolean;
     protected mapColors: Map<string, {
         color: string;

@@ -7,6 +7,7 @@ export interface FlowDTO {
     owner: string;
     readers: string[];
     editors: string[];
+    distributors?: string[];
     creationDate: number;
     updatedAt: number;
     deleted: boolean;
@@ -31,7 +32,7 @@ export interface CardStyle {
     flagShape: FlagShape;
     flagColor: string;
     backgroundColor: string;
-    backgroundImage: string;
+    backgroundImageData?: string | null;
     iconSet: string;
     iconName: string;
     iconColor: string;

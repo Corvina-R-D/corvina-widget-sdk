@@ -83,7 +83,19 @@ export default class MultiseriesDatasourceQueryParameters extends BaseDatasource
     private _formatEmptyFunctions;
     private _updateSource;
     private _updateAllSources;
+    private _removeUnusedSources;
     private _updateSources;
+    private _alignSourcesWith;
+    /**
+     * Inverse of the `range`/`maxValue` translation done by _formatAggregation.
+     *
+     * Unlike DataSourceQueryParameters - which keeps `aggrDeltaCounterRange` in its own serialized
+     * widget state - a multiseries datasource round-trips through the query params themselves. So a
+     * configuration saved as "Auto" carries `maxValue` and no `range`, and rebuilding it must restore
+     * the `{ min: 0, max: 0 }` sentinel instead of falling back to MAX_VALUE, which is the Auto of
+     * reset mode and would be sent back as a real wrap point.
+     */
+    private static restoreDeltaCounterRange;
     private _formatAggregation;
     private _formatSource;
     formatSources(): Array<IAlignmentSource>;
@@ -97,6 +109,7 @@ export default class MultiseriesDatasourceQueryParameters extends BaseDatasource
         prop: string;
         value: any;
     }): void;
+    private _isSourceShared;
     getPropertyValue(prop: string): any;
     static get(instance: MultiseriesDatasourceQueryParameters, property: string): any;
     serialize(): any;

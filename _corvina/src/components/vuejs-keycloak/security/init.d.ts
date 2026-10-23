@@ -1,2 +1,2 @@
-declare const _default: (next?: any, roles?: any) => Promise<void>;
+declare const _default: () => Promise<void>;
 export default _default;

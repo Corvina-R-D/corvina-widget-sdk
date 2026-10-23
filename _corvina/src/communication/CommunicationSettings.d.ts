@@ -32,7 +32,6 @@ export default class CommunicationSettings {
     static platformControllerUrl(): string;
     static wsPlatformControllerUrl(): string;
     static keycloak(initOptions?: KeycloakInitOptions): Promise<Keycloak>;
-    static vpnProxyApiUrl(): string;
     static corvinaVpnProxyApiUrl(): string;
     static auditApiUrl(): string;
     static triggerApiUrl(): string;

@@ -19,6 +19,7 @@ export default class DataAdapter<DataSeries extends BaseObject, DataFormat exten
     }>;
     protected chart: any;
     constructor(chart?: any);
+    private getLabelId;
     appendSerie(source: DataSeries, style?: any): void;
     removeSerie(source: DataSeries): void;
     updateChartData(serie: DataSeries, style?: any): void;

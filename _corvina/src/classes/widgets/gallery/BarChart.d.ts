@@ -1,5 +1,6 @@
 import BaseGallery from './BaseGallery';
 import Value from '../../Value';
+import { WidgetDataModel } from '@/classes/WidgetFactory';
 export declare class BarChartGallery extends BaseGallery {
     constructor();
     getDefaultConfiguration(galleryMode: any): {
@@ -26,16 +27,6 @@ export declare class BarChartGallery extends BaseGallery {
             yAxis: number;
         }[];
     };
-    getDataModel(): {
-        type: string;
-        links: {
-            match: string;
-            factory: {
-                policy: string;
-                type: string;
-                properties: string[];
-            }[];
-        }[];
-    }[];
+    getDataModel(): WidgetDataModel;
 }
 export declare const BarChart: BarChartGallery;
