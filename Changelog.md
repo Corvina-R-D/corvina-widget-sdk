@@ -1,3 +1,32 @@
+# Update 1.1.0
+From this version the SDK follows [semantic versioning](https://semver.org): MAJOR for changes that
+require changes to the existing widgets or projects, MINOR for new features, examples and toolchain
+updates compatible with the existing widgets, PATCH for fixes. Up to 1.0.65 every release incremented
+the patch number.
+
+## Images in the asset storage
+New example `ImageGallery` (`src/examples/ImageGallery`): it stores any number of images in the asset
+storage of the dashboard and shows one of them, chosen at runtime by a datalink. `imageAssets.ts` has
+reusable helpers around the asset API: storage status, asset names, upload, download as data URL,
+save guard. The example is not registered in `src/main.ts`. See
+[Images and assets](https://docs.corvina.cloud/docs/sdk-dashboard-widget/image_assets).
+
+## Vue 2.7
+The Vue 2 widgets are compiled with the Vue of corvina-frontend: `vue` and `vue-template-compiler`
+2.7.16, `vue-loader` `^15.10.0`, `vuetify` 2.7.2; `vue-style-loader` is a devDependency. The CLI
+creates the Vue 2 widgets with the same versions. Use the Options API, which runs also on the Corvina
+versions with Vue 2.6: no `<script setup>`, no Composition API imported from `"vue"`.
+
+## TypeScript definitions
+`_corvina` is aligned with the `develop` branch of corvina-frontend (see
+[doc/update_sdk.md](doc/update_sdk.md)). Among the others, the definitions now declare the asset API:
+`projectStore.beginSaveGuard`, `flushSave` and `endSaveGuard`, `BaseWgt.getAssets`, `removeAsset` and
+`freeAssetsByName`, and the `ts` argument of `BaseGraphicWgt.setPropertyValue`.
+
+## Build warnings
+`webpack.config.js` ignores the harmless warning of the recent webpack versions about the default
+exports of the `<style>` blocks imported by vue-loader 15.
+
 # Update 1.0.65
 ## Corvina instance of the dev server in .env
 `setCommunicationSettings` in `index.ts` takes the host, the realm and the i18n host from `.env`
