@@ -23,13 +23,20 @@ const slug = (text) =>
     .replace(/[^\p{L}\p{N}\s_-]/gu, "")
     .replace(/\s/g, "-");
 
+// The text of a heading as shown: `The [min](ranges.md) value` is "The min value"
+const plainText = (inline) =>
+  (inline.children || [])
+    .filter((token) => token.type === "text" || token.type === "code_inline")
+    .map((token) => token.content)
+    .join("");
+
 /** The ids of the headings, unique in the page. */
 function headingIds(md) {
   md.core.ruler.push("heading_ids", (state) => {
     const used = new Set();
     state.tokens.forEach((token, i) => {
       if (token.type !== "heading_open" || token.attrGet("id")) return;
-      const base = slug(state.tokens[i + 1].content);
+      const base = slug(plainText(state.tokens[i + 1]));
       let id = base;
       for (let n = 1; used.has(id); n++) id = `${base}-${n}`;
       used.add(id);
