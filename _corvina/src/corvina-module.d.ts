@@ -1,6 +1,7 @@
 export { registerWidget, setCommunicationSettings, registerPropControl, } from "@/corvina-model";
 export { globalWidgetRegistry, BasePropsHandler, BaseGallery, BaseGraphicPropsHandler } from "@/corvina-model";
 export type { IPropertyHandler, WidgetDataModel } from "@/corvina-model";
+export type { XViewWidgetHelp, WidgetHelpPage, WidgetHelpGuide, HelpTab } from "@/classes/widgets/help/help";
 export { CommunicationSettings, DataLink, Value, Layout, gs, setStore, store, GridLayout, DeviceMappingAxiosInstance, DashboardAxiosInstance, DeviceSlot, } from "@/corvina-model";
 export type { IDataLinkConstructorArgs, } from "@/corvina-model";
 export { BaseWgt, BaseGraphicWgt, TrendDatasetWgt, BarChartTimeDrillDatasetWgt, ProjectWgt, PageWgt, GroupWgt, ComposedWgt, xForm, xFormula, ActionWgt, TagMgr, DatasetWgt, StubDatasetWgt, LegacyWgt, ErrorPlaceholderWgt, SynopticWgt, AbsoluteLayoutWgt, } from "@/corvina-model";

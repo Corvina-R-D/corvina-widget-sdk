@@ -59,7 +59,10 @@ passed by `index.ts` to `setCommunicationSettings`. See
 | `src/manifest.json` | package name (`name`, prefix of the widget types) and list of the widgets |
 | `src/examples/` | example widgets: Vue 2, DOM API, lit-html, datasets, historical data |
 | `src/resources/` | images and other resources of the package |
+| `src/help.ts` | `widgetHelp`: the help of a widget from its `docs/<locale>/<page>.md`, see [doc/widget_help.md](doc/widget_help.md) |
+| `scripts/markdown-loader.js` | compiles the help pages into the package |
 | `index.ts` | settings of the Corvina instance of the dev server |
+| `newEditor.ts` | the package also in the new dashboard editor of the dev server, see [doc/update_sdk.md](doc/update_sdk.md) |
 | `_corvina/` | typings of the `corvina` module, provided by Corvina at runtime |
 | `static/` | files served by the dev server under `/static/` |
 
@@ -105,4 +108,5 @@ widgets from a specification or from HTML code; the projects created by the CLI 
   [Images and assets](https://docs.corvina.cloud/docs/sdk-dashboard-widget/image_assets),
   [Changelogs](https://docs.corvina.cloud/docs/category/changelogs)
 - In this repository: [doc/cli.md](doc/cli.md), [doc/widgets_without_vue.md](doc/widgets_without_vue.md),
+  [doc/widget_help.md](doc/widget_help.md),
   [Changelog.md](Changelog.md)

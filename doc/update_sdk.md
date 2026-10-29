@@ -44,3 +44,25 @@ yarn run dev:local
 
 Repeat the first two steps after every change of corvina-frontend, then reload the page. The runtime
 is chosen in `webpack.config.js` (`corvinaRuntime`, passed to `index.html`).
+
+## The new dashboard editor
+
+When the instance has the `dashboardNew` flag, Dashboards opens the new editor, corvina-dashboard, in an
+iframe on `/corvina-dashboard/`. With `yarn dev:local` it is the local build, copied by
+`use-local-corvina.js` into `dist/corvina-dashboard/` when it exists, with Corvina's documentation for its
+help (`dist/corvina/static/docs/brand/`). Build it before copying:
+
+```bash
+# in corvina-frontend
+yarn build:dashboard
+```
+
+The new editor has a widget registry of its own: `lib.js` registers the widgets in the page's editor only.
+In development `lib.js` is built again as `dist/org/lib.iframe.js`, without the dev server's client;
+`useNewEditor()` of `newEditor.ts`, called by `index.ts`, publishes it with the manifest as
+`window.__corvinaSdkDev`, and corvina-dashboard loads it as an uploaded package, help included
+(`corvina-dashboard/src/sdkDev.ts`). The organization's packages are not loaded then, as in the page's
+editor. Hot updates do not reach the iframe: it is reloaded after every rebuild, and keeps the open
+dashboard.
+
+`yarn dev` does not serve `/corvina-dashboard/` yet.

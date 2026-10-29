@@ -1,3 +1,19 @@
+# Update 1.2.0
+
+## Help of the widgets
+A widget can bring its own help, shown by the dashboard editor from the help button of its properties:
+pages in Markdown, `docs/<locale>/<page>.md` next to the widget, compiled into the package by
+`scripts/markdown-loader.js` (new devDependency `markdown-it`) and registered with the new `help` field
+of `registerWidget` through `widgetHelp` (`src/help.ts`). One page, or a guide of several pages with
+links between them; the editor picks the language of the user, falling back to english, and cleans the
+html. The example `MyWidget` has two pages in english and italian. See
+[doc/widget_help.md](doc/widget_help.md). The editor of Corvina shows it from the release that supports
+it; the older ones ignore the field.
+
+## TypeScript definitions
+`WidgetRegistrationArgs.help`, and the types `XViewWidgetHelp`, `WidgetHelpPage`, `WidgetHelpGuide` and
+`HelpTab` exported by `corvina`.
+
 # Update 1.1.0
 From this version the SDK follows [semantic versioning](https://semver.org): MAJOR for changes that
 require changes to the existing widgets or projects, MINOR for new features, examples and toolchain
