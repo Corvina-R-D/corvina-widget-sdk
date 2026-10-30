@@ -12,7 +12,8 @@
  * - the static folders the app loads from /static/ (e.g. gallery icons), served before ./static (see webpack.config.js)
  * - when built (yarn build:dashboard in corvina-frontend), corvina-dashboard into dist/corvina-dashboard: the new
  *   dashboard editor, opened by Dashboards in an iframe when the instance has the dashboardNew flag, and with it
- *   Corvina's documentation, which its help reads from /static/docs/brand/ (the Corvina server's alias of its brand)
+ *   Corvina's documentation, which its help reads from /static/docs/brand/ (the Corvina server's alias of its brand),
+ *   and the formula playground its datasource help embeds (/static/formula-playground/)
  */
 const fs = require("fs");
 const path = require("path");
@@ -25,6 +26,7 @@ const staticFolders = ["images", "img", "fonts", "css"];
 const dashboardSourceDir = path.join(frontendDir, "..", "corvina-dashboard", "dist");
 const dashboardTargetDir = path.resolve(__dirname, "../dist/corvina-dashboard");
 const docsSourceDir = path.join(frontendDir, "static", "docs", "brands", "corvina");
+const playgroundSourceDir = path.join(frontendDir, "static", "formula-playground");
 
 if (!fs.existsSync(sourceDir)) {
   console.error(`${sourceDir} not found: run "yarn run build-sdk-lib" in corvina-frontend/frontend-new`);
@@ -71,6 +73,9 @@ if (fs.existsSync(dashboardSourceDir)) {
   fs.cpSync(dashboardSourceDir, dashboardTargetDir, { recursive: true });
   if (fs.existsSync(docsSourceDir))
     fs.cpSync(docsSourceDir, path.join(targetDir, "static", "docs", "brand"), { recursive: true });
+  // the formula playground the datasource help embeds (yarn build:playground in corvina-frontend)
+  if (fs.existsSync(playgroundSourceDir))
+    fs.cpSync(playgroundSourceDir, path.join(targetDir, "static", "formula-playground"), { recursive: true });
   console.log(`Copied corvina-dashboard to ${dashboardTargetDir}${fs.existsSync(docsSourceDir) ? ", and Corvina's documentation" : ""}`);
 } else {
   console.log(`${dashboardSourceDir} not found: the new dashboard editor is missing (yarn build:dashboard in corvina-frontend)`);

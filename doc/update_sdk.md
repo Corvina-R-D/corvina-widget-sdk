@@ -50,11 +50,14 @@ is chosen in `webpack.config.js` (`corvinaRuntime`, passed to `index.html`).
 When the instance has the `dashboardNew` flag, Dashboards opens the new editor, corvina-dashboard, in an
 iframe on `/corvina-dashboard/`. With `yarn dev:local` it is the local build, copied by
 `use-local-corvina.js` into `dist/corvina-dashboard/` when it exists, with Corvina's documentation for its
-help (`dist/corvina/static/docs/brand/`). Build it before copying:
+help (`dist/corvina/static/docs/brand/`) and the formula playground the datasource help embeds
+(`dist/corvina/static/formula-playground/`). Build them before copying:
 
 ```bash
 # in corvina-frontend
 yarn build:dashboard
+yarn build-docs:frontend   # the documentation, frontend-new/static/docs
+yarn build:playground      # frontend-new/static/formula-playground
 ```
 
 The new editor has a widget registry of its own: `lib.js` registers the widgets in the page's editor only.
