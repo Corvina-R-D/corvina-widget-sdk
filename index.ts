@@ -1,5 +1,6 @@
 import { initCorvina, setCommunicationSettings, CommunicationSettings } from "corvina";
 import { globalWidgetRegistry } from "corvina";
+import { useNewEditor } from "./newEditor";
 
 // Disabling organization assets prevent to load widgets from object store.
 globalWidgetRegistry.disableOrganizationAssets();
@@ -32,3 +33,6 @@ initCorvina( ()=> {
    */
   globalWidgetRegistry.updateLanguage();
 });
+
+// The package also in the new dashboard editor, see newEditor.ts
+useNewEditor();
