@@ -59,7 +59,7 @@ function templateFiles(folder, vars) {
 }
 
 function registrationBlock(tech, vars, importDir) {
-  const { Name, camelName, type, category } = vars;
+  const { Name, camelName, type, category, title } = vars;
   const lines = [
     "",
     `// ${Name}: ${tech.label} (created by corvina-sdk create widget ${tech.key})`,
@@ -74,7 +74,10 @@ function registrationBlock(tech, vars, importDir) {
     `  gfx: ${camelName}Gallery.getDefaultConfiguration,`,
     `  props: ${camelName}Gallery.getPropsHandler(),`,
     `  icon: adjustPath( require( "./resources/images/corvina-widget1.png" ) ),`,
-    `  category: ${JSON.stringify(category)}`,
+    `  category: ${JSON.stringify(category)},`,
+    `  displayName: ${JSON.stringify(title)},`,
+    "  // What the widget shows and what its properties are for: the Corvina AI assistant reads it",
+    `  description: ""`,
     "}, manifest);",
     ""
   ];

@@ -1,6 +1,6 @@
 ---
 name: corvina-widget
-description: Build or change Corvina dashboard widgets with the Corvina SDK, from a specification or from HTML code, in the technology of the project (DOM API/plain HTML, lit-html, React, Vue 3, Vue 2). Covers the widget properties in the class and their binding to the view, datalinks (Value), translatable texts, serialize() and deserialization, the gallery default configuration and the property handlers (propControl) shown in the editor. Use it whenever a Corvina widget is created, a property is added, renamed or removed, a mockup is turned into a widget, or a property control is configured.
+description: Build or change Corvina dashboard widgets with the Corvina SDK, from a specification, from HTML code or from a design (Figma through its MCP server, an image, a PDF), in the technology of the project (DOM API/plain HTML, lit-html, React, Vue 3, Vue 2). Covers the widget properties in the class and their binding to the view, datalinks (Value), translatable texts, serialize() and deserialization, the gallery default configuration, the property handlers (propControl) shown in the editor, and the descriptions the Corvina AI assistant reads. Use it whenever a Corvina widget is created, a property is added, renamed or removed, a mockup or a design is turned into a widget, or a property control is configured. To upload the package to an organization, use corvina-widget-deploy.
 ---
 
 # Corvina widgets
@@ -45,7 +45,9 @@ Layers: the main properties (values, texts) in `"attributes"`, colors and appear
 alarms and thresholds in `"Alarms"`, other groups in a section named after them.
 
 From a specification: one row per configurable or live aspect. From HTML: follow
-[references/from-html.md](references/from-html.md). The size, position, border and background of the
+[references/from-html.md](references/from-html.md). From a design (Figma, an image, a PDF): follow
+[references/from-design.md](references/from-design.md), which reads the design into an HTML mockup
+and then continues with from-html.md. The size, position, border and background of the
 widget box are already properties of the base class: never add them.
 
 Choose type, control, layer and options in [references/properties.md](references/properties.md);
@@ -55,7 +57,9 @@ a custom control only when none fits: [references/custom-prop-controls.md](refer
 Each property has the **same name** in:
 
 1. the properties handler (extending `BaseGraphicPropsHandler`, after `super.createCustomPropsHandler()`):
-   `this.<name> = { layer, type, propControl, attachTag, supportI18n, display, description, ... }`;
+   `this.<name> = { layer, type, propControl, attachTag, supportI18n, display, description, ... }`.
+   `description` is what the Corvina AI assistant reads to connect the property: for an `attachTag`
+   property say which tag fits (type, unit, range);
 2. the class: a field (a `Value` when it accepts datalinks), read in the constructor from
    `args.initState.<name>` **with its default** (`?? <default>`: dashboards saved before the
    property existed do not have the key);
@@ -70,6 +74,11 @@ Each property has the **same name** in:
 Class, datalinks, translations and serialization rules:
 [references/class-and-serialization.md](references/class-and-serialization.md).
 
+Then the registration in `src/main.ts`: `displayName` and a `description` of what the widget shows
+and which data it expects (the CLI leaves it empty), and a `dataModel` when the widget has one main
+value. See "Describe it for the AI assistant" in
+[references/from-design.md](references/from-design.md#5-describe-it-for-the-ai-assistant).
+
 Removing or renaming a property: change all the places; a rename breaks the dashboards already
 saved, keep reading the old key in the constructor when that matters.
 
@@ -79,11 +88,15 @@ node .claude/skills/corvina-widget/scripts/check-widget.js src/widgets/<Name>
 yarn build
 ```
 The script lists every property with the places where it was found and reports the missing ones
-(e.g. a property never serialized, a datalink property that is not a `Value`). `yarn build`
+(e.g. a property never serialized, a datalink property that is not a `Value`, a missing description). `yarn build`
 type-checks the widget. Then the widget is tried with `yarn dev`, which needs a login to a Corvina
 instance: drop it from the gallery, change every property in the properties panel, save and reload
 the dashboard (the values must survive). When that is not possible (no account, unattended work),
 rely on the check and the build, and list for the user what to try.
+
+### 5. Upload
+To put the package in a Corvina organization and on a dashboard, connected to real devices, follow
+the `corvina-widget-deploy` skill.
 
 ## Rules
 - Values from datalinks and from the properties panel are data: show them as text (`textContent`,

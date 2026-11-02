@@ -16,5 +16,8 @@ registerWidget({
   gfx: myWidgetGallery.getDefaultConfiguration,
   props: myWidgetGallery.getPropsHandler(),
   icon: adjustPath( iconMyWidget ),
-  category: "MyGallery"
+  category: "MyGallery",
+  displayName: "My Widget",
+  // What the widget shows and what its properties are for: the Corvina AI assistant reads it
+  description: "Example widget showing a message and a value read from a tag"
 }, manifest);
