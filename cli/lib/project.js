@@ -9,6 +9,7 @@ const { appendToArray } = require("./text");
 
 const MANIFEST = "src/manifest.json";
 const MAIN = "src/main.ts";
+const REGISTRATION_TYPINGS = "_corvina/src/classes/widgetCreation.d.ts";
 
 /*
  * Package name of the SDK examples. The package name identifies the package in Corvina: a package
@@ -54,6 +55,15 @@ function addWidgetToManifest(changes, type) {
   const manifest = JSON.parse(text);
   manifest.widgets = [...(manifest.widgets || []), type];
   changes.write(MANIFEST, JSON.stringify(manifest, null, 4));
+}
+
+/*
+ * Whether the typings of registerWidget in the project declare displayName and description. Projects
+ * created before have a copy without them, and a registration with the fields fails their build
+ * (TS2353). Without the typings file there is nothing to fail: a project not yet copied (--dry-run).
+ */
+function declaresRegistrationMetadata(changes) {
+  return !changes.exists(REGISTRATION_TYPINGS) || /\bdisplayName\b/.test(changes.read(REGISTRATION_TYPINGS));
 }
 
 /* Appends the registration of a widget to src/main.ts, adding the imports it needs when missing */
@@ -127,5 +137,7 @@ module.exports = {
   mainDeclares,
   packageManager,
   readManifest,
-  registerInMain
+  registerInMain,
+  declaresRegistrationMetadata,
+  REGISTRATION_TYPINGS
 };

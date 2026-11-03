@@ -44,13 +44,16 @@ When the user does not want the connector, or that Corvina has no such tools, fo
 2. **Check and build.** Run `node .claude/skills/corvina-widget/scripts/check-widget.js
    src/widgets/<Name>` for every widget and fix its errors. Fix the warnings on descriptions too:
    the assistant reads them. Then run `yarn build`, which makes `dist/upload/<name>.zip`.
-3. **Serve the zip** to the page, in the background:
+3. **Serve the zip** to the page, in the background, with a secret of your own (16 or more letters
+   and digits, new every time):
    ```bash
-   node .claude/skills/corvina-widget-deploy/scripts/serve-package.js    # --port <n>, default 8090
+   node .claude/skills/corvina-widget-deploy/scripts/serve-package.js --token <secret>    # --port <n>, default 8090
    ```
-   It serves only the zips of `dist/upload`, on 127.0.0.1, with the CORS headers the page needs.
+   It serves only the zips of `dist/upload`, on 127.0.0.1, with the CORS headers the page needs, and
+   only to requests that have the secret in the path: any site open in the browser can reach a
+   local server. Without `--token` it makes a random one and prints the URLs.
 4. **Upload**: call `execute_webmcp_tool` with `upload_widget_package`,
-   `{ "url": "http://localhost:8090/<name>.zip" }`.
+   `{ "url": "http://localhost:8090/<secret>/<name>.zip" }` (the URL the server prints).
    - The page checks the package. When it is fine, the page asks the user in the assistant panel:
      tell the user to confirm there.
    - The call returns the user's answer, or `waiting_for_user` when they have not answered within a
@@ -104,7 +107,8 @@ change when the dashboard is reopened.
 | Symptom | Likely cause |
 |---|---|
 | `Cannot download http://localhost:8090/...` | serve-package.js not running, another port, or Chrome on another machine |
-| `... answered 404` | no zip with that name in `dist/upload`: run `yarn build`, check `name` in the manifest |
+| `... answered 404` | the secret is missing or wrong in the URL (use the one the server printed or you gave it), or no zip with that name in `dist/upload`: run `yarn build`, check `name` in the manifest |
+| `... answered 403` | the URL does not use `localhost` or `127.0.0.1` |
 | `upload_widget_package` not listed | `aiAgent.webmcp` not set or page not reloaded; Corvina version without the tool; Chrome without WebMCP; the page still loading (list again after a few seconds) |
 | `status: "identify_first"` | call `get_dashboard_context` with `agent` first, then the tool again |
 | `canUpload: false` | the user's permission, or custom widgets not enabled in the organization |

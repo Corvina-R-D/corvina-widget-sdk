@@ -58,7 +58,7 @@ function templateFiles(folder, vars) {
     }));
 }
 
-function registrationBlock(tech, vars, importDir) {
+function registrationBlock(tech, vars, importDir, metadata) {
   const { Name, camelName, type, category, title } = vars;
   const lines = [
     "",
@@ -74,10 +74,12 @@ function registrationBlock(tech, vars, importDir) {
     `  gfx: ${camelName}Gallery.getDefaultConfiguration,`,
     `  props: ${camelName}Gallery.getPropsHandler(),`,
     `  icon: adjustPath( require( "./resources/images/corvina-widget1.png" ) ),`,
-    `  category: ${JSON.stringify(category)},`,
-    `  displayName: ${JSON.stringify(title)},`,
-    "  // What the widget shows and what its properties are for: the Corvina AI assistant reads it",
-    `  description: ""`,
+    ...(metadata ? [
+      `  category: ${JSON.stringify(category)},`,
+      `  displayName: ${JSON.stringify(title)},`,
+      "  // What the widget shows and what its properties are for: the Corvina AI assistant reads it",
+      `  description: ""`
+    ] : [`  category: ${JSON.stringify(category)}`]),
     "}, manifest);",
     ""
   ];
@@ -129,7 +131,12 @@ function createWidget(root, options) {
     changes.write(`${widgetDir}/${file.name}`, file.content);
 
   const importDir = "./" + toPosix(path.relative("src", widgetDir));
-  project.registerInMain(changes, registrationBlock(tech, vars, importDir));
+  const metadata = project.declaresRegistrationMetadata(changes);
+  if (!metadata)
+    warnings.push(`${project.REGISTRATION_TYPINGS} does not declare displayName and description, so the registration has ` +
+      `none (it would fail the build): copy _corvina from the SDK, then add both to the registration, the Corvina AI ` +
+      `assistant reads them`);
+  project.registerInMain(changes, registrationBlock(tech, vars, importDir, metadata));
   project.addWidgetToManifest(changes, type);
   const toInstall = project.addDependencies(changes, root, tech.dependencies, tech.devDependencies);
   // single-chunk for every technology: it fixes also the projects created before it was in the template

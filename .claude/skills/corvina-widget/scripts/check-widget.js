@@ -135,17 +135,21 @@ function galleryKeys(text) {
   return ret ? objectKeys(blockAfter(body, ret.index + ret[0].length - 1)) : null;
 }
 
-// The registerWidget({ ... }) block of src/main.ts registering the class, with the project root above dir
+// The registerWidget({ ... }) block of src/main.ts registering the class, with the project root above dir.
+// `typed` is false when the project's typings of registerWidget (from before displayName and description)
+// do not declare them: adding the fields would fail its build, so no warning asks for them.
 function registration(dir, className) {
   for (let root = path.resolve(dir); root != path.dirname(root); root = path.dirname(root)) {
     const main = path.join(root, "src", "main.ts");
     if (!fs.existsSync(main)) continue;
     const text = read(main);
+    const typings = path.join(root, "_corvina", "src", "classes", "widgetCreation.d.ts");
+    const typed = !fs.existsSync(typings) || /\bdisplayName\b/.test(read(typings));
     for (const match of text.matchAll(/registerWidget\s*\(\s*\{/g)) {
       const block = blockAfter(text, match.index + match[0].length - 1);
-      if (new RegExp(`\\bclass\\s*:\\s*${className}\\b`).test(block)) return { file: path.relative(process.cwd(), main), block };
+      if (new RegExp(`\\bclass\\s*:\\s*${className}\\b`).test(block)) return { file: path.relative(process.cwd(), main), block, typed };
     }
-    return { file: path.relative(process.cwd(), main), block: null };
+    return { file: path.relative(process.cwd(), main), block: null, typed };
   }
   return null;
 }
@@ -210,7 +214,7 @@ function main(dir) {
   const className = read(path.join(dir, files.classFile)).match(/class\s+([A-Za-z_$][\w$]*)\s+extends\s+BaseGraphicWgt\b/)?.[1];
   const reg = className && registration(dir, className);
   if (reg && !reg.block) warnings.push(`${reg.file}: no registerWidget({ class: ${className}, ... })`);
-  else if (reg && !/\bdescription\s*:\s*["'`][^"'`\s]/.test(reg.block))
+  else if (reg && reg.typed && !/\bdescription\s*:\s*["'`][^"'`\s]/.test(reg.block))
     warnings.push(`${reg.file}: registerWidget of ${className} without a description (what the widget shows, read by the AI assistant)`);
 
   // Properties written by the widget at runtime (buttons, switches, inputs of the view)

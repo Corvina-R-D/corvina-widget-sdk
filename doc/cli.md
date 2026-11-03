@@ -157,8 +157,10 @@ fits, or when called with `/corvina-widget` or `/corvina-widget-deploy`.
 - `node .claude/skills/corvina-widget/scripts/check-widget.js src/widgets/<Name>` checks that every
   property of a widget is in the properties handler, the constructor, `serialize()` and the gallery
   defaults, and that the widget and its properties have a description;
-- `node .claude/skills/corvina-widget-deploy/scripts/serve-package.js` serves `dist/upload/*.zip` on
-  `http://localhost:8090`, for the page to download.
+- `node .claude/skills/corvina-widget-deploy/scripts/serve-package.js [--token <secret>]` serves
+  `dist/upload/*.zip` on `http://localhost:8090/<secret>/<name>.zip`, for the page to download. The
+  secret (random when not given, printed at start) is in every URL: other sites open in the browser
+  cannot read the packages.
 
 The skills are maintained in the SDK: the projects get the version of the CLI that creates or
 updates them.
