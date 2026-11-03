@@ -80,9 +80,10 @@ Show the plan to the user (SKILL.md, step 2) before writing the mockup.
 The Corvina AI assistant chooses and connects widgets from what they declare. A widget it cannot read
 is a widget it does not use:
 
-- `registerWidget` (in `src/main.ts`), when `_corvina/src/classes/widgetCreation.d.ts` declares
-  `displayName` (the typings of a project created before do not, and the fields would fail its build:
-  copy `_corvina` from the SDK first):
+- `registerWidget` (in `src/main.ts`), when `WidgetRegistrationArgs` in
+  `_corvina/src/classes/widgetCreation.d.ts` declares both `displayName` and `description` (the
+  typings of a project created before do not, and the fields would fail its build: copy `_corvina`
+  from the SDK first):
   - `displayName`: the name in the gallery;
   - `description`: one or two sentences on what the widget shows and which data it expects, e.g.
     *"Vertical tank showing a fill level in percent (0-100); turns to the alarm color above

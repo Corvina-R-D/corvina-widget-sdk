@@ -135,16 +135,27 @@ function galleryKeys(text) {
   return ret ? objectKeys(blockAfter(body, ret.index + ret[0].length - 1)) : null;
 }
 
+// Whether WidgetRegistrationArgs, in the typings text of the project, declares displayName and description
+// (outside comments). The typings of a project created before do not: a registration with a field
+// they do not declare fails its build (TS2353). Without the interface its shape is unknown: false.
+function declaresRegistrationMetadata(typings) {
+  const code = typings.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "");
+  const match = /\binterface\s+WidgetRegistrationArgs\b[^{]*\{/.exec(code);
+  if (!match) return false;
+  const body = blockAfter(code, match.index + match[0].length - 1);
+  return ["displayName", "description"].every(name => new RegExp(`(^|[\\s;{,])${name}\\??\\s*:`).test(body));
+}
+
 // The registerWidget({ ... }) block of src/main.ts registering the class, with the project root above dir.
-// `typed` is false when the project's typings of registerWidget (from before displayName and description)
-// do not declare them: adding the fields would fail its build, so no warning asks for them.
+// `typed` is false when the project's typings do not declare both fields: adding them would fail its
+// build, so no warning asks for them.
 function registration(dir, className) {
   for (let root = path.resolve(dir); root != path.dirname(root); root = path.dirname(root)) {
     const main = path.join(root, "src", "main.ts");
     if (!fs.existsSync(main)) continue;
     const text = read(main);
     const typings = path.join(root, "_corvina", "src", "classes", "widgetCreation.d.ts");
-    const typed = !fs.existsSync(typings) || /\bdisplayName\b/.test(read(typings));
+    const typed = !fs.existsSync(typings) || declaresRegistrationMetadata(read(typings));
     for (const match of text.matchAll(/registerWidget\s*\(\s*\{/g)) {
       const block = blockAfter(text, match.index + match[0].length - 1);
       if (new RegExp(`\\bclass\\s*:\\s*${className}\\b`).test(block)) return { file: path.relative(process.cwd(), main), block, typed };

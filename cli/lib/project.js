@@ -5,7 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
-const { appendToArray } = require("./text");
+const { appendToArray, interfaceDeclares } = require("./text");
 
 const MANIFEST = "src/manifest.json";
 const MAIN = "src/main.ts";
@@ -58,12 +58,14 @@ function addWidgetToManifest(changes, type) {
 }
 
 /*
- * Whether the typings of registerWidget in the project declare displayName and description. Projects
- * created before have a copy without them, and a registration with the fields fails their build
- * (TS2353). Without the typings file there is nothing to fail: a project not yet copied (--dry-run).
+ * Whether WidgetRegistrationArgs in the typings of the project declares both displayName and
+ * description. Projects created before have a copy without them, and a registration with a field it
+ * does not declare fails their build (TS2353). Without the typings file there is nothing to fail:
+ * a project not yet copied (--dry-run).
  */
 function declaresRegistrationMetadata(changes) {
-  return !changes.exists(REGISTRATION_TYPINGS) || /\bdisplayName\b/.test(changes.read(REGISTRATION_TYPINGS));
+  return !changes.exists(REGISTRATION_TYPINGS) ||
+    interfaceDeclares(changes.read(REGISTRATION_TYPINGS), "WidgetRegistrationArgs", ["displayName", "description"]);
 }
 
 /* Appends the registration of a widget to src/main.ts, adding the imports it needs when missing */

@@ -78,9 +78,10 @@ Then the registration in `src/main.ts`: `displayName` and a `description` of wha
 and which data it expects (the CLI leaves it empty), and a `dataModel` when the widget has one main
 value. See "Describe it for the AI assistant" in
 [references/from-design.md](references/from-design.md#5-describe-it-for-the-ai-assistant).
-Only when `_corvina/src/classes/widgetCreation.d.ts` declares `displayName`: a project created before
-has typings without it, and a registration with the field fails the build (TS2353). Then copy
-`_corvina` from the SDK first.
+Only when `WidgetRegistrationArgs` in `_corvina/src/classes/widgetCreation.d.ts` declares both
+`displayName` and `description`: a project created before has typings without them, and a
+registration with a field they do not declare fails the build (TS2353). Then copy `_corvina` from
+the SDK first.
 
 Removing or renaming a property: change all the places; a rename breaks the dashboards already
 saved, keep reading the old key in the constructor when that matters.

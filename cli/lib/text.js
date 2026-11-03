@@ -30,4 +30,21 @@ function arrayIncludes(text, key, item) {
   return !!match && match[1].includes(JSON.stringify(item));
 }
 
-module.exports = { appendToArray, arrayIncludes };
+/*
+ * Whether `interface <name> { ... }` in a typings text declares every member in names (as `name:` or
+ * `name?:`, outside comments). False when the interface is not there: its shape is then unknown.
+ */
+function interfaceDeclares(text, name, names) {
+  const code = text.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "");
+  const match = new RegExp(`\\binterface\\s+${name}\\b[^{]*\\{`).exec(code);
+  if (!match) return false;
+  let depth = 0;
+  let body = code.slice(match.index + match[0].length - 1);
+  for (let i = 0; i < body.length; i++) {
+    if (body[i] == "{") depth++;
+    else if (body[i] == "}" && --depth == 0) { body = body.slice(0, i); break; }
+  }
+  return names.every(member => new RegExp(`(^|[\\s;{,])${member}\\??\\s*:`).test(body));
+}
+
+module.exports = { appendToArray, arrayIncludes, interfaceDeclares };
