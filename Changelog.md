@@ -14,6 +14,9 @@ it; the older ones ignore the field.
 `WidgetRegistrationArgs.help`, and the types `XViewWidgetHelp`, `WidgetHelpPage`, `WidgetHelpGuide` and
 `HelpTab` exported by `corvina`.
 
+## Compatibility
+Compatible with corvina-frontend `chart-1.0.72`.
+
 # Update 1.1.0
 From this version the SDK follows [semantic versioning](https://semver.org): MAJOR for changes that
 require changes to the existing widgets or projects, MINOR for new features, examples and toolchain
