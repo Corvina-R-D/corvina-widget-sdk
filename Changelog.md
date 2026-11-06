@@ -16,6 +16,19 @@ it; the older ones ignore the field.
 `WidgetRegistrationArgs.help`, and the types `XViewWidgetHelp`, `WidgetHelpPage`, `WidgetHelpGuide` and
 `HelpTab` exported by `corvina`.
 
+## New dashboard editor in the dev server
+With `yarn dev:local` the widgets being developed are also in the new dashboard editor (corvina-dashboard),
+opened by Dashboards in an iframe on `/corvina-dashboard/` when the instance has the `dashboardNew` flag,
+help included. `scripts/use-local-corvina.js` copies also the local build of corvina-dashboard, Corvina's
+documentation and the formula playground. In development `lib.js` is built again as `dist/org/lib.iframe.js`,
+without the dev server's client: `useNewEditor()` of `newEditor.ts`, called by `index.ts`, publishes it to
+the editor, which is reloaded after every rebuild and keeps the open dashboard. The projects created by
+`create project` have `newEditor.ts` and the same build. See [doc/update_sdk.md](doc/update_sdk.md).
+
+## CLI
+`npm pack` and `npm publish` of the CLI failed: the template entries still listed `.vscode`, removed from
+the SDK.
+
 ## Widgets from a design, uploaded by Claude
 - The skill `corvina-widget` builds widgets also from a design: Figma through its MCP server, an
   image or a PDF (`references/from-design.md`), through an HTML mockup.
