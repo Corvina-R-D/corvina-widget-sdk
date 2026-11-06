@@ -1,6 +1,7 @@
 import { VueConstructor } from "vue";
 import { WidgetDataModel } from "@/corvina-model";
 import { IManifest } from "@/interfaces/dashboard";
+import type { XViewWidgetHelp } from "./widgets/help/help";
 /** Component mounting the SDK widgets that render themselves (registered without a Vue component) */
 export declare const SDK_RENDER_HOST = "SdkRenderHost";
 export declare function initWidgets(this: any, widgetsArgs: WidgetRegistrationArgs[]): void;
@@ -18,6 +19,8 @@ export interface WidgetRegistrationArgs {
     category?: string;
     inGallery?: boolean;
     dataModel?: WidgetDataModel;
+    /** The help of the widget, shown by the dashboard editor of corvina-dashboard (see `XViewWidgetHelp`) */
+    help?: XViewWidgetHelp;
     /** Name in the gallery, instead of the type */
     displayName?: string | (() => string);
     /** What the widget shows and is for: the AI assistant reads it to choose and connect the widget */

@@ -6,6 +6,7 @@ import MyWidget from "./examples/MyWidget/MyWidget";
 import MyWidgetVue from "./examples/MyWidget/MyWidget.vue";
 import { myWidgetGallery } from "./examples/MyWidget/MyWidgetGallery";
 import { widgetType as MyWidgetType } from "./examples/MyWidget/defs";
+import { widgetHelp } from "./help";
 
 // Registering widget
 const iconMyWidget = require( "./resources/images/corvina-widget1.png" );
@@ -17,6 +18,8 @@ registerWidget({
   props: myWidgetGallery.getPropsHandler(),
   icon: adjustPath( iconMyWidget ),
   category: "MyGallery",
+  // The help of the widget, from docs/<locale>/<page>.md (see src/help.ts): a guide of two pages
+  help: widgetHelp( require.context( "./examples/MyWidget/docs", true, /\.md$/ ), { home: "overview" } ),
   displayName: "My Widget",
   // What the widget shows and what its properties are for: the Corvina AI assistant reads it
   description: "Example widget showing a message and a value read from a tag"

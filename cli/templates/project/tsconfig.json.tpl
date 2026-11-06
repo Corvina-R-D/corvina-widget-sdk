@@ -28,6 +28,7 @@
         "_corvina/**/*",
         "src/**/*",
         "index.ts",
+        "newEditor.ts",
     ],
     "exclude": [
         "node_modules",

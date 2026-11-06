@@ -151,6 +151,12 @@ module.exports = {
         exclude: [ /node_modules/, /src\/test/ ]
       },
       {
+        // The help pages of the widgets, docs/<locale>/<page>.md: html in lib.js (see src/help.ts)
+        test: /\.md$/,
+        loader: path.resolve(__dirname, 'scripts/markdown-loader.js'),
+        options: { manifest: './src/manifest.json' }
+      },
+      {
         test: /\.(png|jpg|babylon|obj|gif|woff|woff2|eot|ttf|svg)$/,
         loader: 'file-loader',
         options: {
@@ -181,6 +187,12 @@ module.exports = {
       ...( localCorvina && fs.existsSync( resolve( 'dist/corvina/static' ) ) ? [ {
         publicPath: '/static/',
         directory: resolve( 'dist/corvina/static' ),
+      } ] : [] ),
+      // The new dashboard editor of the local build, opened by Dashboards in an iframe when the instance has the
+      // dashboardNew flag (corvina-dashboard, copied by scripts/use-local-corvina.js)
+      ...( localCorvina && fs.existsSync( resolve( 'dist/corvina-dashboard' ) ) ? [ {
+        publicPath: '/corvina-dashboard/',
+        directory: resolve( 'dist/corvina-dashboard' ),
       } ] : [] ),
       {
         publicPath: '/static/',
@@ -264,4 +276,27 @@ if (process.env.NODE_ENV === 'production') {
 
     new SourceMapfixPlugin()
   ])
+}
+
+/*
+ * In development lib.js is built twice: the second, dist/org/lib.iframe.js, without the dev server's client and
+ * hot updates, is the one the new dashboard editor (corvina-dashboard, in an iframe) loads, from where newEditor.ts
+ * publishes it. Evaluated there, lib.js would open a second connection to the dev server and never apply an update:
+ * the page reloads the iframe instead (newEditor.ts).
+ */
+if (process.env.NODE_ENV !== 'production') {
+  const page = module.exports;
+  module.exports = [ page, {
+    ...page,
+    name: 'iframe',
+    entry: { lib: page.entry.lib },
+    output: { ...page.output, filename: '[name].iframe.js', uniqueName: 'corvina-sdk-iframe' },
+    plugins: [
+      new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
+      new VueLoaderPlugin(),
+      new SourceMapfixPlugin()
+    ],
+    // no client, no hot updates (webpack-dev-server skips a compiler with devServer false)
+    devServer: false
+  } ];
 }

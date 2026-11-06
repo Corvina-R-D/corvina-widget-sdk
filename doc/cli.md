@@ -91,9 +91,11 @@ Corvina, so it must be unique in the organization (e.g. `acme-gauges`). `org`, t
 examples, is refused.
 
 - Copied from the SDK containing the CLI: `_corvina` (typings), `static`, `index.html`, `index.ts`,
-  `.env.example`, `gulpfile.js`, `doc`, `scripts`, `src/resources`, `yarn.lock` and the CLI itself.
+  `newEditor.ts`, `.env.example`, `gulpfile.js`, `doc`, `scripts`, `src/resources`, `src/help.ts`,
+  `yarn.lock` and the CLI itself.
 - Generated: `package.json` with just the build (webpack, ts-loader, TypeScript, loaders, dev server,
-  gulp), `webpack.config.js` and `tsconfig.json` without Vue, an empty `src/main.ts`, and
+  gulp, `markdown-it` for the [help of the widgets](widget_help.md)), `webpack.config.js` (also with
+  `lib.iframe.js`, for the new dashboard editor) and `tsconfig.json` without Vue, an empty `src/main.ts`, and
   `src/manifest.json` named `--package`. The scripts are the ones of the SDK: `dev` with the released
   Corvina runtime, `dev:local` with a local build of corvina-frontend (see [update_sdk.md](update_sdk.md)).
 

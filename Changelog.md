@@ -1,4 +1,34 @@
-# Unreleased
+# Update 1.2.0
+
+## Help of the widgets
+A widget can bring its own help, shown by the dashboard editor from the help button of its properties:
+pages in Markdown, `docs/<locale>/<page>.md` next to the widget, compiled into the package by
+`scripts/markdown-loader.js` (new devDependency `markdown-it`) and registered with the new `help` field
+of `registerWidget` through `widgetHelp` (`src/help.ts`). One page, or a guide of several pages with
+links between them; the editor picks the language of the user, falling back to english, and cleans the
+html. The example `MyWidget` has two pages in english and italian. The projects created by
+`create project` have `src/help.ts`, the loader and `markdown-it`; the loader fails the build when two
+different images of the help pages have the same file name. See
+[doc/widget_help.md](doc/widget_help.md). The editor of Corvina shows it from the release that supports
+it; the older ones ignore the field.
+
+## TypeScript definitions
+`WidgetRegistrationArgs.help`, and the types `XViewWidgetHelp`, `WidgetHelpPage`, `WidgetHelpGuide` and
+`HelpTab` exported by `corvina`.
+
+## New dashboard editor in the dev server
+With `yarn dev:local` the widgets being developed are also in the new dashboard editor (corvina-dashboard),
+opened by Dashboards in an iframe on `/corvina-dashboard/` when the instance has the `dashboardNew` flag,
+help included. `scripts/use-local-corvina.js` copies also the local build of corvina-dashboard, Corvina's
+documentation and the formula playground. In development `lib.js` is built again as `dist/org/lib.iframe.js`,
+without the dev server's client: `useNewEditor()` of `newEditor.ts`, called by `index.ts`, publishes it to
+the editor, which is reloaded after every rebuild and keeps the open dashboard. The projects created by
+`create project` have `newEditor.ts` and the same build. See [doc/update_sdk.md](doc/update_sdk.md).
+
+## CLI
+`npm pack` and `npm publish` of the CLI failed: the template entries still listed `.vscode`, removed from
+the SDK.
+
 ## Widgets from a design, uploaded by Claude
 - The skill `corvina-widget` builds widgets also from a design: Figma through its MCP server, an
   image or a PDF (`references/from-design.md`), through an HTML mockup.
@@ -15,6 +45,9 @@
   fail its build, so there it adds nothing and says to copy `_corvina` from the SDK.
   `check-widget.js` warns when the widget or a property has no description, with the same condition
   for the registration.
+
+## Compatibility
+Compatible with corvina-frontend `chart-1.0.72`.
 
 # Update 1.1.0
 From this version the SDK follows [semantic versioning](https://semver.org): MAJOR for changes that
