@@ -4,6 +4,11 @@
   "description": "Scaffolding of Corvina dashboard widget projects and widgets: DOM API, lit-html, React, Vue 3, Vue 2",
   "author": "Corvina",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Corvina-R-D/corvina-widget-sdk.git",
+    "directory": "cli"
+  },
   "bin": {
     "corvina-sdk": "corvina-sdk.js"
   },
@@ -14,6 +19,8 @@
     "template/"
   ],
   "scripts": {
+    "test": "node corvina-sdk.js list && node corvina-sdk.js create project /tmp/corvina-sdk-ci-check --package ci --tech react --widget Check --skip-install --dry-run",
+    "build": "npm pack --dry-run",
     "prepack": "node lib/template.js snapshot",
     "postpack": "node lib/template.js clean"
   },

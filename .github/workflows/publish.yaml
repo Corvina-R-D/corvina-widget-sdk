@@ -1,0 +1,30 @@
+name: Publish
+
+# Publishes the CLI (cli/, @corvina/widget-sdk-cli) on npm.
+# Registered as trusted publisher on npmjs.com: keep the filename.
+# Release tag: `cli-1.2.3` (or `cli-v1.2.3`); `cli-1.2.3-beta.1`, marked as pre-release, goes to `beta`.
+# The prefix keeps the CLI releases apart from the versions of the SDK itself.
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  publish:
+    # Releases of the SDK itself (tags without the prefix) do not publish the CLI
+    if: startsWith(github.event.release.tag_name, 'cli-')
+    uses: Corvina-R-D/corvina-github-public-actions/.github/workflows/publish-npm.yaml@v5.4
+    with:
+      default-branch: main
+      working-directory: cli
+      tag-prefix: cli-
+      test-script: test
+      build-script: build
