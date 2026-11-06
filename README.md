@@ -92,11 +92,23 @@ See [SDK CLI](https://docs.corvina.cloud/docs/sdk-dashboard-widget/cli) and [doc
 
 See [Deploy](https://docs.corvina.cloud/docs/sdk-dashboard-widget/Deploy).
 
-## Claude Code skill
+With Claude Code, a Corvina version whose AI assistant publishes WebMCP tools and the Corvina AI
+connector (downloaded from that assistant), the skill `corvina-widget-deploy` does the upload from
+the browser: the page downloads the zip from `localhost`, and you confirm in its assistant panel. It can then add the widgets to a dashboard and
+connect them to device tags.
 
-The skill `.claude/skills/corvina-widget` helps [Claude Code](https://claude.com/claude-code) to build
-widgets from a specification or from HTML code; the projects created by the CLI have it too. See
-[Claude Code skill](https://docs.corvina.cloud/docs/sdk-dashboard-widget/claude_code_skill).
+## Claude Code skills
+
+Two skills help [Claude Code](https://claude.com/claude-code); the projects created by the CLI have
+them too:
+
+- `.claude/skills/corvina-widget` builds widgets from a specification, HTML code or a design: Figma
+  through its MCP server, an image or a PDF;
+- `.claude/skills/corvina-widget-deploy` uploads the package to an organization from the browser
+  and tries the widgets on a dashboard with real devices.
+
+See [Claude Code skill](https://docs.corvina.cloud/docs/sdk-dashboard-widget/claude_code_skill) and
+[doc/cli.md](doc/cli.md#claude-code-skills).
 
 ## More documentation
 

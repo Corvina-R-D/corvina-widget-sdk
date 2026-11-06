@@ -143,20 +143,27 @@ What keeps the packages of an organization apart when corvina-frontend loads the
 
 ## Claude Code skills
 
-The SDK has a Claude Code skill in `.claude/skills/corvina-widget`, to build widgets from a
-specification or from HTML code: the properties in the class and in the view of the technology,
-datalinks, translations, serialization, the gallery defaults and the property handlers. Claude
-uses it by itself when asked to create or change a widget, or with `/corvina-widget`.
+The SDK has two Claude Code skills in `.claude/skills`. Claude uses them by itself when the request
+fits, or when called with `/corvina-widget` or `/corvina-widget-deploy`.
 
-- `create project` copies it into the new projects;
-- `corvina-sdk add skills` installs it, or updates it, in a project created before
+| Skill | For |
+|---|---|
+| `corvina-widget` | building widgets from a specification, HTML code or a design (Figma through its MCP server, an image, a PDF): the properties in the class and in the view of the technology, datalinks, translations, serialization, the gallery defaults, the property handlers, and the descriptions the Corvina AI assistant reads |
+| `corvina-widget-deploy` | uploading the package to an organization from the browser, through the Corvina AI connector and the WebMCP tools of the Corvina page (the user confirms in the page), then trying the widgets on a dashboard with real devices |
+
+- `create project` copies them into the new projects;
+- `corvina-sdk add skills` installs them, or updates them, in a project created before
   (`--dry-run` lists the files);
 - `node .claude/skills/corvina-widget/scripts/check-widget.js src/widgets/<Name>` checks that every
   property of a widget is in the properties handler, the constructor, `serialize()` and the gallery
-  defaults.
+  defaults, and that the widget and its properties have a description;
+- `node .claude/skills/corvina-widget-deploy/scripts/serve-package.js [--token <secret>]` serves
+  `dist/upload/*.zip` on `http://localhost:8090/<secret>/<name>.zip`, for the page to download. The
+  secret (random when not given, printed at start) is in every URL: other sites open in the browser
+  cannot read the packages.
 
-The skill is maintained in the SDK: the projects get the version of the CLI that creates or updates
-them.
+The skills are maintained in the SDK: the projects get the version of the CLI that creates or
+updates them.
 
 ## Adding a technology
 

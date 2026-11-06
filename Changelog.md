@@ -1,3 +1,21 @@
+# Unreleased
+## Widgets from a design, uploaded by Claude
+- The skill `corvina-widget` builds widgets also from a design: Figma through its MCP server, an
+  image or a PDF (`references/from-design.md`), through an HTML mockup.
+- New skill `corvina-widget-deploy`: uploads the package from the browser through the WebMCP tools
+  of the Corvina page (`list_widget_packages`, `upload_widget_package`), with the user's
+  confirmation in the page, then tries the widgets on a dashboard connected to real devices. It works
+  through the Corvina AI connector, downloaded from Corvina's AI assistant.
+  `scripts/serve-package.js` serves `dist/upload/*.zip` on localhost for the page, only to requests
+  that have its secret in the URL path (`--token`, random by default).
+- `registerWidget` takes `displayName` and `description`: the name in the gallery and what the
+  widget is for, read by the Corvina AI assistant. Older Corvina versions ignore them.
+  `create widget` adds both to the registration, only when the typings of the project
+  (`_corvina`) declare them: a project created before has typings without them, and the fields would
+  fail its build, so there it adds nothing and says to copy `_corvina` from the SDK.
+  `check-widget.js` warns when the widget or a property has no description, with the same condition
+  for the registration.
+
 # Update 1.1.0
 From this version the SDK follows [semantic versioning](https://semver.org): MAJOR for changes that
 require changes to the existing widgets or projects, MINOR for new features, examples and toolchain
