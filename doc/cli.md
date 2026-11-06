@@ -17,9 +17,16 @@ The CLI is the package `@corvina/widget-sdk-cli` in `cli/`, with its own `packag
 
 ### Publishing
 
+Releases are published by the GitHub Actions workflow `.github/workflows/publish.yaml`
+(npm trusted publishing, no token). Create a GitHub release from `main` with the tag `cli-1.2.3`
+(`cli-1.2.3-beta.1`, marked as pre-release, goes to the `beta` dist-tag): the workflow sets the version
+in `cli/package.json`, runs `npm test`, publishes, and opens a PR that records the version on `main`.
+
+For a local check of the package:
+
 ```bash
 cd cli
-npm pack        # or npm publish, with the registry and the access of the @corvina scope
+npm pack        # tarball of the package, with the snapshot of the SDK
 ```
 
 `create project` copies the Corvina typings, `static`, `index.html` and the other dev server files.

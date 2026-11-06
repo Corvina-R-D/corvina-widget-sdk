@@ -1,11 +1,11 @@
-# @corvina/sdk-cli
+# @corvina/widget-sdk-cli
 
 Scaffolding of Corvina dashboard widget projects and widgets, without dependencies.
 
 ```bash
-npx @corvina/sdk-cli create project my-widgets --package acme --tech react --widget TemperatureGauge
+npx @corvina/widget-sdk-cli create project my-widgets --package acme --tech react --widget TemperatureGauge
 cd my-widgets
-yarn @corvina/sdk-cli create widget vue3 Tank
+yarn corvina-sdk create widget vue3 Tank
 yarn dev
 ```
 
@@ -19,4 +19,4 @@ Every technology adds its dependencies and build changes with its first widget: 
 Vue 2 widgets does not install Vue. See `doc/cli.md` in the created project for the details.
 
 The package carries a snapshot of the Corvina SDK (typings, dev server files), made when it is packed:
-publish it from the SDK repository, `cd cli && npm publish`.
+it is published by the GitHub release workflow of the SDK repository (see `doc/cli.md`).
