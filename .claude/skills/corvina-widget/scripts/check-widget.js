@@ -10,6 +10,8 @@
  *   - serialize() of the class: serializedWgt.<prop> = this.<prop>(.v)
  *   - the default configuration of the gallery (<Name>Gallery.ts): "<prop>": <default>
  * A property with attachTag: true (datalinks) must be a Value, serialized with .v.
+ * Properties and the registration (src/main.ts) should have a description: the Corvina AI assistant
+ * reads it to choose the widget and connect its properties to device tags.
  *
  * The check reads the files as text, following the conventions of the files created by
  * `corvina-sdk create widget`: it is a help, not a parser. Exit code 1 when it finds errors.
@@ -91,7 +93,8 @@ function propsHandler(text) {
     const handler = blockAfter(body, match.index + match[0].length - 1);
     const field = (name) => handler.match(new RegExp(`\\b${name}\\s*:\\s*(["'][^"']*["']|true|false|[\\w.]+)`))?.[1]?.replace(/["']/g, "");
     props[match[1]] = { type: field("type"), propControl: field("propControl"), attachTag: field("attachTag") == "true",
-      supportI18n: field("supportI18n") == "true", attachTagPermission: field("attachTagPermission") };
+      supportI18n: field("supportI18n") == "true", attachTagPermission: field("attachTagPermission"),
+      description: field("description") };
   }
   return props;
 }
@@ -130,6 +133,36 @@ function galleryKeys(text) {
   if (!body) return null;
   const ret = body.match(/return\s*\{/);
   return ret ? objectKeys(blockAfter(body, ret.index + ret[0].length - 1)) : null;
+}
+
+// Whether WidgetRegistrationArgs, in the typings text of the project, declares displayName and description
+// (outside comments). The typings of a project created before do not: a registration with a field
+// they do not declare fails its build (TS2353). Without the interface its shape is unknown: false.
+function declaresRegistrationMetadata(typings) {
+  const code = typings.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "");
+  const match = /\binterface\s+WidgetRegistrationArgs\b[^{]*\{/.exec(code);
+  if (!match) return false;
+  const body = blockAfter(code, match.index + match[0].length - 1);
+  return ["displayName", "description"].every(name => new RegExp(`(^|[\\s;{,])${name}\\??\\s*:`).test(body));
+}
+
+// The registerWidget({ ... }) block of src/main.ts registering the class, with the project root above dir.
+// `typed` is false when the project's typings do not declare both fields: adding them would fail its
+// build, so no warning asks for them.
+function registration(dir, className) {
+  for (let root = path.resolve(dir); root != path.dirname(root); root = path.dirname(root)) {
+    const main = path.join(root, "src", "main.ts");
+    if (!fs.existsSync(main)) continue;
+    const text = read(main);
+    const typings = path.join(root, "_corvina", "src", "classes", "widgetCreation.d.ts");
+    const typed = !fs.existsSync(typings) || declaresRegistrationMetadata(read(typings));
+    for (const match of text.matchAll(/registerWidget\s*\(\s*\{/g)) {
+      const block = blockAfter(text, match.index + match[0].length - 1);
+      if (new RegExp(`\\bclass\\s*:\\s*${className}\\b`).test(block)) return { file: path.relative(process.cwd(), main), block, typed };
+    }
+    return { file: path.relative(process.cwd(), main), block: null, typed };
+  }
+  return null;
 }
 
 function main(dir) {
@@ -185,6 +218,16 @@ function main(dir) {
       warnings.push(`${name}: default with || in the constructor replaces also ${handler.type == "numeric" ? "0" : "false"}: use ?? or !== undefined`);
     if (ctor && ctor.field != name) warnings.push(`${name}: stored in the field this.${ctor.field}, the property name is ${name}`);
   }
+  // What the AI assistant reads to choose the widget and connect it
+  const undescribed = Object.entries(props).filter(([name, h]) => custom(name) && !h.description).map(([name]) => name);
+  if (undescribed.length)
+    warnings.push(`${undescribed.join(", ")}: no description in the properties handler (the AI assistant reads it to know what to connect)`);
+  const className = read(path.join(dir, files.classFile)).match(/class\s+([A-Za-z_$][\w$]*)\s+extends\s+BaseGraphicWgt\b/)?.[1];
+  const reg = className && registration(dir, className);
+  if (reg && !reg.block) warnings.push(`${reg.file}: no registerWidget({ class: ${className}, ... })`);
+  else if (reg && reg.typed && !/\bdescription\s*:\s*["'`][^"'`\s]/.test(reg.block))
+    warnings.push(`${reg.file}: registerWidget of ${className} without a description (what the widget shows, read by the AI assistant)`);
+
   // Properties written by the widget at runtime (buttons, switches, inputs of the view)
   const sources = fs.readdirSync(dir).filter(f => /\.(ts|tsx|vue)$/.test(f)).map(f => read(path.join(dir, f))).join("\n");
   const written = new Set([...sources.matchAll(/setPropertyValue\s*\(\s*\{\s*prop\s*:\s*["']([^"']+)["']/g)].map(m => m[1]));

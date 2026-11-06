@@ -21,4 +21,8 @@ export interface WidgetRegistrationArgs {
     dataModel?: WidgetDataModel;
     /** The help of the widget, shown by the dashboard editor of corvina-dashboard (see `XViewWidgetHelp`) */
     help?: XViewWidgetHelp;
+    /** Name in the gallery, instead of the type */
+    displayName?: string | (() => string);
+    /** What the widget shows and is for: the AI assistant reads it to choose and connect the widget */
+    description?: string;
 }
