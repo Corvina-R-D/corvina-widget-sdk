@@ -30,7 +30,8 @@ src/examples/MyWidget/
 - **Images**: use the Markdown syntax with a path relative to the page,
   `![Gauge](../img/gauge.png)`. The image is packaged with the widget like its other resources, so add
   its file name to `resources.images` of `src/manifest.json`, and keep the name unique in the package
-  (the build warns when it is not listed). `<img>` tags written in the page are not packaged: use them
+  (the build warns when it is not listed, and fails when two different images of the pages have the
+  same name). `<img>` tags written in the page are not packaged: use them
   only for absolute URLs.
 - **Html**: the editor cleans the pages before showing them: no scripts, event handlers, iframes,
   `<style>` or forms.

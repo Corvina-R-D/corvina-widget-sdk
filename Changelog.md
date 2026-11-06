@@ -6,7 +6,9 @@ pages in Markdown, `docs/<locale>/<page>.md` next to the widget, compiled into t
 `scripts/markdown-loader.js` (new devDependency `markdown-it`) and registered with the new `help` field
 of `registerWidget` through `widgetHelp` (`src/help.ts`). One page, or a guide of several pages with
 links between them; the editor picks the language of the user, falling back to english, and cleans the
-html. The example `MyWidget` has two pages in english and italian. See
+html. The example `MyWidget` has two pages in english and italian. The projects created by
+`create project` have `src/help.ts`, the loader and `markdown-it`; the loader fails the build when two
+different images of the help pages have the same file name. See
 [doc/widget_help.md](doc/widget_help.md). The editor of Corvina shows it from the release that supports
 it; the older ones ignore the field.
 

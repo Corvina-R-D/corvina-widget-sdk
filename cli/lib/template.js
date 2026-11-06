@@ -20,14 +20,17 @@ const TEMPLATE_ENTRIES = [
   "static",
   "doc",
   "scripts",
-  ".vscode",
   ".gitignore",
   ".env.example",
   "gulpfile.js",
   "index.html",
   "index.ts",
+  // the package also in the new dashboard editor of the dev server, imported by index.ts
+  "newEditor.ts",
   "README.md",
   "src/resources",
+  // widgetHelp: the help of the widgets from their docs/<locale>/<page>.md (doc/widget_help.md)
+  "src/help.ts",
   // Claude Code skills to build widgets (only the skills: .claude can hold local settings)
   ".claude/skills",
   // The install keeps the versions tested with the SDK and drops the packages not used by the project

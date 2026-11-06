@@ -7,7 +7,9 @@
  *   - an image with a relative path (`![](./img/gauge.png)`) is emitted by file-loader like the other
  *     resources, and its URL is the one of the uploaded package: `adjustPath`, which Corvina passes to the
  *     code of the package, resolves it by file name among the `resources.images` of `src/manifest.json`.
- *     So the name must be listed there, and be unique in the package: the loader warns otherwise.
+ *     So the name must be listed there (the loader warns when it is not), and be unique among the images of
+ *     the help pages: two different files with the same name would be emitted to the same file of the package,
+ *     and the loader fails the build naming both.
  *
  * The editor cleans the html before showing it: no scripts, event handlers, iframes, <style> or forms.
  * See src/help.ts for how the pages become the `help` of a widget.
@@ -47,6 +49,63 @@ function headingIds(md) {
 
 const isRelative = (src) => !!src && !/^([a-z][a-z0-9+.-]*:|\/|#)/i.test(src);
 
+const fileName = (src) => path.basename(src.split(/[?#]/)[0]);
+
+/*
+ * The images of the help pages, by page, of each compiler: in watch mode the loader runs again only on the changed
+ * pages, the others keep the images of their last build.
+ */
+const imagesByCompiler = new WeakMap();
+
+const sameContent = (a, b) => {
+  try {
+    return fs.readFileSync(a).equals(fs.readFileSync(b));
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Fails the build when an image of the page has the name of a different image of another page, or of the page.
+ * Returns the indexes of those images: the module does not require them, otherwise webpack would stop writing the
+ * second file with the same name, before reporting this error.
+ */
+function checkUniqueNames(loader, images) {
+  const key = loader._compiler || loader;
+  if (!imagesByCompiler.has(key)) imagesByCompiler.set(key, new Map());
+  const byPage = imagesByCompiler.get(key);
+  const page = loader.resourcePath;
+  const files = images.map((src) => ({
+    name: fileName(src),
+    file: path.resolve(loader.context, src.split(/[?#]/)[0]),
+  }));
+  byPage.set(page, files);
+
+  const relative = (file) => path.relative(loader.rootContext, file);
+  const reported = new Set();
+  const clashing = new Set();
+  files.forEach(({ name, file }, i) => {
+    const others = [...byPage].flatMap(([otherPage, otherFiles]) =>
+      otherFiles
+        .filter((other, j) => (otherPage !== page || j < i) && other.name === name && other.file !== file)
+        .map((other) => ({ ...other, page: otherPage }))
+    );
+    const clash = others.find((other) => !sameContent(file, other.file));
+    if (!clash) return;
+    clashing.add(i);
+    if (reported.has(name)) return;
+    reported.add(name);
+    loader.emitError(
+      new Error(
+        `${name}: two different images have this name, ${relative(file)} (in ${relative(page)}) and ` +
+          `${relative(clash.file)} (in ${relative(clash.page)}). They would be the same file of the package: ` +
+          `rename one of them, also in its page and in resources.images of the manifest.`
+      )
+    );
+  });
+  return clashing;
+}
+
 module.exports = function markdownLoader(source) {
   const { manifest } = this.getOptions() || {};
   const md = markdownIt({ html: true });
@@ -65,12 +124,14 @@ module.exports = function markdownLoader(source) {
   };
   const html = md.render(source);
 
+  const clashing = checkUniqueNames(this, images);
+
   if (manifest && images.length) {
     const manifestPath = path.resolve(this.rootContext, manifest);
     this.addDependency(manifestPath);
     const listed = JSON.parse(fs.readFileSync(manifestPath, "utf8")).resources?.images || [];
     for (const src of images) {
-      const name = path.basename(src.split(/[?#]/)[0]);
+      const name = fileName(src);
       if (!listed.includes(name))
         this.emitWarning(
           new Error(`${name}: add it to resources.images of ${manifest}, or it is missing once uploaded`)
@@ -81,7 +142,11 @@ module.exports = function markdownLoader(source) {
   const parts = html.split(/\u0000(\d+)\u0000/);
   const code = parts
     .map((part, i) =>
-      i % 2 ? `adjustPath(require(${JSON.stringify(images[Number(part)])}))` : JSON.stringify(part)
+      i % 2
+        ? clashing.has(Number(part))
+          ? '""'
+          : `adjustPath(require(${JSON.stringify(images[Number(part)])}))`
+        : JSON.stringify(part)
     )
     .join(" + ");
   return `module.exports = ${code};\n`;

@@ -31,6 +31,8 @@ const BUILD_DEPENDENCIES = {
   "gulp": "^4.0.2",
   "gulp-zip": "^5.0.2",
   "html-webpack-plugin": "^5.6.0",
+  // the help pages of the widgets, compiled by scripts/markdown-loader.js
+  "markdown-it": "^14.2.0",
   "style-loader": "^0.23.0",
   "ts-loader": "^8.0.9",
   "typescript": "^5.9.3",
