@@ -1,6 +1,6 @@
 {
   "name": "@corvina/widget-sdk-cli",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Scaffolding of Corvina dashboard widget projects and widgets: DOM API, lit-html, React, Vue 3, Vue 2",
   "author": "Corvina",
   "license": "Apache-2.0",
