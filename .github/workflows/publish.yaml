@@ -1,8 +1,8 @@
-name: Publish
+name: Publish @corvina/widget-sdk-cli
 
 # Publishes the CLI (cli/, @corvina/widget-sdk-cli) on npm.
 # Registered as trusted publisher on npmjs.com: keep the filename.
-# Release tag: `cli-1.2.3` (or `cli-v1.2.3`); `cli-1.2.3-beta.1`, marked as pre-release, goes to `beta`.
+# Release tag: `cli-1.2.3` (no leading `v`); `cli-1.2.3-beta.1`, marked as pre-release, goes to `beta`.
 # The prefix keeps the CLI releases apart from the versions of the SDK itself.
 on:
   release:
